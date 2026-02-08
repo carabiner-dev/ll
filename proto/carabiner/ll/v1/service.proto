@@ -1,0 +1,47 @@
+// SPDX-FileCopyrightText: Copyright 2025 Carabiner Systems, Inc
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+package carabiner.ll.v1;
+
+option go_package = "github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1";
+
+import "carabiner/ll/v1/messages.proto";
+
+// LamplightService provides a Google Zanzibar-style permissions API.
+service LamplightService {
+  // Check determines whether a subject has a permission on an object.
+  rpc Check(CheckRequest) returns (CheckResponse);
+
+  // Write creates or touches relation tuples.
+  rpc Write(WriteRequest) returns (WriteResponse);
+
+  // Read returns relation tuples matching a filter.
+  rpc Read(ReadRequest) returns (ReadResponse);
+
+  // Delete removes relation tuples matching a filter.
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+
+  // ListObjects returns all objects of a given type on which the subject has a permission.
+  rpc ListObjects(ListObjectsRequest) returns (ListObjectsResponse);
+
+  // Expand returns the full tree of subjects with a given permission on an object.
+  rpc Expand(ExpandRequest) returns (ExpandResponse);
+
+  // WriteSchema writes or updates a named schema set.
+  rpc WriteSchema(WriteSchemaRequest) returns (WriteSchemaResponse);
+
+  // ReadSchema returns the authorization schema. If name is specified, returns that
+  // specific schema set. Otherwise returns all schema sets concatenated.
+  rpc ReadSchema(ReadSchemaRequest) returns (ReadSchemaResponse);
+
+  // ListSchemaSets returns the names of all stored schema sets.
+  rpc ListSchemaSets(ListSchemaSetsRequest) returns (ListSchemaSetsResponse);
+
+  // DeleteSchemaSet removes a named schema set.
+  rpc DeleteSchemaSet(DeleteSchemaSetRequest) returns (DeleteSchemaSetResponse);
+
+  // HealthCheck returns the health of the service.
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
