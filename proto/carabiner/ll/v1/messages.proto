@@ -1,0 +1,166 @@
+// SPDX-FileCopyrightText: Copyright 2025 Carabiner Systems, Inc
+
+syntax = "proto3";
+
+package carabiner.ll.v1;
+
+option go_package = "github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1";
+
+import "carabiner/ll/v1/types.proto";
+
+// CheckRequest is the request for the Check RPC.
+message CheckRequest {
+  RelationTuple tuple = 1;
+  Consistency consistency = 2;
+}
+
+// CheckResponse is the response for the Check RPC.
+message CheckResponse {
+  bool allowed = 1;
+  ConsistencyToken checked_at = 2;
+}
+
+// WriteRequest is the request for the Write RPC.
+message WriteRequest {
+  repeated RelationTuple writes = 1;
+  repeated RelationTuple deletes = 2;
+}
+
+// WriteResponse is the response for the Write RPC.
+message WriteResponse {
+  ConsistencyToken written_at = 1;
+}
+
+// ReadRequest is the request for the Read RPC.
+message ReadRequest {
+  RelationTupleFilter filter = 1;
+  Consistency consistency = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+}
+
+// ReadResponse is the response for the Read RPC.
+message ReadResponse {
+  repeated RelationTuple tuples = 1;
+  string next_page_token = 2;
+}
+
+// DeleteRequest is the request for the Delete RPC.
+message DeleteRequest {
+  RelationTupleFilter filter = 1;
+}
+
+// DeleteResponse is the response for the Delete RPC.
+message DeleteResponse {
+  ConsistencyToken deleted_at = 1;
+}
+
+// ListObjectsRequest is the request for the ListObjects RPC.
+message ListObjectsRequest {
+  string subject_type = 1;
+  string subject_id = 2;
+  string permission = 3;
+  string object_type = 4;
+  Consistency consistency = 5;
+}
+
+// ListObjectsResponse is the response for the ListObjects RPC.
+message ListObjectsResponse {
+  repeated string object_ids = 1;
+}
+
+// ExpandRequest is the request for the Expand RPC.
+message ExpandRequest {
+  string object_type = 1;
+  string object_id = 2;
+  string permission = 3;
+  Consistency consistency = 4;
+}
+
+// ExpandResponse is the response for the Expand RPC.
+message ExpandResponse {
+  ExpandTree tree = 1;
+}
+
+// ExpandTree represents the expansion of a permission.
+message ExpandTree {
+  // The relation or permission being expanded.
+  string expanded = 1;
+
+  oneof node {
+    ExpandLeaf leaf = 2;
+    ExpandUnion union = 3;
+    ExpandIntersection intersection = 4;
+    ExpandExclusion exclusion = 5;
+  }
+}
+
+// ExpandLeaf contains the direct subjects.
+message ExpandLeaf {
+  repeated RelationTuple subjects = 1;
+}
+
+// ExpandUnion combines children with OR logic.
+message ExpandUnion {
+  repeated ExpandTree children = 1;
+}
+
+// ExpandIntersection combines children with AND logic.
+message ExpandIntersection {
+  repeated ExpandTree children = 1;
+}
+
+// ExpandExclusion subtracts one set from another.
+message ExpandExclusion {
+  ExpandTree base = 1;
+  ExpandTree subtract = 2;
+}
+
+// WriteSchemaRequest is the request for the WriteSchema RPC.
+message WriteSchemaRequest {
+  string schema_yaml = 1;
+}
+
+// WriteSchemaResponse is the response for the WriteSchema RPC.
+message WriteSchemaResponse {}
+
+// ReadSchemaRequest is the request for the ReadSchema RPC.
+message ReadSchemaRequest {
+  // Optional: if specified, returns only this named schema set.
+  // If empty, returns all schema sets concatenated.
+  string name = 1;
+}
+
+// ReadSchemaResponse is the response for the ReadSchema RPC.
+message ReadSchemaResponse {
+  string schema_yaml = 1;
+}
+
+// ListSchemaSetsRequest is the request for the ListSchemaSets RPC.
+message ListSchemaSetsRequest {}
+
+// ListSchemaSetsResponse is the response for the ListSchemaSets RPC.
+message ListSchemaSetsResponse {
+  repeated string names = 1;
+}
+
+// DeleteSchemaSetRequest is the request for the DeleteSchemaSet RPC.
+message DeleteSchemaSetRequest {
+  string name = 1;
+}
+
+// DeleteSchemaSetResponse is the response for the DeleteSchemaSet RPC.
+message DeleteSchemaSetResponse {}
+
+// HealthCheckRequest is the request for the HealthCheck RPC.
+message HealthCheckRequest {}
+
+// HealthCheckResponse is the response for the HealthCheck RPC.
+message HealthCheckResponse {
+  enum ServingStatus {
+    SERVING_STATUS_UNSPECIFIED = 0;
+    SERVING_STATUS_SERVING = 1;
+    SERVING_STATUS_NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+}

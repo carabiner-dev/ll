@@ -1,0 +1,53 @@
+// SPDX-FileCopyrightText: Copyright 2025 Carabiner Systems, Inc
+
+syntax = "proto3";
+
+package carabiner.ll.v1;
+
+option go_package = "github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1";
+
+// RelationTuple implements the zanzibar tuple, it represents a relationship
+// between an object and a subject.
+//
+// Format: object_type:object_id#relation@subject_type:subject_id[#subject_relation]
+message RelationTuple {
+  string object_type = 1;
+  string object_id = 2;
+  string relation = 3;
+  string subject_type = 4;
+  string subject_id = 5;
+  // Optional: for subject sets (e.g., group:eng#member)
+  string subject_relation = 6;
+}
+
+// ConsistencyToken is an opaque token representing a point-in-time snapshot.
+message ConsistencyToken {
+  bytes token = 1;
+}
+
+// Consistency specifies the consistency requirements for a read operation.
+message Consistency {
+  oneof requirement {
+    // Minimize latency; may return slightly stale data.
+    bool minimize_latency = 1;
+    // Fully consistent; reads reflect all prior writes.
+    bool fully_consistent = 2;
+    // At least as fresh as the given token.
+    ConsistencyToken at_least_as_fresh = 3;
+  }
+}
+
+// RelationTupleFilter is used to filter tuples in read/delete operations.
+message RelationTupleFilter {
+  string object_type = 1;
+  string object_id = 2;
+  string relation = 3;
+  SubjectFilter subject_filter = 4;
+}
+
+// SubjectFilter filters by subject fields.
+message SubjectFilter {
+  string subject_type = 1;
+  string subject_id = 2;
+  string subject_relation = 3;
+}
