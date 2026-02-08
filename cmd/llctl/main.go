@@ -34,6 +34,7 @@ It provides commands for:
 	cmd.AddDelete(rootCmd)
 	cmd.AddSchema(rootCmd)
 	cmd.AddLs(rootCmd)
+	cmd.AddIAM(rootCmd)
 	addVersion(rootCmd)
 
 	// Hidden aliases
