@@ -23,6 +23,7 @@ var _ command.OptionsSet = (*LsOptions)(nil)
 type LsOptions struct {
 	ServerOptions
 	Decode bool
+	System bool
 }
 
 var defaultLsOptions = LsOptions{
@@ -39,6 +40,7 @@ func (o *LsOptions) Validate() error {
 func (o *LsOptions) AddFlags(cmd *cobra.Command) {
 	o.ServerOptions.AddFlags(cmd)
 	cmd.Flags().BoolVar(&o.Decode, "decode", true, "Decode IDs containing special characters (show human-readable form)")
+	cmd.Flags().BoolVar(&o.System, "system", false, "Include internal _lamplight system types and permissions")
 }
 
 func (o *LsOptions) Config() *command.OptionsSetConfig {
@@ -150,10 +152,12 @@ func addLsObjects(parent *cobra.Command) {
 Without arguments, lists all object types defined in the schema.
 With a type argument, lists all objects of that type that have tuples.
 
+By default, internal _lamplight system types are hidden. Use --system to show them.
+
 Examples:
   llctl ls objects              # list all object types
-  llctl ls objects folder       # list all folders with tuples
-  llctl ls objects document     # list all documents with tuples`,
+  llctl ls objects --system     # include _lamplight system types
+  llctl ls objects folder       # list all folders with tuples`,
 		Args: cobra.MaximumNArgs(1),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return opts.Validate()
@@ -187,13 +191,25 @@ Examples:
 					return fmt.Errorf("parsing schema: %w", err)
 				}
 
+				// Filter out system types unless --system flag is set
+				var filtered []typeInfo
 				for _, t := range types {
-					fmt.Println(t)
+					if opts.System || !strings.HasPrefix(t.Name, "_lamplight.") {
+						filtered = append(filtered, t)
+					}
 				}
 
-				if len(types) == 0 {
+				if len(filtered) == 0 {
 					fmt.Println("no object types found")
+					return nil
 				}
+
+				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+				fmt.Fprintln(w, "TYPE\tDESCRIPTION")
+				for _, t := range filtered {
+					fmt.Fprintf(w, "%s\t%s\n", t.Name, t.Description)
+				}
+				w.Flush()
 				return nil
 			}
 
@@ -249,8 +265,11 @@ Without arguments, lists all permissions in a table with their object types.
 With a type argument, lists permissions for that specific type.
 With a type:id argument, lists permission grants on that specific object instance.
 
+By default, internal _lamplight system types are hidden. Use --system to show them.
+
 Examples:
   llctl ls permissions                  # list all permissions by type
+  llctl ls permissions --system         # include _lamplight system permissions
   llctl ls permissions folder           # list permissions for folder type
   llctl ls permissions folder:home      # list grants on folder:home`,
 		Args: cobra.MaximumNArgs(1),
@@ -286,14 +305,22 @@ Examples:
 					return fmt.Errorf("parsing schema: %w", err)
 				}
 
-				if len(perms) == 0 {
+				// Filter out system types unless --system flag is set
+				var filtered []typePermission
+				for _, p := range perms {
+					if opts.System || !strings.HasPrefix(p.ObjectType, "_lamplight.") {
+						filtered = append(filtered, p)
+					}
+				}
+
+				if len(filtered) == 0 {
 					fmt.Println("no permissions found")
 					return nil
 				}
 
 				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 				fmt.Fprintln(w, "TYPE\tPERMISSION")
-				for _, p := range perms {
+				for _, p := range filtered {
 					fmt.Fprintf(w, "%s\t%s\n", p.ObjectType, p.Permission)
 				}
 				w.Flush()
@@ -376,6 +403,7 @@ type schemaDoc struct {
 // schemaType represents a type definition in the schema.
 type schemaType struct {
 	Name        string             `yaml:"name"`
+	Description string             `yaml:"description"`
 	Permissions []schemaPermission `yaml:"permissions"`
 }
 
@@ -390,9 +418,15 @@ type typePermission struct {
 	Permission string
 }
 
-// parseObjectTypes extracts all type names from the schema YAML.
-func parseObjectTypes(schemaYAML string) ([]string, error) {
-	var types []string
+// typeInfo holds type name and description.
+type typeInfo struct {
+	Name        string
+	Description string
+}
+
+// parseObjectTypes extracts all type names and descriptions from the schema YAML.
+func parseObjectTypes(schemaYAML string) ([]typeInfo, error) {
+	var types []typeInfo
 
 	decoder := yaml.NewDecoder(strings.NewReader(schemaYAML))
 	for {
@@ -406,7 +440,10 @@ func parseObjectTypes(schemaYAML string) ([]string, error) {
 
 		for _, t := range doc.Spec {
 			if t.Name != "" {
-				types = append(types, t.Name)
+				types = append(types, typeInfo{
+					Name:        t.Name,
+					Description: t.Description,
+				})
 			}
 		}
 	}
