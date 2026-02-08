@@ -7,10 +7,14 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"text/tabwriter"
+	"os"
 
 	"github.com/carabiner-dev/command"
 	"github.com/carabiner-dev/ll"
+	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 var _ command.OptionsSet = (*LsOptions)(nil)
@@ -41,12 +45,26 @@ func (o *LsOptions) Config() *command.OptionsSetConfig {
 	return nil
 }
 
-// AddLs adds the ls command to the parent command.
+// AddLs adds the ls command and its subcommands to the parent command.
 func AddLs(parent *cobra.Command) {
+	cmd := &cobra.Command{
+		Use:   "ls",
+		Short: "List grants, objects, or permissions",
+		Long:  `Commands for listing grants, objects, and permissions.`,
+	}
+
+	addLsGrants(cmd)
+	addLsObjects(cmd)
+	addLsPermissions(cmd)
+	parent.AddCommand(cmd)
+}
+
+// addLsGrants adds the grants subcommand (formerly the main ls command).
+func addLsGrants(parent *cobra.Command) {
 	opts := defaultLsOptions
 
 	cmd := &cobra.Command{
-		Use:   "ls <subject_type:subject_id#permission> <object_type>",
+		Use:   "grants <subject_type:subject_id#permission> <object_type>",
 		Short: "List objects of a type that a subject has a permission on",
 		Long: `List all objects of a given type that a subject has a specific permission on.
 
@@ -54,8 +72,8 @@ The subject is specified as subject_type:subject_id#permission, and the object t
 is the type of objects to search.
 
 Examples:
-  llctl ls "user:alice#can_view" document
-  llctl ls "user:bob#can_edit" folder`,
+  llctl ls grants "user:alice#can_view" document
+  llctl ls grants "user:bob#can_edit" folder`,
 		Args: cobra.ExactArgs(2),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return opts.Validate()
@@ -118,4 +136,337 @@ Examples:
 	}
 	opts.AddFlags(cmd)
 	parent.AddCommand(cmd)
+}
+
+// addLsObjects adds the objects subcommand.
+func addLsObjects(parent *cobra.Command) {
+	opts := defaultLsOptions
+
+	cmd := &cobra.Command{
+		Use:   "objects [type]",
+		Short: "List object types or objects of a specific type",
+		Long: `List registered object types, or list all known objects of a specific type.
+
+Without arguments, lists all object types defined in the schema.
+With a type argument, lists all objects of that type that have tuples.
+
+Examples:
+  llctl ls objects              # list all object types
+  llctl ls objects folder       # list all folders with tuples
+  llctl ls objects document     # list all documents with tuples`,
+		Args: cobra.MaximumNArgs(1),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return opts.Validate()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			token, err := opts.GetToken()
+			if err != nil {
+				return fmt.Errorf("reading token: %w", err)
+			}
+
+			var clientOpts []ll.Option
+			if token != "" {
+				clientOpts = append(clientOpts, ll.WithToken(token))
+			}
+
+			c, err := ll.New(opts.Server, clientOpts...)
+			if err != nil {
+				return err
+			}
+			defer c.Close()
+
+			// No args: list object types from schema
+			if len(args) == 0 {
+				schemaYAML, err := c.ReadSchema(cmd.Context())
+				if err != nil {
+					return fmt.Errorf("reading schema: %w", err)
+				}
+
+				types, err := parseObjectTypes(schemaYAML)
+				if err != nil {
+					return fmt.Errorf("parsing schema: %w", err)
+				}
+
+				for _, t := range types {
+					fmt.Println(t)
+				}
+
+				if len(types) == 0 {
+					fmt.Println("no object types found")
+				}
+				return nil
+			}
+
+			// With type arg: list objects of that type
+			objectType := args[0]
+			filter := &llv1.RelationTupleFilter{
+				ObjectType: objectType,
+			}
+
+			tuples, err := c.Read(cmd.Context(), filter)
+			if err != nil {
+				return err
+			}
+
+			// Extract unique object IDs
+			seen := make(map[string]bool)
+			var objectIDs []string
+			for _, t := range tuples {
+				if !seen[t.ObjectId] {
+					seen[t.ObjectId] = true
+					objectIDs = append(objectIDs, t.ObjectId)
+				}
+			}
+
+			for _, id := range objectIDs {
+				if opts.Decode {
+					fmt.Println(ll.DecodeID(id))
+				} else {
+					fmt.Println(id)
+				}
+			}
+
+			if len(objectIDs) == 0 {
+				fmt.Printf("no %s objects found\n", objectType)
+			}
+			return nil
+		},
+	}
+	opts.AddFlags(cmd)
+	parent.AddCommand(cmd)
+}
+
+// addLsPermissions adds the permissions subcommand.
+func addLsPermissions(parent *cobra.Command) {
+	opts := defaultLsOptions
+
+	cmd := &cobra.Command{
+		Use:   "permissions [type|type:id]",
+		Short: "List permissions from schema or grants on an object",
+		Long: `List permissions defined in the schema or permission grants on a specific object.
+
+Without arguments, lists all permissions in a table with their object types.
+With a type argument, lists permissions for that specific type.
+With a type:id argument, lists permission grants on that specific object instance.
+
+Examples:
+  llctl ls permissions                  # list all permissions by type
+  llctl ls permissions folder           # list permissions for folder type
+  llctl ls permissions folder:home      # list grants on folder:home`,
+		Args: cobra.MaximumNArgs(1),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return opts.Validate()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			token, err := opts.GetToken()
+			if err != nil {
+				return fmt.Errorf("reading token: %w", err)
+			}
+
+			var clientOpts []ll.Option
+			if token != "" {
+				clientOpts = append(clientOpts, ll.WithToken(token))
+			}
+
+			c, err := ll.New(opts.Server, clientOpts...)
+			if err != nil {
+				return err
+			}
+			defer c.Close()
+
+			// No args: list all permissions by type
+			if len(args) == 0 {
+				schemaYAML, err := c.ReadSchema(cmd.Context())
+				if err != nil {
+					return fmt.Errorf("reading schema: %w", err)
+				}
+
+				perms, err := parseAllPermissions(schemaYAML)
+				if err != nil {
+					return fmt.Errorf("parsing schema: %w", err)
+				}
+
+				if len(perms) == 0 {
+					fmt.Println("no permissions found")
+					return nil
+				}
+
+				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+				fmt.Fprintln(w, "TYPE\tPERMISSION")
+				for _, p := range perms {
+					fmt.Fprintf(w, "%s\t%s\n", p.ObjectType, p.Permission)
+				}
+				w.Flush()
+				return nil
+			}
+
+			arg := args[0]
+
+			// Check if it's type:id (has a colon)
+			colonIdx := strings.Index(arg, ":")
+			if colonIdx > 0 {
+				// type:id - list permission grants on that object
+				objectType := arg[:colonIdx]
+				objectID := arg[colonIdx+1:]
+
+				filter := &llv1.RelationTupleFilter{
+					ObjectType: objectType,
+					ObjectId:   objectID,
+				}
+
+				tuples, err := c.Read(cmd.Context(), filter)
+				if err != nil {
+					return err
+				}
+
+				if len(tuples) == 0 {
+					fmt.Printf("no grants found on %s\n", arg)
+					return nil
+				}
+
+				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+				fmt.Fprintln(w, "RELATION\tSUBJECT")
+				for _, t := range tuples {
+					subject := fmt.Sprintf("%s:%s", t.SubjectType, t.SubjectId)
+					if opts.Decode {
+						subject = fmt.Sprintf("%s:%s", t.SubjectType, ll.DecodeID(t.SubjectId))
+					}
+					if t.SubjectRelation != "" {
+						subject += "#" + t.SubjectRelation
+					}
+					fmt.Fprintf(w, "%s\t%s\n", t.Relation, subject)
+				}
+				w.Flush()
+				return nil
+			}
+
+			// Just type - list permissions for that type from schema
+			objectType := arg
+			schemaYAML, err := c.ReadSchema(cmd.Context())
+			if err != nil {
+				return fmt.Errorf("reading schema: %w", err)
+			}
+
+			perms, err := parseTypePermissions(schemaYAML, objectType)
+			if err != nil {
+				return fmt.Errorf("parsing schema: %w", err)
+			}
+
+			for _, p := range perms {
+				fmt.Println(p)
+			}
+
+			if len(perms) == 0 {
+				fmt.Printf("no permissions found for type %q\n", objectType)
+			}
+			return nil
+		},
+	}
+	opts.AddFlags(cmd)
+	parent.AddCommand(cmd)
+}
+
+// Schema parsing helpers
+
+// schemaDoc represents a parsed schema document.
+type schemaDoc struct {
+	Spec []schemaType `yaml:"spec"`
+}
+
+// schemaType represents a type definition in the schema.
+type schemaType struct {
+	Name        string             `yaml:"name"`
+	Permissions []schemaPermission `yaml:"permissions"`
+}
+
+// schemaPermission represents a permission definition.
+type schemaPermission struct {
+	Name string `yaml:"name"`
+}
+
+// typePermission pairs a type with a permission name.
+type typePermission struct {
+	ObjectType string
+	Permission string
+}
+
+// parseObjectTypes extracts all type names from the schema YAML.
+func parseObjectTypes(schemaYAML string) ([]string, error) {
+	var types []string
+
+	decoder := yaml.NewDecoder(strings.NewReader(schemaYAML))
+	for {
+		var doc schemaDoc
+		if err := decoder.Decode(&doc); err != nil {
+			if err.Error() == "EOF" {
+				break
+			}
+			return nil, err
+		}
+
+		for _, t := range doc.Spec {
+			if t.Name != "" {
+				types = append(types, t.Name)
+			}
+		}
+	}
+
+	return types, nil
+}
+
+// parseAllPermissions extracts all permissions with their types from the schema.
+func parseAllPermissions(schemaYAML string) ([]typePermission, error) {
+	var perms []typePermission
+
+	decoder := yaml.NewDecoder(strings.NewReader(schemaYAML))
+	for {
+		var doc schemaDoc
+		if err := decoder.Decode(&doc); err != nil {
+			if err.Error() == "EOF" {
+				break
+			}
+			return nil, err
+		}
+
+		for _, t := range doc.Spec {
+			for _, p := range t.Permissions {
+				if p.Name != "" {
+					perms = append(perms, typePermission{
+						ObjectType: t.Name,
+						Permission: p.Name,
+					})
+				}
+			}
+		}
+	}
+
+	return perms, nil
+}
+
+// parseTypePermissions extracts permissions for a specific type from the schema.
+func parseTypePermissions(schemaYAML string, objectType string) ([]string, error) {
+	var perms []string
+
+	decoder := yaml.NewDecoder(strings.NewReader(schemaYAML))
+	for {
+		var doc schemaDoc
+		if err := decoder.Decode(&doc); err != nil {
+			if err.Error() == "EOF" {
+				break
+			}
+			return nil, err
+		}
+
+		for _, t := range doc.Spec {
+			if t.Name == objectType {
+				for _, p := range t.Permissions {
+					if p.Name != "" {
+						perms = append(perms, p.Name)
+					}
+				}
+			}
+		}
+	}
+
+	return perms, nil
 }
