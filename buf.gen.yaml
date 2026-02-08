@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Copyright 2026 Carabiner Systems, Inc
+---
+version: v2
+plugins:
+  - protoc_builtin: go
+    out: api
+    opt:
+      - paths=source_relative
+  - protoc_builtin: go-grpc
+    out: api
+    opt:
+      - paths=source_relative

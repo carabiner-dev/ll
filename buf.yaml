@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: Copyright 2026 Carabiner Systems, Inc
+---
+version: v2
+modules:
+  - path: proto
+    name: buf.build/carabiner/ll
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE
