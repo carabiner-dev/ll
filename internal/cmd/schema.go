@@ -9,7 +9,6 @@ import (
 	"os"
 
 	"github.com/carabiner-dev/command"
-	"github.com/carabiner-dev/ll"
 	"github.com/spf13/cobra"
 )
 
@@ -70,17 +69,7 @@ func AddApply(parent *cobra.Command) {
 				return fmt.Errorf("reading file: %w", err)
 			}
 
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}
@@ -117,17 +106,7 @@ func AddGet(parent *cobra.Command) {
 				return cmd.Help()
 			}
 
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}
@@ -211,17 +190,7 @@ Examples:
 				return fmt.Errorf("reading file: %w", err)
 			}
 
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}
@@ -267,17 +236,7 @@ Examples:
 				return cmd.Help()
 			}
 
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}
@@ -343,17 +302,7 @@ Examples:
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}

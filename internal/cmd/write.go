@@ -67,17 +67,7 @@ Examples:
 				tuples = append(tuples, t)
 			}
 
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}

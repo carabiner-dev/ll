@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/carabiner-dev/command"
+	"github.com/carabiner-dev/ll"
 	"github.com/spf13/cobra"
 )
 
@@ -20,8 +21,9 @@ var defaultServerOptions = ServerOptions{
 
 // ServerOptions contains the common server connection options.
 type ServerOptions struct {
-	Server string
-	Token  string
+	Server  string
+	Token   string
+	UseREST bool
 }
 
 func (so *ServerOptions) Config() *command.OptionsSetConfig {
@@ -38,6 +40,7 @@ func (so *ServerOptions) Validate() error {
 func (so *ServerOptions) AddFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&so.Server, "server", defaultServerOptions.Server, "Lamplight server address")
 	cmd.PersistentFlags().StringVar(&so.Token, "token", "", "Authentication token (file path or token string)")
+	cmd.PersistentFlags().BoolVar(&so.UseREST, "rest", false, "Use REST API instead of gRPC")
 }
 
 // GetToken returns the authentication token.
@@ -59,4 +62,27 @@ func (so *ServerOptions) GetToken() (string, error) {
 
 	// Not a file, return as-is
 	return so.Token, nil
+}
+
+// NewClient creates a new Lamplight client based on the configured options.
+// If UseREST is true, it creates a REST client; otherwise, it creates a gRPC client.
+func (so *ServerOptions) NewClient() (ll.Client, error) {
+	token, err := so.GetToken()
+	if err != nil {
+		return nil, err
+	}
+
+	if so.UseREST {
+		var opts []ll.RESTOption
+		if token != "" {
+			opts = append(opts, ll.WithRESTToken(token))
+		}
+		return ll.NewREST(so.Server, opts...)
+	}
+
+	var opts []ll.Option
+	if token != "" {
+		opts = append(opts, ll.WithToken(token))
+	}
+	return ll.New(so.Server, opts...)
 }

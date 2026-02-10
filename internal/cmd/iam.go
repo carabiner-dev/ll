@@ -149,17 +149,7 @@ Examples:
 			// Encode the subject
 			encodedSubject := ll.EncodeID(subjectFlag)
 
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}
@@ -248,17 +238,7 @@ Examples:
 			// Encode the subject
 			encodedSubject := ll.EncodeID(subjectFlag)
 
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}
@@ -338,17 +318,7 @@ Examples:
 			// Encode the subject
 			encodedSubject := ll.EncodeID(subjectFlag)
 
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}
@@ -406,17 +376,7 @@ Examples:
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}

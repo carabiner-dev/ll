@@ -8,7 +8,6 @@ import (
 	"fmt"
 
 	"github.com/carabiner-dev/command"
-	"github.com/carabiner-dev/ll"
 	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 	"github.com/spf13/cobra"
 )
@@ -60,17 +59,7 @@ Examples:
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			token, err := opts.GetToken()
-			if err != nil {
-				return fmt.Errorf("reading token: %w", err)
-			}
-
-			var clientOpts []ll.Option
-			if token != "" {
-				clientOpts = append(clientOpts, ll.WithToken(token))
-			}
-
-			c, err := ll.New(opts.Server, clientOpts...)
+			c, err := opts.NewClient()
 			if err != nil {
 				return err
 			}
