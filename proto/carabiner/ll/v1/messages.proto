@@ -165,3 +165,31 @@ message HealthCheckResponse {
   }
   ServingStatus status = 1;
 }
+
+// WhoAmIRequest is the request for the WhoAmI RPC.
+message WhoAmIRequest {}
+
+// WhoAmIResponse is the response for the WhoAmI RPC.
+message WhoAmIResponse {
+  // The authenticated subject (from JWT sub claim).
+  // Empty if not authenticated.
+  string subject = 1;
+
+  // Whether authentication is enabled on the server.
+  bool authenticated = 2;
+
+  // The user's IAM grants on Lamplight operations.
+  repeated IAMGrant grants = 3;
+}
+
+// IAMGrant represents an IAM permission grant.
+message IAMGrant {
+  // The object the grant applies to (e.g., "_lamplight.tuple:global" or "_lamplight.tuple:folder%3Amy-folder").
+  string object = 1;
+
+  // The relation granted (e.g., "writer", "reader", "executor").
+  string relation = 2;
+
+  // Human-readable description of what this grant allows.
+  string description = 3;
+}

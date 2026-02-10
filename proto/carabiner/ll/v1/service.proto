@@ -44,4 +44,7 @@ service LamplightService {
 
   // HealthCheck returns the health of the service.
   rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+
+  // WhoAmI returns the authenticated user's identity and IAM grants.
+  rpc WhoAmI(WhoAmIRequest) returns (WhoAmIResponse);
 }
