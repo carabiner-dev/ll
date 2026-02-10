@@ -56,6 +56,7 @@ The _lamplight.tuple:global object is the root - grants there apply to all objec
 	addIAMGrant(cmd)
 	addIAMRevoke(cmd)
 	addIAMCheck(cmd)
+	addIAMWhoAmI(cmd)
 	parent.AddCommand(cmd)
 }
 
@@ -376,6 +377,86 @@ Examples:
 
 	cmd.Flags().String("subject", "", "Subject to check (required)")
 	cmd.MarkFlagRequired("subject") //nolint:errcheck
+	opts.AddFlags(cmd)
+	parent.AddCommand(cmd)
+}
+
+func addIAMWhoAmI(parent *cobra.Command) {
+	opts := defaultIAMOptions
+
+	cmd := &cobra.Command{
+		Use:   "whoami",
+		Short: "Display the current user's identity and IAM grants",
+		Long: `Display the authenticated user's identity as seen by the server,
+along with their IAM grants on Lamplight operations.
+
+This command is useful for:
+  - Verifying your authentication is working correctly
+  - Checking what permissions you have on Lamplight operations
+  - Debugging authorization issues
+
+Examples:
+  # Check your identity and grants
+  llctl iam whoami
+
+  # With explicit server and token
+  llctl iam whoami --server=localhost:8080 --token=/path/to/token.jwt`,
+		Args: cobra.NoArgs,
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return opts.Validate()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			token, err := opts.GetToken()
+			if err != nil {
+				return fmt.Errorf("reading token: %w", err)
+			}
+
+			var clientOpts []ll.Option
+			if token != "" {
+				clientOpts = append(clientOpts, ll.WithToken(token))
+			}
+
+			c, err := ll.New(opts.Server, clientOpts...)
+			if err != nil {
+				return err
+			}
+			defer c.Close()
+
+			resp, err := c.WhoAmI(cmd.Context())
+			if err != nil {
+				return fmt.Errorf("calling WhoAmI: %w", err)
+			}
+
+			// Display identity
+			fmt.Println("Identity:")
+			if resp.Subject != "" {
+				fmt.Printf("  Subject: %s\n", resp.Subject)
+			} else {
+				fmt.Println("  Subject: (not authenticated)")
+			}
+			fmt.Printf("  Authentication enabled: %v\n", resp.Authenticated)
+
+			// Display grants
+			fmt.Println("\nIAM Grants:")
+			if len(resp.Grants) == 0 {
+				if resp.Subject == "" {
+					fmt.Println("  (not authenticated - no grants)")
+				} else {
+					fmt.Println("  (no grants found)")
+				}
+			} else {
+				for _, grant := range resp.Grants {
+					fmt.Printf("  - %s#%s\n", grant.Object, grant.Relation)
+					if grant.Description != "" {
+						fmt.Printf("    %s\n", grant.Description)
+					}
+				}
+			}
+
+			return nil
+		},
+	}
+
 	opts.AddFlags(cmd)
 	parent.AddCommand(cmd)
 }
