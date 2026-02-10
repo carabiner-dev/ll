@@ -1457,6 +1457,172 @@ func (x *HealthCheckResponse) GetStatus() HealthCheckResponse_ServingStatus {
 	return HealthCheckResponse_SERVING_STATUS_UNSPECIFIED
 }
 
+// WhoAmIRequest is the request for the WhoAmI RPC.
+type WhoAmIRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WhoAmIRequest) Reset() {
+	*x = WhoAmIRequest{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WhoAmIRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WhoAmIRequest) ProtoMessage() {}
+
+func (x *WhoAmIRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WhoAmIRequest.ProtoReflect.Descriptor instead.
+func (*WhoAmIRequest) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{27}
+}
+
+// WhoAmIResponse is the response for the WhoAmI RPC.
+type WhoAmIResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The authenticated subject (from JWT sub claim).
+	// Empty if not authenticated.
+	Subject string `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+	// Whether authentication is enabled on the server.
+	Authenticated bool `protobuf:"varint,2,opt,name=authenticated,proto3" json:"authenticated,omitempty"`
+	// The user's IAM grants on Lamplight operations.
+	Grants        []*IAMGrant `protobuf:"bytes,3,rep,name=grants,proto3" json:"grants,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *WhoAmIResponse) Reset() {
+	*x = WhoAmIResponse{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *WhoAmIResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*WhoAmIResponse) ProtoMessage() {}
+
+func (x *WhoAmIResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use WhoAmIResponse.ProtoReflect.Descriptor instead.
+func (*WhoAmIResponse) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *WhoAmIResponse) GetSubject() string {
+	if x != nil {
+		return x.Subject
+	}
+	return ""
+}
+
+func (x *WhoAmIResponse) GetAuthenticated() bool {
+	if x != nil {
+		return x.Authenticated
+	}
+	return false
+}
+
+func (x *WhoAmIResponse) GetGrants() []*IAMGrant {
+	if x != nil {
+		return x.Grants
+	}
+	return nil
+}
+
+// IAMGrant represents an IAM permission grant.
+type IAMGrant struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The object the grant applies to (e.g., "_lamplight.tuple:global" or "_lamplight.tuple:folder%3Amy-folder").
+	Object string `protobuf:"bytes,1,opt,name=object,proto3" json:"object,omitempty"`
+	// The relation granted (e.g., "writer", "reader", "executor").
+	Relation string `protobuf:"bytes,2,opt,name=relation,proto3" json:"relation,omitempty"`
+	// Human-readable description of what this grant allows.
+	Description   string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IAMGrant) Reset() {
+	*x = IAMGrant{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IAMGrant) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IAMGrant) ProtoMessage() {}
+
+func (x *IAMGrant) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IAMGrant.ProtoReflect.Descriptor instead.
+func (*IAMGrant) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *IAMGrant) GetObject() string {
+	if x != nil {
+		return x.Object
+	}
+	return ""
+}
+
+func (x *IAMGrant) GetRelation() string {
+	if x != nil {
+		return x.Relation
+	}
+	return ""
+}
+
+func (x *IAMGrant) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
 var File_carabiner_ll_v1_messages_proto protoreflect.FileDescriptor
 
 const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
@@ -1551,7 +1717,16 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\rServingStatus\x12\x1e\n" +
 	"\x1aSERVING_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SERVING_STATUS_SERVING\x10\x01\x12\x1e\n" +
-	"\x1aSERVING_STATUS_NOT_SERVING\x10\x02B6Z4github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1b\x06proto3"
+	"\x1aSERVING_STATUS_NOT_SERVING\x10\x02\"\x0f\n" +
+	"\rWhoAmIRequest\"\x83\x01\n" +
+	"\x0eWhoAmIResponse\x12\x18\n" +
+	"\asubject\x18\x01 \x01(\tR\asubject\x12$\n" +
+	"\rauthenticated\x18\x02 \x01(\bR\rauthenticated\x121\n" +
+	"\x06grants\x18\x03 \x03(\v2\x19.carabiner.ll.v1.IAMGrantR\x06grants\"`\n" +
+	"\bIAMGrant\x12\x16\n" +
+	"\x06object\x18\x01 \x01(\tR\x06object\x12\x1a\n" +
+	"\brelation\x18\x02 \x01(\tR\brelation\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescriptionB6Z4github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1b\x06proto3"
 
 var (
 	file_carabiner_ll_v1_messages_proto_rawDescOnce sync.Once
@@ -1566,7 +1741,7 @@ func file_carabiner_ll_v1_messages_proto_rawDescGZIP() []byte {
 }
 
 var file_carabiner_ll_v1_messages_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_carabiner_ll_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_carabiner_ll_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_carabiner_ll_v1_messages_proto_goTypes = []any{
 	(HealthCheckResponse_ServingStatus)(0), // 0: carabiner.ll.v1.HealthCheckResponse.ServingStatus
 	(*CheckRequest)(nil),                   // 1: carabiner.ll.v1.CheckRequest
@@ -1596,41 +1771,45 @@ var file_carabiner_ll_v1_messages_proto_goTypes = []any{
 	(*DeleteSchemaSetResponse)(nil),        // 25: carabiner.ll.v1.DeleteSchemaSetResponse
 	(*HealthCheckRequest)(nil),             // 26: carabiner.ll.v1.HealthCheckRequest
 	(*HealthCheckResponse)(nil),            // 27: carabiner.ll.v1.HealthCheckResponse
-	(*RelationTuple)(nil),                  // 28: carabiner.ll.v1.RelationTuple
-	(*Consistency)(nil),                    // 29: carabiner.ll.v1.Consistency
-	(*ConsistencyToken)(nil),               // 30: carabiner.ll.v1.ConsistencyToken
-	(*RelationTupleFilter)(nil),            // 31: carabiner.ll.v1.RelationTupleFilter
+	(*WhoAmIRequest)(nil),                  // 28: carabiner.ll.v1.WhoAmIRequest
+	(*WhoAmIResponse)(nil),                 // 29: carabiner.ll.v1.WhoAmIResponse
+	(*IAMGrant)(nil),                       // 30: carabiner.ll.v1.IAMGrant
+	(*RelationTuple)(nil),                  // 31: carabiner.ll.v1.RelationTuple
+	(*Consistency)(nil),                    // 32: carabiner.ll.v1.Consistency
+	(*ConsistencyToken)(nil),               // 33: carabiner.ll.v1.ConsistencyToken
+	(*RelationTupleFilter)(nil),            // 34: carabiner.ll.v1.RelationTupleFilter
 }
 var file_carabiner_ll_v1_messages_proto_depIdxs = []int32{
-	28, // 0: carabiner.ll.v1.CheckRequest.tuple:type_name -> carabiner.ll.v1.RelationTuple
-	29, // 1: carabiner.ll.v1.CheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	30, // 2: carabiner.ll.v1.CheckResponse.checked_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	28, // 3: carabiner.ll.v1.WriteRequest.writes:type_name -> carabiner.ll.v1.RelationTuple
-	28, // 4: carabiner.ll.v1.WriteRequest.deletes:type_name -> carabiner.ll.v1.RelationTuple
-	30, // 5: carabiner.ll.v1.WriteResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	31, // 6: carabiner.ll.v1.ReadRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
-	29, // 7: carabiner.ll.v1.ReadRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	28, // 8: carabiner.ll.v1.ReadResponse.tuples:type_name -> carabiner.ll.v1.RelationTuple
-	31, // 9: carabiner.ll.v1.DeleteRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
-	30, // 10: carabiner.ll.v1.DeleteResponse.deleted_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	29, // 11: carabiner.ll.v1.ListObjectsRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	29, // 12: carabiner.ll.v1.ExpandRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	31, // 0: carabiner.ll.v1.CheckRequest.tuple:type_name -> carabiner.ll.v1.RelationTuple
+	32, // 1: carabiner.ll.v1.CheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	33, // 2: carabiner.ll.v1.CheckResponse.checked_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	31, // 3: carabiner.ll.v1.WriteRequest.writes:type_name -> carabiner.ll.v1.RelationTuple
+	31, // 4: carabiner.ll.v1.WriteRequest.deletes:type_name -> carabiner.ll.v1.RelationTuple
+	33, // 5: carabiner.ll.v1.WriteResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	34, // 6: carabiner.ll.v1.ReadRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
+	32, // 7: carabiner.ll.v1.ReadRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	31, // 8: carabiner.ll.v1.ReadResponse.tuples:type_name -> carabiner.ll.v1.RelationTuple
+	34, // 9: carabiner.ll.v1.DeleteRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
+	33, // 10: carabiner.ll.v1.DeleteResponse.deleted_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	32, // 11: carabiner.ll.v1.ListObjectsRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	32, // 12: carabiner.ll.v1.ExpandRequest.consistency:type_name -> carabiner.ll.v1.Consistency
 	13, // 13: carabiner.ll.v1.ExpandResponse.tree:type_name -> carabiner.ll.v1.ExpandTree
 	14, // 14: carabiner.ll.v1.ExpandTree.leaf:type_name -> carabiner.ll.v1.ExpandLeaf
 	15, // 15: carabiner.ll.v1.ExpandTree.union:type_name -> carabiner.ll.v1.ExpandUnion
 	16, // 16: carabiner.ll.v1.ExpandTree.intersection:type_name -> carabiner.ll.v1.ExpandIntersection
 	17, // 17: carabiner.ll.v1.ExpandTree.exclusion:type_name -> carabiner.ll.v1.ExpandExclusion
-	28, // 18: carabiner.ll.v1.ExpandLeaf.subjects:type_name -> carabiner.ll.v1.RelationTuple
+	31, // 18: carabiner.ll.v1.ExpandLeaf.subjects:type_name -> carabiner.ll.v1.RelationTuple
 	13, // 19: carabiner.ll.v1.ExpandUnion.children:type_name -> carabiner.ll.v1.ExpandTree
 	13, // 20: carabiner.ll.v1.ExpandIntersection.children:type_name -> carabiner.ll.v1.ExpandTree
 	13, // 21: carabiner.ll.v1.ExpandExclusion.base:type_name -> carabiner.ll.v1.ExpandTree
 	13, // 22: carabiner.ll.v1.ExpandExclusion.subtract:type_name -> carabiner.ll.v1.ExpandTree
 	0,  // 23: carabiner.ll.v1.HealthCheckResponse.status:type_name -> carabiner.ll.v1.HealthCheckResponse.ServingStatus
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	30, // 24: carabiner.ll.v1.WhoAmIResponse.grants:type_name -> carabiner.ll.v1.IAMGrant
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_carabiner_ll_v1_messages_proto_init() }
@@ -1651,7 +1830,7 @@ func file_carabiner_ll_v1_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_carabiner_ll_v1_messages_proto_rawDesc), len(file_carabiner_ll_v1_messages_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   27,
+			NumMessages:   30,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

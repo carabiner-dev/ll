@@ -33,6 +33,7 @@ const (
 	LamplightService_ListSchemaSets_FullMethodName  = "/carabiner.ll.v1.LamplightService/ListSchemaSets"
 	LamplightService_DeleteSchemaSet_FullMethodName = "/carabiner.ll.v1.LamplightService/DeleteSchemaSet"
 	LamplightService_HealthCheck_FullMethodName     = "/carabiner.ll.v1.LamplightService/HealthCheck"
+	LamplightService_WhoAmI_FullMethodName          = "/carabiner.ll.v1.LamplightService/WhoAmI"
 )
 
 // LamplightServiceClient is the client API for LamplightService service.
@@ -64,6 +65,8 @@ type LamplightServiceClient interface {
 	DeleteSchemaSet(ctx context.Context, in *DeleteSchemaSetRequest, opts ...grpc.CallOption) (*DeleteSchemaSetResponse, error)
 	// HealthCheck returns the health of the service.
 	HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
+	// WhoAmI returns the authenticated user's identity and IAM grants.
+	WhoAmI(ctx context.Context, in *WhoAmIRequest, opts ...grpc.CallOption) (*WhoAmIResponse, error)
 }
 
 type lamplightServiceClient struct {
@@ -184,6 +187,16 @@ func (c *lamplightServiceClient) HealthCheck(ctx context.Context, in *HealthChec
 	return out, nil
 }
 
+func (c *lamplightServiceClient) WhoAmI(ctx context.Context, in *WhoAmIRequest, opts ...grpc.CallOption) (*WhoAmIResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WhoAmIResponse)
+	err := c.cc.Invoke(ctx, LamplightService_WhoAmI_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LamplightServiceServer is the server API for LamplightService service.
 // All implementations must embed UnimplementedLamplightServiceServer
 // for forward compatibility.
@@ -213,6 +226,8 @@ type LamplightServiceServer interface {
 	DeleteSchemaSet(context.Context, *DeleteSchemaSetRequest) (*DeleteSchemaSetResponse, error)
 	// HealthCheck returns the health of the service.
 	HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
+	// WhoAmI returns the authenticated user's identity and IAM grants.
+	WhoAmI(context.Context, *WhoAmIRequest) (*WhoAmIResponse, error)
 	mustEmbedUnimplementedLamplightServiceServer()
 }
 
@@ -255,6 +270,9 @@ func (UnimplementedLamplightServiceServer) DeleteSchemaSet(context.Context, *Del
 }
 func (UnimplementedLamplightServiceServer) HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method HealthCheck not implemented")
+}
+func (UnimplementedLamplightServiceServer) WhoAmI(context.Context, *WhoAmIRequest) (*WhoAmIResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method WhoAmI not implemented")
 }
 func (UnimplementedLamplightServiceServer) mustEmbedUnimplementedLamplightServiceServer() {}
 func (UnimplementedLamplightServiceServer) testEmbeddedByValue()                          {}
@@ -475,6 +493,24 @@ func _LamplightService_HealthCheck_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LamplightService_WhoAmI_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WhoAmIRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LamplightServiceServer).WhoAmI(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LamplightService_WhoAmI_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LamplightServiceServer).WhoAmI(ctx, req.(*WhoAmIRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LamplightService_ServiceDesc is the grpc.ServiceDesc for LamplightService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -525,6 +561,10 @@ var LamplightService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HealthCheck",
 			Handler:    _LamplightService_HealthCheck_Handler,
+		},
+		{
+			MethodName: "WhoAmI",
+			Handler:    _LamplightService_WhoAmI_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

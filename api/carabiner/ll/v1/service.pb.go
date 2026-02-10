@@ -27,7 +27,7 @@ var File_carabiner_ll_v1_service_proto protoreflect.FileDescriptor
 
 const file_carabiner_ll_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcarabiner/ll/v1/service.proto\x12\x0fcarabiner.ll.v1\x1a\x1ecarabiner/ll/v1/messages.proto2\xab\a\n" +
+	"\x1dcarabiner/ll/v1/service.proto\x12\x0fcarabiner.ll.v1\x1a\x1ecarabiner/ll/v1/messages.proto2\xf6\a\n" +
 	"\x10LamplightService\x12F\n" +
 	"\x05Check\x12\x1d.carabiner.ll.v1.CheckRequest\x1a\x1e.carabiner.ll.v1.CheckResponse\x12F\n" +
 	"\x05Write\x12\x1d.carabiner.ll.v1.WriteRequest\x1a\x1e.carabiner.ll.v1.WriteResponse\x12C\n" +
@@ -40,7 +40,8 @@ const file_carabiner_ll_v1_service_proto_rawDesc = "" +
 	"ReadSchema\x12\".carabiner.ll.v1.ReadSchemaRequest\x1a#.carabiner.ll.v1.ReadSchemaResponse\x12a\n" +
 	"\x0eListSchemaSets\x12&.carabiner.ll.v1.ListSchemaSetsRequest\x1a'.carabiner.ll.v1.ListSchemaSetsResponse\x12d\n" +
 	"\x0fDeleteSchemaSet\x12'.carabiner.ll.v1.DeleteSchemaSetRequest\x1a(.carabiner.ll.v1.DeleteSchemaSetResponse\x12X\n" +
-	"\vHealthCheck\x12#.carabiner.ll.v1.HealthCheckRequest\x1a$.carabiner.ll.v1.HealthCheckResponseB6Z4github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1b\x06proto3"
+	"\vHealthCheck\x12#.carabiner.ll.v1.HealthCheckRequest\x1a$.carabiner.ll.v1.HealthCheckResponse\x12I\n" +
+	"\x06WhoAmI\x12\x1e.carabiner.ll.v1.WhoAmIRequest\x1a\x1f.carabiner.ll.v1.WhoAmIResponseB6Z4github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1b\x06proto3"
 
 var file_carabiner_ll_v1_service_proto_goTypes = []any{
 	(*CheckRequest)(nil),            // 0: carabiner.ll.v1.CheckRequest
@@ -54,17 +55,19 @@ var file_carabiner_ll_v1_service_proto_goTypes = []any{
 	(*ListSchemaSetsRequest)(nil),   // 8: carabiner.ll.v1.ListSchemaSetsRequest
 	(*DeleteSchemaSetRequest)(nil),  // 9: carabiner.ll.v1.DeleteSchemaSetRequest
 	(*HealthCheckRequest)(nil),      // 10: carabiner.ll.v1.HealthCheckRequest
-	(*CheckResponse)(nil),           // 11: carabiner.ll.v1.CheckResponse
-	(*WriteResponse)(nil),           // 12: carabiner.ll.v1.WriteResponse
-	(*ReadResponse)(nil),            // 13: carabiner.ll.v1.ReadResponse
-	(*DeleteResponse)(nil),          // 14: carabiner.ll.v1.DeleteResponse
-	(*ListObjectsResponse)(nil),     // 15: carabiner.ll.v1.ListObjectsResponse
-	(*ExpandResponse)(nil),          // 16: carabiner.ll.v1.ExpandResponse
-	(*WriteSchemaResponse)(nil),     // 17: carabiner.ll.v1.WriteSchemaResponse
-	(*ReadSchemaResponse)(nil),      // 18: carabiner.ll.v1.ReadSchemaResponse
-	(*ListSchemaSetsResponse)(nil),  // 19: carabiner.ll.v1.ListSchemaSetsResponse
-	(*DeleteSchemaSetResponse)(nil), // 20: carabiner.ll.v1.DeleteSchemaSetResponse
-	(*HealthCheckResponse)(nil),     // 21: carabiner.ll.v1.HealthCheckResponse
+	(*WhoAmIRequest)(nil),           // 11: carabiner.ll.v1.WhoAmIRequest
+	(*CheckResponse)(nil),           // 12: carabiner.ll.v1.CheckResponse
+	(*WriteResponse)(nil),           // 13: carabiner.ll.v1.WriteResponse
+	(*ReadResponse)(nil),            // 14: carabiner.ll.v1.ReadResponse
+	(*DeleteResponse)(nil),          // 15: carabiner.ll.v1.DeleteResponse
+	(*ListObjectsResponse)(nil),     // 16: carabiner.ll.v1.ListObjectsResponse
+	(*ExpandResponse)(nil),          // 17: carabiner.ll.v1.ExpandResponse
+	(*WriteSchemaResponse)(nil),     // 18: carabiner.ll.v1.WriteSchemaResponse
+	(*ReadSchemaResponse)(nil),      // 19: carabiner.ll.v1.ReadSchemaResponse
+	(*ListSchemaSetsResponse)(nil),  // 20: carabiner.ll.v1.ListSchemaSetsResponse
+	(*DeleteSchemaSetResponse)(nil), // 21: carabiner.ll.v1.DeleteSchemaSetResponse
+	(*HealthCheckResponse)(nil),     // 22: carabiner.ll.v1.HealthCheckResponse
+	(*WhoAmIResponse)(nil),          // 23: carabiner.ll.v1.WhoAmIResponse
 }
 var file_carabiner_ll_v1_service_proto_depIdxs = []int32{
 	0,  // 0: carabiner.ll.v1.LamplightService.Check:input_type -> carabiner.ll.v1.CheckRequest
@@ -78,19 +81,21 @@ var file_carabiner_ll_v1_service_proto_depIdxs = []int32{
 	8,  // 8: carabiner.ll.v1.LamplightService.ListSchemaSets:input_type -> carabiner.ll.v1.ListSchemaSetsRequest
 	9,  // 9: carabiner.ll.v1.LamplightService.DeleteSchemaSet:input_type -> carabiner.ll.v1.DeleteSchemaSetRequest
 	10, // 10: carabiner.ll.v1.LamplightService.HealthCheck:input_type -> carabiner.ll.v1.HealthCheckRequest
-	11, // 11: carabiner.ll.v1.LamplightService.Check:output_type -> carabiner.ll.v1.CheckResponse
-	12, // 12: carabiner.ll.v1.LamplightService.Write:output_type -> carabiner.ll.v1.WriteResponse
-	13, // 13: carabiner.ll.v1.LamplightService.Read:output_type -> carabiner.ll.v1.ReadResponse
-	14, // 14: carabiner.ll.v1.LamplightService.Delete:output_type -> carabiner.ll.v1.DeleteResponse
-	15, // 15: carabiner.ll.v1.LamplightService.ListObjects:output_type -> carabiner.ll.v1.ListObjectsResponse
-	16, // 16: carabiner.ll.v1.LamplightService.Expand:output_type -> carabiner.ll.v1.ExpandResponse
-	17, // 17: carabiner.ll.v1.LamplightService.WriteSchema:output_type -> carabiner.ll.v1.WriteSchemaResponse
-	18, // 18: carabiner.ll.v1.LamplightService.ReadSchema:output_type -> carabiner.ll.v1.ReadSchemaResponse
-	19, // 19: carabiner.ll.v1.LamplightService.ListSchemaSets:output_type -> carabiner.ll.v1.ListSchemaSetsResponse
-	20, // 20: carabiner.ll.v1.LamplightService.DeleteSchemaSet:output_type -> carabiner.ll.v1.DeleteSchemaSetResponse
-	21, // 21: carabiner.ll.v1.LamplightService.HealthCheck:output_type -> carabiner.ll.v1.HealthCheckResponse
-	11, // [11:22] is the sub-list for method output_type
-	0,  // [0:11] is the sub-list for method input_type
+	11, // 11: carabiner.ll.v1.LamplightService.WhoAmI:input_type -> carabiner.ll.v1.WhoAmIRequest
+	12, // 12: carabiner.ll.v1.LamplightService.Check:output_type -> carabiner.ll.v1.CheckResponse
+	13, // 13: carabiner.ll.v1.LamplightService.Write:output_type -> carabiner.ll.v1.WriteResponse
+	14, // 14: carabiner.ll.v1.LamplightService.Read:output_type -> carabiner.ll.v1.ReadResponse
+	15, // 15: carabiner.ll.v1.LamplightService.Delete:output_type -> carabiner.ll.v1.DeleteResponse
+	16, // 16: carabiner.ll.v1.LamplightService.ListObjects:output_type -> carabiner.ll.v1.ListObjectsResponse
+	17, // 17: carabiner.ll.v1.LamplightService.Expand:output_type -> carabiner.ll.v1.ExpandResponse
+	18, // 18: carabiner.ll.v1.LamplightService.WriteSchema:output_type -> carabiner.ll.v1.WriteSchemaResponse
+	19, // 19: carabiner.ll.v1.LamplightService.ReadSchema:output_type -> carabiner.ll.v1.ReadSchemaResponse
+	20, // 20: carabiner.ll.v1.LamplightService.ListSchemaSets:output_type -> carabiner.ll.v1.ListSchemaSetsResponse
+	21, // 21: carabiner.ll.v1.LamplightService.DeleteSchemaSet:output_type -> carabiner.ll.v1.DeleteSchemaSetResponse
+	22, // 22: carabiner.ll.v1.LamplightService.HealthCheck:output_type -> carabiner.ll.v1.HealthCheckResponse
+	23, // 23: carabiner.ll.v1.LamplightService.WhoAmI:output_type -> carabiner.ll.v1.WhoAmIResponse
+	12, // [12:24] is the sub-list for method output_type
+	0,  // [0:12] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
