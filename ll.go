@@ -6,10 +6,13 @@ package ll
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+	"strings"
 
 	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -32,9 +35,10 @@ type Client interface {
 
 // GRPCClient implements Client using gRPC.
 type GRPCClient struct {
-	conn   *grpc.ClientConn
-	client llv1.LamplightServiceClient
-	token  string
+	conn     *grpc.ClientConn
+	client   llv1.LamplightServiceClient
+	token    string
+	insecure bool
 }
 
 // Option configures the client.
@@ -48,23 +52,47 @@ func WithToken(token string) Option {
 	}
 }
 
+// WithInsecure disables TLS for the connection.
+// By default, the client uses TLS for non-localhost addresses.
+// Use this option for local development or when connecting to a server
+// behind a TLS-terminating proxy on a trusted network.
+func WithInsecure() Option {
+	return func(c *GRPCClient) {
+		c.insecure = true
+	}
+}
+
 // New creates a new Client connected to the given server address.
+// By default, TLS is used for non-localhost addresses. Use WithInsecure()
+// to disable TLS for local development.
 func New(serverAddr string, opts ...Option) (Client, error) {
 	c := &GRPCClient{}
 
-	// Apply options first to get the token
+	// Apply options first to get the token and insecure flag
 	for _, opt := range opts {
 		opt(c)
 	}
 
+	// Determine if we should use TLS
+	// Default to TLS unless:
+	// 1. WithInsecure() was called
+	// 2. Connecting to localhost
+	useTLS := !c.insecure && !isLocalhost(serverAddr)
+
 	// Build dial options
-	dialOpts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	var dialOpts []grpc.DialOption
+	if useTLS {
+		// Use system CA pool for TLS
+		dialOpts = append(dialOpts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{
+			MinVersion: tls.VersionTLS12,
+		})))
+	} else {
+		dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
 	// Add per-RPC credentials if token is set
 	if c.token != "" {
-		dialOpts = append(dialOpts, grpc.WithPerRPCCredentials(tokenAuth{token: c.token}))
+		dialOpts = append(dialOpts, grpc.WithPerRPCCredentials(tokenAuth{token: c.token, requireTLS: useTLS}))
 	}
 
 	conn, err := grpc.NewClient(serverAddr, dialOpts...)
@@ -77,9 +105,28 @@ func New(serverAddr string, opts ...Option) (Client, error) {
 	return c, nil
 }
 
+// isLocalhost returns true if the address points to localhost.
+func isLocalhost(addr string) bool {
+	// Strip port if present
+	host := addr
+	if idx := strings.LastIndex(addr, ":"); idx != -1 {
+		// Check if this is an IPv6 address [::1]:port
+		if strings.HasPrefix(addr, "[") {
+			if bracketIdx := strings.Index(addr, "]"); bracketIdx != -1 {
+				host = addr[1:bracketIdx]
+			}
+		} else {
+			host = addr[:idx]
+		}
+	}
+
+	return host == "localhost" || host == "127.0.0.1" || host == "::1" || host == "[::1]"
+}
+
 // tokenAuth implements grpc.PerRPCCredentials to add the auth token to each request.
 type tokenAuth struct {
-	token string
+	token      string
+	requireTLS bool
 }
 
 func (t tokenAuth) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
@@ -89,9 +136,7 @@ func (t tokenAuth) GetRequestMetadata(ctx context.Context, uri ...string) (map[s
 }
 
 func (t tokenAuth) RequireTransportSecurity() bool {
-	// Return false to allow insecure connections (for local development).
-	// In production, this should ideally require TLS.
-	return false
+	return t.requireTLS
 }
 
 func (c *GRPCClient) Check(ctx context.Context, t *llv1.RelationTuple) (bool, error) {

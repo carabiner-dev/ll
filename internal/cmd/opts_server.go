@@ -21,9 +21,10 @@ var defaultServerOptions = ServerOptions{
 
 // ServerOptions contains the common server connection options.
 type ServerOptions struct {
-	Server  string
-	Token   string
-	UseREST bool
+	Server   string
+	Token    string
+	UseREST  bool
+	Insecure bool
 }
 
 func (so *ServerOptions) Config() *command.OptionsSetConfig {
@@ -41,6 +42,7 @@ func (so *ServerOptions) AddFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVar(&so.Server, "server", defaultServerOptions.Server, "Lamplight server address")
 	cmd.PersistentFlags().StringVar(&so.Token, "token", "", "Authentication token (file path or token string)")
 	cmd.PersistentFlags().BoolVar(&so.UseREST, "rest", false, "Use REST API instead of gRPC")
+	cmd.PersistentFlags().BoolVar(&so.Insecure, "insecure", false, "Disable TLS (for local development)")
 }
 
 // GetToken returns the authentication token.
@@ -77,12 +79,18 @@ func (so *ServerOptions) NewClient() (ll.Client, error) {
 		if token != "" {
 			opts = append(opts, ll.WithRESTToken(token))
 		}
+		if so.Insecure {
+			opts = append(opts, ll.WithRESTInsecure())
+		}
 		return ll.NewREST(so.Server, opts...)
 	}
 
 	var opts []ll.Option
 	if token != "" {
 		opts = append(opts, ll.WithToken(token))
+	}
+	if so.Insecure {
+		opts = append(opts, ll.WithInsecure())
 	}
 	return ll.New(so.Server, opts...)
 }

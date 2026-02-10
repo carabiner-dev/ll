@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -17,10 +18,11 @@ import (
 
 // RESTClient implements Client using HTTP/REST.
 type RESTClient struct {
-	baseURL    string
-	httpClient *http.Client
-	token      string
-	marshaler  protojson.MarshalOptions
+	baseURL     string
+	httpClient  *http.Client
+	token       string
+	insecure    bool
+	marshaler   protojson.MarshalOptions
 	unmarshaler protojson.UnmarshalOptions
 }
 
@@ -34,25 +36,38 @@ func WithRESTToken(token string) RESTOption {
 	}
 }
 
-// NewREST creates a new REST Client connected to the given server address.
-// The serverAddr should be the base URL (e.g., "http://localhost:8080").
-func NewREST(serverAddr string, opts ...RESTOption) (Client, error) {
-	// Ensure the server address has a scheme
-	if serverAddr != "" && serverAddr[0] != 'h' {
-		serverAddr = "http://" + serverAddr
+// WithRESTInsecure forces HTTP instead of HTTPS for non-localhost addresses.
+func WithRESTInsecure() RESTOption {
+	return func(c *RESTClient) {
+		c.insecure = true
 	}
+}
 
+// NewREST creates a new REST Client connected to the given server address.
+// By default, HTTPS is used for non-localhost addresses. Use WithRESTInsecure()
+// to force HTTP for local development.
+func NewREST(serverAddr string, opts ...RESTOption) (Client, error) {
 	c := &RESTClient{
-		baseURL:    serverAddr,
-		httpClient: http.DefaultClient,
-		marshaler:  protojson.MarshalOptions{},
+		httpClient:  http.DefaultClient,
+		marshaler:   protojson.MarshalOptions{},
 		unmarshaler: protojson.UnmarshalOptions{DiscardUnknown: true},
 	}
 
+	// Apply options first to get insecure flag
 	for _, opt := range opts {
 		opt(c)
 	}
 
+	// Determine scheme based on address and insecure flag
+	if serverAddr != "" && !strings.HasPrefix(serverAddr, "http://") && !strings.HasPrefix(serverAddr, "https://") {
+		if c.insecure || isLocalhost(serverAddr) {
+			serverAddr = "http://" + serverAddr
+		} else {
+			serverAddr = "https://" + serverAddr
+		}
+	}
+
+	c.baseURL = serverAddr
 	return c, nil
 }
 
