@@ -26,6 +26,7 @@ type Client interface {
 	ReadSchemaSet(ctx context.Context, name string) (string, error)
 	ListSchemaSets(ctx context.Context) ([]string, error)
 	DeleteSchemaSet(ctx context.Context, name string) error
+	WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error)
 	Close() error
 }
 
@@ -190,6 +191,10 @@ func (c *GRPCClient) ListSchemaSets(ctx context.Context) ([]string, error) {
 func (c *GRPCClient) DeleteSchemaSet(ctx context.Context, name string) error {
 	_, err := c.client.DeleteSchemaSet(ctx, &llv1.DeleteSchemaSetRequest{Name: name})
 	return err
+}
+
+func (c *GRPCClient) WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error) {
+	return c.client.WhoAmI(ctx, &llv1.WhoAmIRequest{})
 }
 
 func (c *GRPCClient) Close() error {
