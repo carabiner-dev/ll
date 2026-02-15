@@ -22,18 +22,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LamplightService_Check_FullMethodName           = "/carabiner.ll.v1.LamplightService/Check"
-	LamplightService_Write_FullMethodName           = "/carabiner.ll.v1.LamplightService/Write"
-	LamplightService_Read_FullMethodName            = "/carabiner.ll.v1.LamplightService/Read"
-	LamplightService_Delete_FullMethodName          = "/carabiner.ll.v1.LamplightService/Delete"
-	LamplightService_ListObjects_FullMethodName     = "/carabiner.ll.v1.LamplightService/ListObjects"
-	LamplightService_Expand_FullMethodName          = "/carabiner.ll.v1.LamplightService/Expand"
-	LamplightService_WriteSchema_FullMethodName     = "/carabiner.ll.v1.LamplightService/WriteSchema"
-	LamplightService_ReadSchema_FullMethodName      = "/carabiner.ll.v1.LamplightService/ReadSchema"
-	LamplightService_ListSchemaSets_FullMethodName  = "/carabiner.ll.v1.LamplightService/ListSchemaSets"
-	LamplightService_DeleteSchemaSet_FullMethodName = "/carabiner.ll.v1.LamplightService/DeleteSchemaSet"
-	LamplightService_HealthCheck_FullMethodName     = "/carabiner.ll.v1.LamplightService/HealthCheck"
-	LamplightService_WhoAmI_FullMethodName          = "/carabiner.ll.v1.LamplightService/WhoAmI"
+	LamplightService_Check_FullMethodName               = "/carabiner.ll.v1.LamplightService/Check"
+	LamplightService_Write_FullMethodName               = "/carabiner.ll.v1.LamplightService/Write"
+	LamplightService_Read_FullMethodName                = "/carabiner.ll.v1.LamplightService/Read"
+	LamplightService_Delete_FullMethodName              = "/carabiner.ll.v1.LamplightService/Delete"
+	LamplightService_ListObjects_FullMethodName         = "/carabiner.ll.v1.LamplightService/ListObjects"
+	LamplightService_Expand_FullMethodName              = "/carabiner.ll.v1.LamplightService/Expand"
+	LamplightService_WriteSchema_FullMethodName         = "/carabiner.ll.v1.LamplightService/WriteSchema"
+	LamplightService_ReadSchema_FullMethodName          = "/carabiner.ll.v1.LamplightService/ReadSchema"
+	LamplightService_ListSchemaSets_FullMethodName      = "/carabiner.ll.v1.LamplightService/ListSchemaSets"
+	LamplightService_DeleteSchemaSet_FullMethodName     = "/carabiner.ll.v1.LamplightService/DeleteSchemaSet"
+	LamplightService_HealthCheck_FullMethodName         = "/carabiner.ll.v1.LamplightService/HealthCheck"
+	LamplightService_WhoAmI_FullMethodName              = "/carabiner.ll.v1.LamplightService/WhoAmI"
+	LamplightService_EnsurePath_FullMethodName          = "/carabiner.ll.v1.LamplightService/EnsurePath"
+	LamplightService_GrantRole_FullMethodName           = "/carabiner.ll.v1.LamplightService/GrantRole"
+	LamplightService_RevokeRole_FullMethodName          = "/carabiner.ll.v1.LamplightService/RevokeRole"
+	LamplightService_ListRoleAssignments_FullMethodName = "/carabiner.ll.v1.LamplightService/ListRoleAssignments"
+	LamplightService_ListRoles_FullMethodName           = "/carabiner.ll.v1.LamplightService/ListRoles"
 )
 
 // LamplightServiceClient is the client API for LamplightService service.
@@ -67,6 +72,30 @@ type LamplightServiceClient interface {
 	HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
 	// WhoAmI returns the authenticated user's identity and IAM grants.
 	WhoAmI(ctx context.Context, in *WhoAmIRequest, opts ...grpc.CallOption) (*WhoAmIResponse, error)
+	// EnsurePath ensures all parent tuples exist for a hierarchical path.
+	// It parses the path, checks which tuples already exist, and creates only
+	// the missing ones. Returns information about what was created vs. existed.
+	//
+	// Path format: type:id>type:id>type:id#relation
+	// Example: folder:root>folder:projects>file:readme.md#parent
+	//
+	// This creates tuples connecting each child to its parent:
+	//
+	//	folder:projects#parent@folder:root
+	//	file:readme.md#parent@folder:projects
+	EnsurePath(ctx context.Context, in *EnsurePathRequest, opts ...grpc.CallOption) (*EnsurePathResponse, error)
+	// GrantRole assigns a role to a subject on an object.
+	// Roles are defined in the server configuration and expand to a set of tuples.
+	// Role-granted tuples cannot be deleted individually; they are removed when
+	// the role is revoked.
+	GrantRole(ctx context.Context, in *GrantRoleRequest, opts ...grpc.CallOption) (*GrantRoleResponse, error)
+	// RevokeRole removes a role assignment from a subject on an object.
+	// This deletes all tuples that were created when the role was granted.
+	RevokeRole(ctx context.Context, in *RevokeRoleRequest, opts ...grpc.CallOption) (*RevokeRoleResponse, error)
+	// ListRoleAssignments returns all role assignments matching the filter.
+	ListRoleAssignments(ctx context.Context, in *ListRoleAssignmentsRequest, opts ...grpc.CallOption) (*ListRoleAssignmentsResponse, error)
+	// ListRoles returns the names of all defined roles.
+	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
 }
 
 type lamplightServiceClient struct {
@@ -197,6 +226,56 @@ func (c *lamplightServiceClient) WhoAmI(ctx context.Context, in *WhoAmIRequest, 
 	return out, nil
 }
 
+func (c *lamplightServiceClient) EnsurePath(ctx context.Context, in *EnsurePathRequest, opts ...grpc.CallOption) (*EnsurePathResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EnsurePathResponse)
+	err := c.cc.Invoke(ctx, LamplightService_EnsurePath_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lamplightServiceClient) GrantRole(ctx context.Context, in *GrantRoleRequest, opts ...grpc.CallOption) (*GrantRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GrantRoleResponse)
+	err := c.cc.Invoke(ctx, LamplightService_GrantRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lamplightServiceClient) RevokeRole(ctx context.Context, in *RevokeRoleRequest, opts ...grpc.CallOption) (*RevokeRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RevokeRoleResponse)
+	err := c.cc.Invoke(ctx, LamplightService_RevokeRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lamplightServiceClient) ListRoleAssignments(ctx context.Context, in *ListRoleAssignmentsRequest, opts ...grpc.CallOption) (*ListRoleAssignmentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRoleAssignmentsResponse)
+	err := c.cc.Invoke(ctx, LamplightService_ListRoleAssignments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *lamplightServiceClient) ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRolesResponse)
+	err := c.cc.Invoke(ctx, LamplightService_ListRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LamplightServiceServer is the server API for LamplightService service.
 // All implementations must embed UnimplementedLamplightServiceServer
 // for forward compatibility.
@@ -228,6 +307,30 @@ type LamplightServiceServer interface {
 	HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
 	// WhoAmI returns the authenticated user's identity and IAM grants.
 	WhoAmI(context.Context, *WhoAmIRequest) (*WhoAmIResponse, error)
+	// EnsurePath ensures all parent tuples exist for a hierarchical path.
+	// It parses the path, checks which tuples already exist, and creates only
+	// the missing ones. Returns information about what was created vs. existed.
+	//
+	// Path format: type:id>type:id>type:id#relation
+	// Example: folder:root>folder:projects>file:readme.md#parent
+	//
+	// This creates tuples connecting each child to its parent:
+	//
+	//	folder:projects#parent@folder:root
+	//	file:readme.md#parent@folder:projects
+	EnsurePath(context.Context, *EnsurePathRequest) (*EnsurePathResponse, error)
+	// GrantRole assigns a role to a subject on an object.
+	// Roles are defined in the server configuration and expand to a set of tuples.
+	// Role-granted tuples cannot be deleted individually; they are removed when
+	// the role is revoked.
+	GrantRole(context.Context, *GrantRoleRequest) (*GrantRoleResponse, error)
+	// RevokeRole removes a role assignment from a subject on an object.
+	// This deletes all tuples that were created when the role was granted.
+	RevokeRole(context.Context, *RevokeRoleRequest) (*RevokeRoleResponse, error)
+	// ListRoleAssignments returns all role assignments matching the filter.
+	ListRoleAssignments(context.Context, *ListRoleAssignmentsRequest) (*ListRoleAssignmentsResponse, error)
+	// ListRoles returns the names of all defined roles.
+	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
 	mustEmbedUnimplementedLamplightServiceServer()
 }
 
@@ -273,6 +376,21 @@ func (UnimplementedLamplightServiceServer) HealthCheck(context.Context, *HealthC
 }
 func (UnimplementedLamplightServiceServer) WhoAmI(context.Context, *WhoAmIRequest) (*WhoAmIResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method WhoAmI not implemented")
+}
+func (UnimplementedLamplightServiceServer) EnsurePath(context.Context, *EnsurePathRequest) (*EnsurePathResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method EnsurePath not implemented")
+}
+func (UnimplementedLamplightServiceServer) GrantRole(context.Context, *GrantRoleRequest) (*GrantRoleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GrantRole not implemented")
+}
+func (UnimplementedLamplightServiceServer) RevokeRole(context.Context, *RevokeRoleRequest) (*RevokeRoleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RevokeRole not implemented")
+}
+func (UnimplementedLamplightServiceServer) ListRoleAssignments(context.Context, *ListRoleAssignmentsRequest) (*ListRoleAssignmentsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRoleAssignments not implemented")
+}
+func (UnimplementedLamplightServiceServer) ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRoles not implemented")
 }
 func (UnimplementedLamplightServiceServer) mustEmbedUnimplementedLamplightServiceServer() {}
 func (UnimplementedLamplightServiceServer) testEmbeddedByValue()                          {}
@@ -511,6 +629,96 @@ func _LamplightService_WhoAmI_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LamplightService_EnsurePath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EnsurePathRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LamplightServiceServer).EnsurePath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LamplightService_EnsurePath_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LamplightServiceServer).EnsurePath(ctx, req.(*EnsurePathRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LamplightService_GrantRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrantRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LamplightServiceServer).GrantRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LamplightService_GrantRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LamplightServiceServer).GrantRole(ctx, req.(*GrantRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LamplightService_RevokeRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokeRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LamplightServiceServer).RevokeRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LamplightService_RevokeRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LamplightServiceServer).RevokeRole(ctx, req.(*RevokeRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LamplightService_ListRoleAssignments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRoleAssignmentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LamplightServiceServer).ListRoleAssignments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LamplightService_ListRoleAssignments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LamplightServiceServer).ListRoleAssignments(ctx, req.(*ListRoleAssignmentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LamplightService_ListRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LamplightServiceServer).ListRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LamplightService_ListRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LamplightServiceServer).ListRoles(ctx, req.(*ListRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LamplightService_ServiceDesc is the grpc.ServiceDesc for LamplightService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -565,6 +773,26 @@ var LamplightService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WhoAmI",
 			Handler:    _LamplightService_WhoAmI_Handler,
+		},
+		{
+			MethodName: "EnsurePath",
+			Handler:    _LamplightService_EnsurePath_Handler,
+		},
+		{
+			MethodName: "GrantRole",
+			Handler:    _LamplightService_GrantRole_Handler,
+		},
+		{
+			MethodName: "RevokeRole",
+			Handler:    _LamplightService_RevokeRole_Handler,
+		},
+		{
+			MethodName: "ListRoleAssignments",
+			Handler:    _LamplightService_ListRoleAssignments_Handler,
+		},
+		{
+			MethodName: "ListRoles",
+			Handler:    _LamplightService_ListRoles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

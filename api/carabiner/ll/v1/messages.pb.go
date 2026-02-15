@@ -1623,6 +1623,673 @@ func (x *IAMGrant) GetDescription() string {
 	return ""
 }
 
+// EnsurePathRequest is the request for the EnsurePath RPC.
+type EnsurePathRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The hierarchical path in the format: type:id>type:id>type:id#relation
+	// Example: folder:root>folder:projects>file:readme.md#parent
+	Path          string `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EnsurePathRequest) Reset() {
+	*x = EnsurePathRequest{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EnsurePathRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EnsurePathRequest) ProtoMessage() {}
+
+func (x *EnsurePathRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EnsurePathRequest.ProtoReflect.Descriptor instead.
+func (*EnsurePathRequest) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *EnsurePathRequest) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+// EnsurePathResponse is the response for the EnsurePath RPC.
+type EnsurePathResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The tuples that were created (did not exist before).
+	Created []*RelationTuple `protobuf:"bytes,1,rep,name=created,proto3" json:"created,omitempty"`
+	// The tuples that already existed (were not created).
+	Existed []*RelationTuple `protobuf:"bytes,2,rep,name=existed,proto3" json:"existed,omitempty"`
+	// The consistency token after writing.
+	WrittenAt     *ConsistencyToken `protobuf:"bytes,3,opt,name=written_at,json=writtenAt,proto3" json:"written_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EnsurePathResponse) Reset() {
+	*x = EnsurePathResponse{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EnsurePathResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EnsurePathResponse) ProtoMessage() {}
+
+func (x *EnsurePathResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EnsurePathResponse.ProtoReflect.Descriptor instead.
+func (*EnsurePathResponse) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *EnsurePathResponse) GetCreated() []*RelationTuple {
+	if x != nil {
+		return x.Created
+	}
+	return nil
+}
+
+func (x *EnsurePathResponse) GetExisted() []*RelationTuple {
+	if x != nil {
+		return x.Existed
+	}
+	return nil
+}
+
+func (x *EnsurePathResponse) GetWrittenAt() *ConsistencyToken {
+	if x != nil {
+		return x.WrittenAt
+	}
+	return nil
+}
+
+// GrantRoleRequest is the request for the GrantRole RPC.
+type GrantRoleRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the role to grant.
+	Role string `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	// The object to grant the role on.
+	ObjectType string `protobuf:"bytes,2,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
+	ObjectId   string `protobuf:"bytes,3,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
+	// The subject receiving the role.
+	SubjectType   string `protobuf:"bytes,4,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
+	SubjectId     string `protobuf:"bytes,5,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GrantRoleRequest) Reset() {
+	*x = GrantRoleRequest{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GrantRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantRoleRequest) ProtoMessage() {}
+
+func (x *GrantRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantRoleRequest.ProtoReflect.Descriptor instead.
+func (*GrantRoleRequest) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *GrantRoleRequest) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *GrantRoleRequest) GetObjectType() string {
+	if x != nil {
+		return x.ObjectType
+	}
+	return ""
+}
+
+func (x *GrantRoleRequest) GetObjectId() string {
+	if x != nil {
+		return x.ObjectId
+	}
+	return ""
+}
+
+func (x *GrantRoleRequest) GetSubjectType() string {
+	if x != nil {
+		return x.SubjectType
+	}
+	return ""
+}
+
+func (x *GrantRoleRequest) GetSubjectId() string {
+	if x != nil {
+		return x.SubjectId
+	}
+	return ""
+}
+
+// GrantRoleResponse is the response for the GrantRole RPC.
+type GrantRoleResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The role assignment that was created.
+	Assignment *RoleAssignment `protobuf:"bytes,1,opt,name=assignment,proto3" json:"assignment,omitempty"`
+	// The tuples that were created for this role.
+	CreatedTuples []*RelationTuple `protobuf:"bytes,2,rep,name=created_tuples,json=createdTuples,proto3" json:"created_tuples,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GrantRoleResponse) Reset() {
+	*x = GrantRoleResponse{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GrantRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantRoleResponse) ProtoMessage() {}
+
+func (x *GrantRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantRoleResponse.ProtoReflect.Descriptor instead.
+func (*GrantRoleResponse) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *GrantRoleResponse) GetAssignment() *RoleAssignment {
+	if x != nil {
+		return x.Assignment
+	}
+	return nil
+}
+
+func (x *GrantRoleResponse) GetCreatedTuples() []*RelationTuple {
+	if x != nil {
+		return x.CreatedTuples
+	}
+	return nil
+}
+
+// RevokeRoleRequest is the request for the RevokeRole RPC.
+type RevokeRoleRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the role to revoke.
+	Role string `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	// The object to revoke the role from.
+	ObjectType string `protobuf:"bytes,2,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
+	ObjectId   string `protobuf:"bytes,3,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
+	// The subject losing the role.
+	SubjectType   string `protobuf:"bytes,4,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
+	SubjectId     string `protobuf:"bytes,5,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeRoleRequest) Reset() {
+	*x = RevokeRoleRequest{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeRoleRequest) ProtoMessage() {}
+
+func (x *RevokeRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeRoleRequest.ProtoReflect.Descriptor instead.
+func (*RevokeRoleRequest) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *RevokeRoleRequest) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *RevokeRoleRequest) GetObjectType() string {
+	if x != nil {
+		return x.ObjectType
+	}
+	return ""
+}
+
+func (x *RevokeRoleRequest) GetObjectId() string {
+	if x != nil {
+		return x.ObjectId
+	}
+	return ""
+}
+
+func (x *RevokeRoleRequest) GetSubjectType() string {
+	if x != nil {
+		return x.SubjectType
+	}
+	return ""
+}
+
+func (x *RevokeRoleRequest) GetSubjectId() string {
+	if x != nil {
+		return x.SubjectId
+	}
+	return ""
+}
+
+// RevokeRoleResponse is the response for the RevokeRole RPC.
+type RevokeRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeRoleResponse) Reset() {
+	*x = RevokeRoleResponse{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeRoleResponse) ProtoMessage() {}
+
+func (x *RevokeRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeRoleResponse.ProtoReflect.Descriptor instead.
+func (*RevokeRoleResponse) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{35}
+}
+
+// ListRoleAssignmentsRequest is the request for the ListRoleAssignments RPC.
+type ListRoleAssignmentsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Optional filters. Empty values are ignored.
+	ObjectType    string `protobuf:"bytes,1,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
+	ObjectId      string `protobuf:"bytes,2,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
+	SubjectType   string `protobuf:"bytes,3,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
+	SubjectId     string `protobuf:"bytes,4,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	Role          string `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRoleAssignmentsRequest) Reset() {
+	*x = ListRoleAssignmentsRequest{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRoleAssignmentsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRoleAssignmentsRequest) ProtoMessage() {}
+
+func (x *ListRoleAssignmentsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRoleAssignmentsRequest.ProtoReflect.Descriptor instead.
+func (*ListRoleAssignmentsRequest) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *ListRoleAssignmentsRequest) GetObjectType() string {
+	if x != nil {
+		return x.ObjectType
+	}
+	return ""
+}
+
+func (x *ListRoleAssignmentsRequest) GetObjectId() string {
+	if x != nil {
+		return x.ObjectId
+	}
+	return ""
+}
+
+func (x *ListRoleAssignmentsRequest) GetSubjectType() string {
+	if x != nil {
+		return x.SubjectType
+	}
+	return ""
+}
+
+func (x *ListRoleAssignmentsRequest) GetSubjectId() string {
+	if x != nil {
+		return x.SubjectId
+	}
+	return ""
+}
+
+func (x *ListRoleAssignmentsRequest) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+// ListRoleAssignmentsResponse is the response for the ListRoleAssignments RPC.
+type ListRoleAssignmentsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Assignments   []*RoleAssignment      `protobuf:"bytes,1,rep,name=assignments,proto3" json:"assignments,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRoleAssignmentsResponse) Reset() {
+	*x = ListRoleAssignmentsResponse{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRoleAssignmentsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRoleAssignmentsResponse) ProtoMessage() {}
+
+func (x *ListRoleAssignmentsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRoleAssignmentsResponse.ProtoReflect.Descriptor instead.
+func (*ListRoleAssignmentsResponse) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *ListRoleAssignmentsResponse) GetAssignments() []*RoleAssignment {
+	if x != nil {
+		return x.Assignments
+	}
+	return nil
+}
+
+// ListRolesRequest is the request for the ListRoles RPC.
+type ListRolesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRolesRequest) Reset() {
+	*x = ListRolesRequest{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRolesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRolesRequest) ProtoMessage() {}
+
+func (x *ListRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRolesRequest.ProtoReflect.Descriptor instead.
+func (*ListRolesRequest) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{38}
+}
+
+// ListRolesResponse is the response for the ListRoles RPC.
+type ListRolesResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The names of all defined roles.
+	Roles         []string `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRolesResponse) Reset() {
+	*x = ListRolesResponse{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRolesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRolesResponse) ProtoMessage() {}
+
+func (x *ListRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRolesResponse.ProtoReflect.Descriptor instead.
+func (*ListRolesResponse) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *ListRolesResponse) GetRoles() []string {
+	if x != nil {
+		return x.Roles
+	}
+	return nil
+}
+
+// RoleAssignment represents a role granted to a subject on an object.
+type RoleAssignment struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier for this assignment.
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The role name.
+	Role string `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	// The object the role is assigned on.
+	ObjectType string `protobuf:"bytes,3,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
+	ObjectId   string `protobuf:"bytes,4,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
+	// The subject who has the role.
+	SubjectType string `protobuf:"bytes,5,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
+	SubjectId   string `protobuf:"bytes,6,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	// When the role was assigned (RFC 3339 format).
+	CreatedAt     string `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RoleAssignment) Reset() {
+	*x = RoleAssignment{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RoleAssignment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RoleAssignment) ProtoMessage() {}
+
+func (x *RoleAssignment) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RoleAssignment.ProtoReflect.Descriptor instead.
+func (*RoleAssignment) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *RoleAssignment) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *RoleAssignment) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *RoleAssignment) GetObjectType() string {
+	if x != nil {
+		return x.ObjectType
+	}
+	return ""
+}
+
+func (x *RoleAssignment) GetObjectId() string {
+	if x != nil {
+		return x.ObjectId
+	}
+	return ""
+}
+
+func (x *RoleAssignment) GetSubjectType() string {
+	if x != nil {
+		return x.SubjectType
+	}
+	return ""
+}
+
+func (x *RoleAssignment) GetSubjectId() string {
+	if x != nil {
+		return x.SubjectId
+	}
+	return ""
+}
+
+func (x *RoleAssignment) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
 var File_carabiner_ll_v1_messages_proto protoreflect.FileDescriptor
 
 const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
@@ -1726,7 +2393,60 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\bIAMGrant\x12\x16\n" +
 	"\x06object\x18\x01 \x01(\tR\x06object\x12\x1a\n" +
 	"\brelation\x18\x02 \x01(\tR\brelation\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescriptionB6Z4github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1b\x06proto3"
+	"\vdescription\x18\x03 \x01(\tR\vdescription\"'\n" +
+	"\x11EnsurePathRequest\x12\x12\n" +
+	"\x04path\x18\x01 \x01(\tR\x04path\"\xca\x01\n" +
+	"\x12EnsurePathResponse\x128\n" +
+	"\acreated\x18\x01 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\acreated\x128\n" +
+	"\aexisted\x18\x02 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\aexisted\x12@\n" +
+	"\n" +
+	"written_at\x18\x03 \x01(\v2!.carabiner.ll.v1.ConsistencyTokenR\twrittenAt\"\xa6\x01\n" +
+	"\x10GrantRoleRequest\x12\x12\n" +
+	"\x04role\x18\x01 \x01(\tR\x04role\x12\x1f\n" +
+	"\vobject_type\x18\x02 \x01(\tR\n" +
+	"objectType\x12\x1b\n" +
+	"\tobject_id\x18\x03 \x01(\tR\bobjectId\x12!\n" +
+	"\fsubject_type\x18\x04 \x01(\tR\vsubjectType\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x05 \x01(\tR\tsubjectId\"\x9b\x01\n" +
+	"\x11GrantRoleResponse\x12?\n" +
+	"\n" +
+	"assignment\x18\x01 \x01(\v2\x1f.carabiner.ll.v1.RoleAssignmentR\n" +
+	"assignment\x12E\n" +
+	"\x0ecreated_tuples\x18\x02 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\rcreatedTuples\"\xa7\x01\n" +
+	"\x11RevokeRoleRequest\x12\x12\n" +
+	"\x04role\x18\x01 \x01(\tR\x04role\x12\x1f\n" +
+	"\vobject_type\x18\x02 \x01(\tR\n" +
+	"objectType\x12\x1b\n" +
+	"\tobject_id\x18\x03 \x01(\tR\bobjectId\x12!\n" +
+	"\fsubject_type\x18\x04 \x01(\tR\vsubjectType\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x05 \x01(\tR\tsubjectId\"\x14\n" +
+	"\x12RevokeRoleResponse\"\xb0\x01\n" +
+	"\x1aListRoleAssignmentsRequest\x12\x1f\n" +
+	"\vobject_type\x18\x01 \x01(\tR\n" +
+	"objectType\x12\x1b\n" +
+	"\tobject_id\x18\x02 \x01(\tR\bobjectId\x12!\n" +
+	"\fsubject_type\x18\x03 \x01(\tR\vsubjectType\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x04 \x01(\tR\tsubjectId\x12\x12\n" +
+	"\x04role\x18\x05 \x01(\tR\x04role\"`\n" +
+	"\x1bListRoleAssignmentsResponse\x12A\n" +
+	"\vassignments\x18\x01 \x03(\v2\x1f.carabiner.ll.v1.RoleAssignmentR\vassignments\"\x12\n" +
+	"\x10ListRolesRequest\")\n" +
+	"\x11ListRolesResponse\x12\x14\n" +
+	"\x05roles\x18\x01 \x03(\tR\x05roles\"\xd3\x01\n" +
+	"\x0eRoleAssignment\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04role\x18\x02 \x01(\tR\x04role\x12\x1f\n" +
+	"\vobject_type\x18\x03 \x01(\tR\n" +
+	"objectType\x12\x1b\n" +
+	"\tobject_id\x18\x04 \x01(\tR\bobjectId\x12!\n" +
+	"\fsubject_type\x18\x05 \x01(\tR\vsubjectType\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x06 \x01(\tR\tsubjectId\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\a \x01(\tR\tcreatedAtB6Z4github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1b\x06proto3"
 
 var (
 	file_carabiner_ll_v1_messages_proto_rawDescOnce sync.Once
@@ -1741,7 +2461,7 @@ func file_carabiner_ll_v1_messages_proto_rawDescGZIP() []byte {
 }
 
 var file_carabiner_ll_v1_messages_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_carabiner_ll_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
+var file_carabiner_ll_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 41)
 var file_carabiner_ll_v1_messages_proto_goTypes = []any{
 	(HealthCheckResponse_ServingStatus)(0), // 0: carabiner.ll.v1.HealthCheckResponse.ServingStatus
 	(*CheckRequest)(nil),                   // 1: carabiner.ll.v1.CheckRequest
@@ -1774,42 +2494,59 @@ var file_carabiner_ll_v1_messages_proto_goTypes = []any{
 	(*WhoAmIRequest)(nil),                  // 28: carabiner.ll.v1.WhoAmIRequest
 	(*WhoAmIResponse)(nil),                 // 29: carabiner.ll.v1.WhoAmIResponse
 	(*IAMGrant)(nil),                       // 30: carabiner.ll.v1.IAMGrant
-	(*RelationTuple)(nil),                  // 31: carabiner.ll.v1.RelationTuple
-	(*Consistency)(nil),                    // 32: carabiner.ll.v1.Consistency
-	(*ConsistencyToken)(nil),               // 33: carabiner.ll.v1.ConsistencyToken
-	(*RelationTupleFilter)(nil),            // 34: carabiner.ll.v1.RelationTupleFilter
+	(*EnsurePathRequest)(nil),              // 31: carabiner.ll.v1.EnsurePathRequest
+	(*EnsurePathResponse)(nil),             // 32: carabiner.ll.v1.EnsurePathResponse
+	(*GrantRoleRequest)(nil),               // 33: carabiner.ll.v1.GrantRoleRequest
+	(*GrantRoleResponse)(nil),              // 34: carabiner.ll.v1.GrantRoleResponse
+	(*RevokeRoleRequest)(nil),              // 35: carabiner.ll.v1.RevokeRoleRequest
+	(*RevokeRoleResponse)(nil),             // 36: carabiner.ll.v1.RevokeRoleResponse
+	(*ListRoleAssignmentsRequest)(nil),     // 37: carabiner.ll.v1.ListRoleAssignmentsRequest
+	(*ListRoleAssignmentsResponse)(nil),    // 38: carabiner.ll.v1.ListRoleAssignmentsResponse
+	(*ListRolesRequest)(nil),               // 39: carabiner.ll.v1.ListRolesRequest
+	(*ListRolesResponse)(nil),              // 40: carabiner.ll.v1.ListRolesResponse
+	(*RoleAssignment)(nil),                 // 41: carabiner.ll.v1.RoleAssignment
+	(*RelationTuple)(nil),                  // 42: carabiner.ll.v1.RelationTuple
+	(*Consistency)(nil),                    // 43: carabiner.ll.v1.Consistency
+	(*ConsistencyToken)(nil),               // 44: carabiner.ll.v1.ConsistencyToken
+	(*RelationTupleFilter)(nil),            // 45: carabiner.ll.v1.RelationTupleFilter
 }
 var file_carabiner_ll_v1_messages_proto_depIdxs = []int32{
-	31, // 0: carabiner.ll.v1.CheckRequest.tuple:type_name -> carabiner.ll.v1.RelationTuple
-	32, // 1: carabiner.ll.v1.CheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	33, // 2: carabiner.ll.v1.CheckResponse.checked_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	31, // 3: carabiner.ll.v1.WriteRequest.writes:type_name -> carabiner.ll.v1.RelationTuple
-	31, // 4: carabiner.ll.v1.WriteRequest.deletes:type_name -> carabiner.ll.v1.RelationTuple
-	33, // 5: carabiner.ll.v1.WriteResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	34, // 6: carabiner.ll.v1.ReadRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
-	32, // 7: carabiner.ll.v1.ReadRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	31, // 8: carabiner.ll.v1.ReadResponse.tuples:type_name -> carabiner.ll.v1.RelationTuple
-	34, // 9: carabiner.ll.v1.DeleteRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
-	33, // 10: carabiner.ll.v1.DeleteResponse.deleted_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	32, // 11: carabiner.ll.v1.ListObjectsRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	32, // 12: carabiner.ll.v1.ExpandRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	42, // 0: carabiner.ll.v1.CheckRequest.tuple:type_name -> carabiner.ll.v1.RelationTuple
+	43, // 1: carabiner.ll.v1.CheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	44, // 2: carabiner.ll.v1.CheckResponse.checked_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	42, // 3: carabiner.ll.v1.WriteRequest.writes:type_name -> carabiner.ll.v1.RelationTuple
+	42, // 4: carabiner.ll.v1.WriteRequest.deletes:type_name -> carabiner.ll.v1.RelationTuple
+	44, // 5: carabiner.ll.v1.WriteResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	45, // 6: carabiner.ll.v1.ReadRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
+	43, // 7: carabiner.ll.v1.ReadRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	42, // 8: carabiner.ll.v1.ReadResponse.tuples:type_name -> carabiner.ll.v1.RelationTuple
+	45, // 9: carabiner.ll.v1.DeleteRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
+	44, // 10: carabiner.ll.v1.DeleteResponse.deleted_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	43, // 11: carabiner.ll.v1.ListObjectsRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	43, // 12: carabiner.ll.v1.ExpandRequest.consistency:type_name -> carabiner.ll.v1.Consistency
 	13, // 13: carabiner.ll.v1.ExpandResponse.tree:type_name -> carabiner.ll.v1.ExpandTree
 	14, // 14: carabiner.ll.v1.ExpandTree.leaf:type_name -> carabiner.ll.v1.ExpandLeaf
 	15, // 15: carabiner.ll.v1.ExpandTree.union:type_name -> carabiner.ll.v1.ExpandUnion
 	16, // 16: carabiner.ll.v1.ExpandTree.intersection:type_name -> carabiner.ll.v1.ExpandIntersection
 	17, // 17: carabiner.ll.v1.ExpandTree.exclusion:type_name -> carabiner.ll.v1.ExpandExclusion
-	31, // 18: carabiner.ll.v1.ExpandLeaf.subjects:type_name -> carabiner.ll.v1.RelationTuple
+	42, // 18: carabiner.ll.v1.ExpandLeaf.subjects:type_name -> carabiner.ll.v1.RelationTuple
 	13, // 19: carabiner.ll.v1.ExpandUnion.children:type_name -> carabiner.ll.v1.ExpandTree
 	13, // 20: carabiner.ll.v1.ExpandIntersection.children:type_name -> carabiner.ll.v1.ExpandTree
 	13, // 21: carabiner.ll.v1.ExpandExclusion.base:type_name -> carabiner.ll.v1.ExpandTree
 	13, // 22: carabiner.ll.v1.ExpandExclusion.subtract:type_name -> carabiner.ll.v1.ExpandTree
 	0,  // 23: carabiner.ll.v1.HealthCheckResponse.status:type_name -> carabiner.ll.v1.HealthCheckResponse.ServingStatus
 	30, // 24: carabiner.ll.v1.WhoAmIResponse.grants:type_name -> carabiner.ll.v1.IAMGrant
-	25, // [25:25] is the sub-list for method output_type
-	25, // [25:25] is the sub-list for method input_type
-	25, // [25:25] is the sub-list for extension type_name
-	25, // [25:25] is the sub-list for extension extendee
-	0,  // [0:25] is the sub-list for field type_name
+	42, // 25: carabiner.ll.v1.EnsurePathResponse.created:type_name -> carabiner.ll.v1.RelationTuple
+	42, // 26: carabiner.ll.v1.EnsurePathResponse.existed:type_name -> carabiner.ll.v1.RelationTuple
+	44, // 27: carabiner.ll.v1.EnsurePathResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	41, // 28: carabiner.ll.v1.GrantRoleResponse.assignment:type_name -> carabiner.ll.v1.RoleAssignment
+	42, // 29: carabiner.ll.v1.GrantRoleResponse.created_tuples:type_name -> carabiner.ll.v1.RelationTuple
+	41, // 30: carabiner.ll.v1.ListRoleAssignmentsResponse.assignments:type_name -> carabiner.ll.v1.RoleAssignment
+	31, // [31:31] is the sub-list for method output_type
+	31, // [31:31] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_carabiner_ll_v1_messages_proto_init() }
@@ -1830,7 +2567,7 @@ func file_carabiner_ll_v1_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_carabiner_ll_v1_messages_proto_rawDesc), len(file_carabiner_ll_v1_messages_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   30,
+			NumMessages:   41,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

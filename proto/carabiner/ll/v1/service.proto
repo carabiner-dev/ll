@@ -47,4 +47,32 @@ service LamplightService {
 
   // WhoAmI returns the authenticated user's identity and IAM grants.
   rpc WhoAmI(WhoAmIRequest) returns (WhoAmIResponse);
+
+  // EnsurePath ensures all parent tuples exist for a hierarchical path.
+  // It parses the path, checks which tuples already exist, and creates only
+  // the missing ones. Returns information about what was created vs. existed.
+  //
+  // Path format: type:id>type:id>type:id#relation
+  // Example: folder:root>folder:projects>file:readme.md#parent
+  //
+  // This creates tuples connecting each child to its parent:
+  //   folder:projects#parent@folder:root
+  //   file:readme.md#parent@folder:projects
+  rpc EnsurePath(EnsurePathRequest) returns (EnsurePathResponse);
+
+  // GrantRole assigns a role to a subject on an object.
+  // Roles are defined in the server configuration and expand to a set of tuples.
+  // Role-granted tuples cannot be deleted individually; they are removed when
+  // the role is revoked.
+  rpc GrantRole(GrantRoleRequest) returns (GrantRoleResponse);
+
+  // RevokeRole removes a role assignment from a subject on an object.
+  // This deletes all tuples that were created when the role was granted.
+  rpc RevokeRole(RevokeRoleRequest) returns (RevokeRoleResponse);
+
+  // ListRoleAssignments returns all role assignments matching the filter.
+  rpc ListRoleAssignments(ListRoleAssignmentsRequest) returns (ListRoleAssignmentsResponse);
+
+  // ListRoles returns the names of all defined roles.
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
 }

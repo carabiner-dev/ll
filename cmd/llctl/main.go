@@ -35,6 +35,8 @@ It provides commands for:
 	cmd.AddSchema(rootCmd)
 	cmd.AddLs(rootCmd)
 	cmd.AddIAM(rootCmd)
+	cmd.AddEnsurePath(rootCmd)
+	cmd.AddRole(rootCmd)
 	addVersion(rootCmd)
 
 	// Hidden aliases

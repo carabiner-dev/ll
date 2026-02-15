@@ -193,3 +193,106 @@ message IAMGrant {
   // Human-readable description of what this grant allows.
   string description = 3;
 }
+
+// EnsurePathRequest is the request for the EnsurePath RPC.
+message EnsurePathRequest {
+  // The hierarchical path in the format: type:id>type:id>type:id#relation
+  // Example: folder:root>folder:projects>file:readme.md#parent
+  string path = 1;
+}
+
+// EnsurePathResponse is the response for the EnsurePath RPC.
+message EnsurePathResponse {
+  // The tuples that were created (did not exist before).
+  repeated RelationTuple created = 1;
+
+  // The tuples that already existed (were not created).
+  repeated RelationTuple existed = 2;
+
+  // The consistency token after writing.
+  ConsistencyToken written_at = 3;
+}
+
+// GrantRoleRequest is the request for the GrantRole RPC.
+message GrantRoleRequest {
+  // The name of the role to grant.
+  string role = 1;
+
+  // The object to grant the role on.
+  string object_type = 2;
+  string object_id = 3;
+
+  // The subject receiving the role.
+  string subject_type = 4;
+  string subject_id = 5;
+}
+
+// GrantRoleResponse is the response for the GrantRole RPC.
+message GrantRoleResponse {
+  // The role assignment that was created.
+  RoleAssignment assignment = 1;
+
+  // The tuples that were created for this role.
+  repeated RelationTuple created_tuples = 2;
+}
+
+// RevokeRoleRequest is the request for the RevokeRole RPC.
+message RevokeRoleRequest {
+  // The name of the role to revoke.
+  string role = 1;
+
+  // The object to revoke the role from.
+  string object_type = 2;
+  string object_id = 3;
+
+  // The subject losing the role.
+  string subject_type = 4;
+  string subject_id = 5;
+}
+
+// RevokeRoleResponse is the response for the RevokeRole RPC.
+message RevokeRoleResponse {}
+
+// ListRoleAssignmentsRequest is the request for the ListRoleAssignments RPC.
+message ListRoleAssignmentsRequest {
+  // Optional filters. Empty values are ignored.
+  string object_type = 1;
+  string object_id = 2;
+  string subject_type = 3;
+  string subject_id = 4;
+  string role = 5;
+}
+
+// ListRoleAssignmentsResponse is the response for the ListRoleAssignments RPC.
+message ListRoleAssignmentsResponse {
+  repeated RoleAssignment assignments = 1;
+}
+
+// ListRolesRequest is the request for the ListRoles RPC.
+message ListRolesRequest {}
+
+// ListRolesResponse is the response for the ListRoles RPC.
+message ListRolesResponse {
+  // The names of all defined roles.
+  repeated string roles = 1;
+}
+
+// RoleAssignment represents a role granted to a subject on an object.
+message RoleAssignment {
+  // Unique identifier for this assignment.
+  string id = 1;
+
+  // The role name.
+  string role = 2;
+
+  // The object the role is assigned on.
+  string object_type = 3;
+  string object_id = 4;
+
+  // The subject who has the role.
+  string subject_type = 5;
+  string subject_id = 6;
+
+  // When the role was assigned (RFC 3339 format).
+  string created_at = 7;
+}

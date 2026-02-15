@@ -250,6 +250,70 @@ func (c *RESTClient) WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error) {
 	return resp, nil
 }
 
+func (c *RESTClient) EnsurePath(ctx context.Context, pathStr string) error {
+	req := &llv1.EnsurePathRequest{Path: pathStr}
+	resp := &llv1.EnsurePathResponse{}
+
+	return c.doRequest(ctx, "POST", "/v1/ensure-path", req, resp)
+}
+
+func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error) {
+	req := &llv1.GrantRoleRequest{
+		Role:        role,
+		ObjectType:  objectType,
+		ObjectId:    objectID,
+		SubjectType: subjectType,
+		SubjectId:   subjectID,
+	}
+	resp := &llv1.GrantRoleResponse{}
+
+	if err := c.doRequest(ctx, "POST", "/v1/role/grant", req, resp); err != nil {
+		return nil, err
+	}
+
+	return resp.Assignment, nil
+}
+
+func (c *RESTClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) error {
+	req := &llv1.RevokeRoleRequest{
+		Role:        role,
+		ObjectType:  objectType,
+		ObjectId:    objectID,
+		SubjectType: subjectType,
+		SubjectId:   subjectID,
+	}
+	resp := &llv1.RevokeRoleResponse{}
+
+	return c.doRequest(ctx, "POST", "/v1/role/revoke", req, resp)
+}
+
+func (c *RESTClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string) ([]*llv1.RoleAssignment, error) {
+	req := &llv1.ListRoleAssignmentsRequest{
+		ObjectType:  objectType,
+		ObjectId:    objectID,
+		SubjectType: subjectType,
+		SubjectId:   subjectID,
+		Role:        role,
+	}
+	resp := &llv1.ListRoleAssignmentsResponse{}
+
+	if err := c.doRequest(ctx, "POST", "/v1/role/list", req, resp); err != nil {
+		return nil, err
+	}
+
+	return resp.Assignments, nil
+}
+
+func (c *RESTClient) ListRoles(ctx context.Context) ([]string, error) {
+	resp := &llv1.ListRolesResponse{}
+
+	if err := c.doRequest(ctx, "GET", "/v1/roles", nil, resp); err != nil {
+		return nil, err
+	}
+
+	return resp.Roles, nil
+}
+
 func (c *RESTClient) Close() error {
 	// HTTP client doesn't need explicit closing
 	return nil

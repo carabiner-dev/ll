@@ -30,6 +30,18 @@ type Client interface {
 	ListSchemaSets(ctx context.Context) ([]string, error)
 	DeleteSchemaSet(ctx context.Context, name string) error
 	WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error)
+	// EnsurePath ensures all parent tuples exist for the given path.
+	// The path format is: type:id>type:id>type:id#relation
+	// This creates tuples connecting each child to its parent using the specified relation.
+	EnsurePath(ctx context.Context, path string) error
+	// GrantRole assigns a role to a subject on an object.
+	GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error)
+	// RevokeRole removes a role assignment from a subject on an object.
+	RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) error
+	// ListRoleAssignments returns all role assignments matching the filter.
+	ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string) ([]*llv1.RoleAssignment, error)
+	// ListRoles returns the names of all defined roles.
+	ListRoles(ctx context.Context) ([]string, error)
 	Close() error
 }
 
@@ -240,6 +252,58 @@ func (c *GRPCClient) DeleteSchemaSet(ctx context.Context, name string) error {
 
 func (c *GRPCClient) WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error) {
 	return c.client.WhoAmI(ctx, &llv1.WhoAmIRequest{})
+}
+
+func (c *GRPCClient) EnsurePath(ctx context.Context, pathStr string) error {
+	_, err := c.client.EnsurePath(ctx, &llv1.EnsurePathRequest{Path: pathStr})
+	return err
+}
+
+func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error) {
+	resp, err := c.client.GrantRole(ctx, &llv1.GrantRoleRequest{
+		Role:        role,
+		ObjectType:  objectType,
+		ObjectId:    objectID,
+		SubjectType: subjectType,
+		SubjectId:   subjectID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Assignment, nil
+}
+
+func (c *GRPCClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) error {
+	_, err := c.client.RevokeRole(ctx, &llv1.RevokeRoleRequest{
+		Role:        role,
+		ObjectType:  objectType,
+		ObjectId:    objectID,
+		SubjectType: subjectType,
+		SubjectId:   subjectID,
+	})
+	return err
+}
+
+func (c *GRPCClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string) ([]*llv1.RoleAssignment, error) {
+	resp, err := c.client.ListRoleAssignments(ctx, &llv1.ListRoleAssignmentsRequest{
+		ObjectType:  objectType,
+		ObjectId:    objectID,
+		SubjectType: subjectType,
+		SubjectId:   subjectID,
+		Role:        role,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Assignments, nil
+}
+
+func (c *GRPCClient) ListRoles(ctx context.Context) ([]string, error) {
+	resp, err := c.client.ListRoles(ctx, &llv1.ListRolesRequest{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Roles, nil
 }
 
 func (c *GRPCClient) Close() error {

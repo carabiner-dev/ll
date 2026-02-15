@@ -10,8 +10,8 @@ import (
 	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 )
 
-// EncodeID URL-encodes special characters in an ID that would conflict with tuple delimiters.
-// Characters encoded: @ # : %
+// EncodeID URL-encodes special characters in an ID that would conflict with tuple or path delimiters.
+// Characters encoded: % @ # : >
 func EncodeID(s string) string {
 	var b strings.Builder
 	for _, r := range s {
@@ -24,6 +24,8 @@ func EncodeID(s string) string {
 			b.WriteString("%23")
 		case ':':
 			b.WriteString("%3A")
+		case '>':
+			b.WriteString("%3E")
 		default:
 			b.WriteRune(r)
 		}
@@ -48,6 +50,9 @@ func DecodeID(s string) string {
 				i += 2
 			case "3A", "3a":
 				b.WriteByte(':')
+				i += 2
+			case "3E", "3e":
+				b.WriteByte('>')
 				i += 2
 			default:
 				b.WriteByte(s[i])
