@@ -26,6 +26,7 @@ Path format: type:id>type:id>type:id#relation`,
 	}
 
 	addPathWrite(pathCmd)
+	addPathCheck(pathCmd)
 
 	parent.AddCommand(pathCmd)
 }
@@ -91,6 +92,78 @@ Examples:
 				fmt.Printf("  %s:%s#%s@%s:%s\n",
 					t.ObjectType, t.ObjectId, t.Relation,
 					t.SubjectType, t.SubjectId)
+			}
+
+			return nil
+		},
+	}
+	opts.AddFlags(cmd)
+	parent.AddCommand(cmd)
+}
+
+func addPathCheck(parent *cobra.Command) {
+	opts := defaultServerOptions
+
+	cmd := &cobra.Command{
+		Use:   "check <path>",
+		Short: "Check if all tuples in a hierarchical path exist",
+		Long: `Check if all tuples in a hierarchical path exist.
+
+The path format is: type:id>type:id>type:id#relation
+
+This checks each tuple in the path without creating any.
+Returns which tuples exist and which are missing.
+
+Examples:
+  llctl path check "folder:root>folder:sub>file:doc.txt#parent"
+  llctl path check "org:acme>team:backend>repo:api#owner"
+`,
+		Args: cobra.ExactArgs(1),
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return opts.Validate()
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			pathStr := args[0]
+
+			// Validate the path first
+			_, err := ll.ParsePath(pathStr)
+			if err != nil {
+				return fmt.Errorf("invalid path: %w", err)
+			}
+
+			c, err := opts.NewClient()
+			if err != nil {
+				return err
+			}
+			defer c.Close()
+
+			resp, err := c.CheckPath(cmd.Context(), pathStr)
+			if err != nil {
+				return err
+			}
+
+			if resp.Complete {
+				fmt.Printf("Path is complete (%d tuple(s) found)\n", len(resp.Found))
+			} else {
+				fmt.Printf("Path is incomplete\n")
+			}
+
+			if len(resp.Found) > 0 {
+				fmt.Println("\nFound:")
+				for _, t := range resp.Found {
+					fmt.Printf("  %s:%s#%s@%s:%s\n",
+						t.ObjectType, t.ObjectId, t.Relation,
+						t.SubjectType, t.SubjectId)
+				}
+			}
+
+			if len(resp.Missing) > 0 {
+				fmt.Println("\nMissing:")
+				for _, t := range resp.Missing {
+					fmt.Printf("  %s:%s#%s@%s:%s\n",
+						t.ObjectType, t.ObjectId, t.Relation,
+						t.SubjectType, t.SubjectId)
+				}
 			}
 
 			return nil

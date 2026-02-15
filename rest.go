@@ -257,6 +257,17 @@ func (c *RESTClient) EnsurePath(ctx context.Context, pathStr string) error {
 	return c.doRequest(ctx, "POST", "/v1/ensure-path", req, resp)
 }
 
+func (c *RESTClient) CheckPath(ctx context.Context, pathStr string) (*llv1.CheckPathResponse, error) {
+	req := &llv1.CheckPathRequest{Path: pathStr}
+	resp := &llv1.CheckPathResponse{}
+
+	if err := c.doRequest(ctx, "POST", "/v1/check-path", req, resp); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error) {
 	req := &llv1.GrantRoleRequest{
 		Role:        role,

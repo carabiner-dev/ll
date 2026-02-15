@@ -35,6 +35,7 @@ const (
 	LamplightService_HealthCheck_FullMethodName         = "/carabiner.ll.v1.LamplightService/HealthCheck"
 	LamplightService_WhoAmI_FullMethodName              = "/carabiner.ll.v1.LamplightService/WhoAmI"
 	LamplightService_EnsurePath_FullMethodName          = "/carabiner.ll.v1.LamplightService/EnsurePath"
+	LamplightService_CheckPath_FullMethodName           = "/carabiner.ll.v1.LamplightService/CheckPath"
 	LamplightService_GrantRole_FullMethodName           = "/carabiner.ll.v1.LamplightService/GrantRole"
 	LamplightService_RevokeRole_FullMethodName          = "/carabiner.ll.v1.LamplightService/RevokeRole"
 	LamplightService_ListRoleAssignments_FullMethodName = "/carabiner.ll.v1.LamplightService/ListRoleAssignments"
@@ -84,6 +85,10 @@ type LamplightServiceClient interface {
 	//	folder:projects#parent@folder:root
 	//	file:readme.md#parent@folder:projects
 	EnsurePath(ctx context.Context, in *EnsurePathRequest, opts ...grpc.CallOption) (*EnsurePathResponse, error)
+	// CheckPath checks if all tuples in a hierarchical path exist.
+	// It parses the path and checks each tuple without creating any.
+	// Returns which tuples exist and which are missing.
+	CheckPath(ctx context.Context, in *CheckPathRequest, opts ...grpc.CallOption) (*CheckPathResponse, error)
 	// GrantRole assigns a role to a subject on an object.
 	// Roles are defined in the server configuration and expand to a set of tuples.
 	// Role-granted tuples cannot be deleted individually; they are removed when
@@ -236,6 +241,16 @@ func (c *lamplightServiceClient) EnsurePath(ctx context.Context, in *EnsurePathR
 	return out, nil
 }
 
+func (c *lamplightServiceClient) CheckPath(ctx context.Context, in *CheckPathRequest, opts ...grpc.CallOption) (*CheckPathResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckPathResponse)
+	err := c.cc.Invoke(ctx, LamplightService_CheckPath_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *lamplightServiceClient) GrantRole(ctx context.Context, in *GrantRoleRequest, opts ...grpc.CallOption) (*GrantRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GrantRoleResponse)
@@ -319,6 +334,10 @@ type LamplightServiceServer interface {
 	//	folder:projects#parent@folder:root
 	//	file:readme.md#parent@folder:projects
 	EnsurePath(context.Context, *EnsurePathRequest) (*EnsurePathResponse, error)
+	// CheckPath checks if all tuples in a hierarchical path exist.
+	// It parses the path and checks each tuple without creating any.
+	// Returns which tuples exist and which are missing.
+	CheckPath(context.Context, *CheckPathRequest) (*CheckPathResponse, error)
 	// GrantRole assigns a role to a subject on an object.
 	// Roles are defined in the server configuration and expand to a set of tuples.
 	// Role-granted tuples cannot be deleted individually; they are removed when
@@ -379,6 +398,9 @@ func (UnimplementedLamplightServiceServer) WhoAmI(context.Context, *WhoAmIReques
 }
 func (UnimplementedLamplightServiceServer) EnsurePath(context.Context, *EnsurePathRequest) (*EnsurePathResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method EnsurePath not implemented")
+}
+func (UnimplementedLamplightServiceServer) CheckPath(context.Context, *CheckPathRequest) (*CheckPathResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckPath not implemented")
 }
 func (UnimplementedLamplightServiceServer) GrantRole(context.Context, *GrantRoleRequest) (*GrantRoleResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GrantRole not implemented")
@@ -647,6 +669,24 @@ func _LamplightService_EnsurePath_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LamplightService_CheckPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPathRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LamplightServiceServer).CheckPath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LamplightService_CheckPath_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LamplightServiceServer).CheckPath(ctx, req.(*CheckPathRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _LamplightService_GrantRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GrantRoleRequest)
 	if err := dec(in); err != nil {
@@ -777,6 +817,10 @@ var LamplightService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EnsurePath",
 			Handler:    _LamplightService_EnsurePath_Handler,
+		},
+		{
+			MethodName: "CheckPath",
+			Handler:    _LamplightService_CheckPath_Handler,
 		},
 		{
 			MethodName: "GrantRole",

@@ -27,7 +27,7 @@ var File_carabiner_ll_v1_service_proto protoreflect.FileDescriptor
 
 const file_carabiner_ll_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"\x1dcarabiner/ll/v1/service.proto\x12\x0fcarabiner.ll.v1\x1a\x1ecarabiner/ll/v1/messages.proto2\xbe\v\n" +
+	"\x1dcarabiner/ll/v1/service.proto\x12\x0fcarabiner.ll.v1\x1a\x1ecarabiner/ll/v1/messages.proto2\x92\f\n" +
 	"\x10LamplightService\x12F\n" +
 	"\x05Check\x12\x1d.carabiner.ll.v1.CheckRequest\x1a\x1e.carabiner.ll.v1.CheckResponse\x12F\n" +
 	"\x05Write\x12\x1d.carabiner.ll.v1.WriteRequest\x1a\x1e.carabiner.ll.v1.WriteResponse\x12C\n" +
@@ -44,6 +44,7 @@ const file_carabiner_ll_v1_service_proto_rawDesc = "" +
 	"\x06WhoAmI\x12\x1e.carabiner.ll.v1.WhoAmIRequest\x1a\x1f.carabiner.ll.v1.WhoAmIResponse\x12U\n" +
 	"\n" +
 	"EnsurePath\x12\".carabiner.ll.v1.EnsurePathRequest\x1a#.carabiner.ll.v1.EnsurePathResponse\x12R\n" +
+	"\tCheckPath\x12!.carabiner.ll.v1.CheckPathRequest\x1a\".carabiner.ll.v1.CheckPathResponse\x12R\n" +
 	"\tGrantRole\x12!.carabiner.ll.v1.GrantRoleRequest\x1a\".carabiner.ll.v1.GrantRoleResponse\x12U\n" +
 	"\n" +
 	"RevokeRole\x12\".carabiner.ll.v1.RevokeRoleRequest\x1a#.carabiner.ll.v1.RevokeRoleResponse\x12p\n" +
@@ -64,27 +65,29 @@ var file_carabiner_ll_v1_service_proto_goTypes = []any{
 	(*HealthCheckRequest)(nil),          // 10: carabiner.ll.v1.HealthCheckRequest
 	(*WhoAmIRequest)(nil),               // 11: carabiner.ll.v1.WhoAmIRequest
 	(*EnsurePathRequest)(nil),           // 12: carabiner.ll.v1.EnsurePathRequest
-	(*GrantRoleRequest)(nil),            // 13: carabiner.ll.v1.GrantRoleRequest
-	(*RevokeRoleRequest)(nil),           // 14: carabiner.ll.v1.RevokeRoleRequest
-	(*ListRoleAssignmentsRequest)(nil),  // 15: carabiner.ll.v1.ListRoleAssignmentsRequest
-	(*ListRolesRequest)(nil),            // 16: carabiner.ll.v1.ListRolesRequest
-	(*CheckResponse)(nil),               // 17: carabiner.ll.v1.CheckResponse
-	(*WriteResponse)(nil),               // 18: carabiner.ll.v1.WriteResponse
-	(*ReadResponse)(nil),                // 19: carabiner.ll.v1.ReadResponse
-	(*DeleteResponse)(nil),              // 20: carabiner.ll.v1.DeleteResponse
-	(*ListObjectsResponse)(nil),         // 21: carabiner.ll.v1.ListObjectsResponse
-	(*ExpandResponse)(nil),              // 22: carabiner.ll.v1.ExpandResponse
-	(*WriteSchemaResponse)(nil),         // 23: carabiner.ll.v1.WriteSchemaResponse
-	(*ReadSchemaResponse)(nil),          // 24: carabiner.ll.v1.ReadSchemaResponse
-	(*ListSchemaSetsResponse)(nil),      // 25: carabiner.ll.v1.ListSchemaSetsResponse
-	(*DeleteSchemaSetResponse)(nil),     // 26: carabiner.ll.v1.DeleteSchemaSetResponse
-	(*HealthCheckResponse)(nil),         // 27: carabiner.ll.v1.HealthCheckResponse
-	(*WhoAmIResponse)(nil),              // 28: carabiner.ll.v1.WhoAmIResponse
-	(*EnsurePathResponse)(nil),          // 29: carabiner.ll.v1.EnsurePathResponse
-	(*GrantRoleResponse)(nil),           // 30: carabiner.ll.v1.GrantRoleResponse
-	(*RevokeRoleResponse)(nil),          // 31: carabiner.ll.v1.RevokeRoleResponse
-	(*ListRoleAssignmentsResponse)(nil), // 32: carabiner.ll.v1.ListRoleAssignmentsResponse
-	(*ListRolesResponse)(nil),           // 33: carabiner.ll.v1.ListRolesResponse
+	(*CheckPathRequest)(nil),            // 13: carabiner.ll.v1.CheckPathRequest
+	(*GrantRoleRequest)(nil),            // 14: carabiner.ll.v1.GrantRoleRequest
+	(*RevokeRoleRequest)(nil),           // 15: carabiner.ll.v1.RevokeRoleRequest
+	(*ListRoleAssignmentsRequest)(nil),  // 16: carabiner.ll.v1.ListRoleAssignmentsRequest
+	(*ListRolesRequest)(nil),            // 17: carabiner.ll.v1.ListRolesRequest
+	(*CheckResponse)(nil),               // 18: carabiner.ll.v1.CheckResponse
+	(*WriteResponse)(nil),               // 19: carabiner.ll.v1.WriteResponse
+	(*ReadResponse)(nil),                // 20: carabiner.ll.v1.ReadResponse
+	(*DeleteResponse)(nil),              // 21: carabiner.ll.v1.DeleteResponse
+	(*ListObjectsResponse)(nil),         // 22: carabiner.ll.v1.ListObjectsResponse
+	(*ExpandResponse)(nil),              // 23: carabiner.ll.v1.ExpandResponse
+	(*WriteSchemaResponse)(nil),         // 24: carabiner.ll.v1.WriteSchemaResponse
+	(*ReadSchemaResponse)(nil),          // 25: carabiner.ll.v1.ReadSchemaResponse
+	(*ListSchemaSetsResponse)(nil),      // 26: carabiner.ll.v1.ListSchemaSetsResponse
+	(*DeleteSchemaSetResponse)(nil),     // 27: carabiner.ll.v1.DeleteSchemaSetResponse
+	(*HealthCheckResponse)(nil),         // 28: carabiner.ll.v1.HealthCheckResponse
+	(*WhoAmIResponse)(nil),              // 29: carabiner.ll.v1.WhoAmIResponse
+	(*EnsurePathResponse)(nil),          // 30: carabiner.ll.v1.EnsurePathResponse
+	(*CheckPathResponse)(nil),           // 31: carabiner.ll.v1.CheckPathResponse
+	(*GrantRoleResponse)(nil),           // 32: carabiner.ll.v1.GrantRoleResponse
+	(*RevokeRoleResponse)(nil),          // 33: carabiner.ll.v1.RevokeRoleResponse
+	(*ListRoleAssignmentsResponse)(nil), // 34: carabiner.ll.v1.ListRoleAssignmentsResponse
+	(*ListRolesResponse)(nil),           // 35: carabiner.ll.v1.ListRolesResponse
 }
 var file_carabiner_ll_v1_service_proto_depIdxs = []int32{
 	0,  // 0: carabiner.ll.v1.LamplightService.Check:input_type -> carabiner.ll.v1.CheckRequest
@@ -100,29 +103,31 @@ var file_carabiner_ll_v1_service_proto_depIdxs = []int32{
 	10, // 10: carabiner.ll.v1.LamplightService.HealthCheck:input_type -> carabiner.ll.v1.HealthCheckRequest
 	11, // 11: carabiner.ll.v1.LamplightService.WhoAmI:input_type -> carabiner.ll.v1.WhoAmIRequest
 	12, // 12: carabiner.ll.v1.LamplightService.EnsurePath:input_type -> carabiner.ll.v1.EnsurePathRequest
-	13, // 13: carabiner.ll.v1.LamplightService.GrantRole:input_type -> carabiner.ll.v1.GrantRoleRequest
-	14, // 14: carabiner.ll.v1.LamplightService.RevokeRole:input_type -> carabiner.ll.v1.RevokeRoleRequest
-	15, // 15: carabiner.ll.v1.LamplightService.ListRoleAssignments:input_type -> carabiner.ll.v1.ListRoleAssignmentsRequest
-	16, // 16: carabiner.ll.v1.LamplightService.ListRoles:input_type -> carabiner.ll.v1.ListRolesRequest
-	17, // 17: carabiner.ll.v1.LamplightService.Check:output_type -> carabiner.ll.v1.CheckResponse
-	18, // 18: carabiner.ll.v1.LamplightService.Write:output_type -> carabiner.ll.v1.WriteResponse
-	19, // 19: carabiner.ll.v1.LamplightService.Read:output_type -> carabiner.ll.v1.ReadResponse
-	20, // 20: carabiner.ll.v1.LamplightService.Delete:output_type -> carabiner.ll.v1.DeleteResponse
-	21, // 21: carabiner.ll.v1.LamplightService.ListObjects:output_type -> carabiner.ll.v1.ListObjectsResponse
-	22, // 22: carabiner.ll.v1.LamplightService.Expand:output_type -> carabiner.ll.v1.ExpandResponse
-	23, // 23: carabiner.ll.v1.LamplightService.WriteSchema:output_type -> carabiner.ll.v1.WriteSchemaResponse
-	24, // 24: carabiner.ll.v1.LamplightService.ReadSchema:output_type -> carabiner.ll.v1.ReadSchemaResponse
-	25, // 25: carabiner.ll.v1.LamplightService.ListSchemaSets:output_type -> carabiner.ll.v1.ListSchemaSetsResponse
-	26, // 26: carabiner.ll.v1.LamplightService.DeleteSchemaSet:output_type -> carabiner.ll.v1.DeleteSchemaSetResponse
-	27, // 27: carabiner.ll.v1.LamplightService.HealthCheck:output_type -> carabiner.ll.v1.HealthCheckResponse
-	28, // 28: carabiner.ll.v1.LamplightService.WhoAmI:output_type -> carabiner.ll.v1.WhoAmIResponse
-	29, // 29: carabiner.ll.v1.LamplightService.EnsurePath:output_type -> carabiner.ll.v1.EnsurePathResponse
-	30, // 30: carabiner.ll.v1.LamplightService.GrantRole:output_type -> carabiner.ll.v1.GrantRoleResponse
-	31, // 31: carabiner.ll.v1.LamplightService.RevokeRole:output_type -> carabiner.ll.v1.RevokeRoleResponse
-	32, // 32: carabiner.ll.v1.LamplightService.ListRoleAssignments:output_type -> carabiner.ll.v1.ListRoleAssignmentsResponse
-	33, // 33: carabiner.ll.v1.LamplightService.ListRoles:output_type -> carabiner.ll.v1.ListRolesResponse
-	17, // [17:34] is the sub-list for method output_type
-	0,  // [0:17] is the sub-list for method input_type
+	13, // 13: carabiner.ll.v1.LamplightService.CheckPath:input_type -> carabiner.ll.v1.CheckPathRequest
+	14, // 14: carabiner.ll.v1.LamplightService.GrantRole:input_type -> carabiner.ll.v1.GrantRoleRequest
+	15, // 15: carabiner.ll.v1.LamplightService.RevokeRole:input_type -> carabiner.ll.v1.RevokeRoleRequest
+	16, // 16: carabiner.ll.v1.LamplightService.ListRoleAssignments:input_type -> carabiner.ll.v1.ListRoleAssignmentsRequest
+	17, // 17: carabiner.ll.v1.LamplightService.ListRoles:input_type -> carabiner.ll.v1.ListRolesRequest
+	18, // 18: carabiner.ll.v1.LamplightService.Check:output_type -> carabiner.ll.v1.CheckResponse
+	19, // 19: carabiner.ll.v1.LamplightService.Write:output_type -> carabiner.ll.v1.WriteResponse
+	20, // 20: carabiner.ll.v1.LamplightService.Read:output_type -> carabiner.ll.v1.ReadResponse
+	21, // 21: carabiner.ll.v1.LamplightService.Delete:output_type -> carabiner.ll.v1.DeleteResponse
+	22, // 22: carabiner.ll.v1.LamplightService.ListObjects:output_type -> carabiner.ll.v1.ListObjectsResponse
+	23, // 23: carabiner.ll.v1.LamplightService.Expand:output_type -> carabiner.ll.v1.ExpandResponse
+	24, // 24: carabiner.ll.v1.LamplightService.WriteSchema:output_type -> carabiner.ll.v1.WriteSchemaResponse
+	25, // 25: carabiner.ll.v1.LamplightService.ReadSchema:output_type -> carabiner.ll.v1.ReadSchemaResponse
+	26, // 26: carabiner.ll.v1.LamplightService.ListSchemaSets:output_type -> carabiner.ll.v1.ListSchemaSetsResponse
+	27, // 27: carabiner.ll.v1.LamplightService.DeleteSchemaSet:output_type -> carabiner.ll.v1.DeleteSchemaSetResponse
+	28, // 28: carabiner.ll.v1.LamplightService.HealthCheck:output_type -> carabiner.ll.v1.HealthCheckResponse
+	29, // 29: carabiner.ll.v1.LamplightService.WhoAmI:output_type -> carabiner.ll.v1.WhoAmIResponse
+	30, // 30: carabiner.ll.v1.LamplightService.EnsurePath:output_type -> carabiner.ll.v1.EnsurePathResponse
+	31, // 31: carabiner.ll.v1.LamplightService.CheckPath:output_type -> carabiner.ll.v1.CheckPathResponse
+	32, // 32: carabiner.ll.v1.LamplightService.GrantRole:output_type -> carabiner.ll.v1.GrantRoleResponse
+	33, // 33: carabiner.ll.v1.LamplightService.RevokeRole:output_type -> carabiner.ll.v1.RevokeRoleResponse
+	34, // 34: carabiner.ll.v1.LamplightService.ListRoleAssignments:output_type -> carabiner.ll.v1.ListRoleAssignmentsResponse
+	35, // 35: carabiner.ll.v1.LamplightService.ListRoles:output_type -> carabiner.ll.v1.ListRolesResponse
+	18, // [18:36] is the sub-list for method output_type
+	0,  // [0:18] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

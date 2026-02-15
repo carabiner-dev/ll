@@ -34,6 +34,9 @@ type Client interface {
 	// The path format is: type:id>type:id>type:id#relation
 	// This creates tuples connecting each child to its parent using the specified relation.
 	EnsurePath(ctx context.Context, path string) error
+	// CheckPath checks if all tuples in the given path exist.
+	// Returns whether the path is complete and which tuples are found/missing.
+	CheckPath(ctx context.Context, path string) (*llv1.CheckPathResponse, error)
 	// GrantRole assigns a role to a subject on an object.
 	GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error)
 	// RevokeRole removes a role assignment from a subject on an object.
@@ -257,6 +260,10 @@ func (c *GRPCClient) WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error) {
 func (c *GRPCClient) EnsurePath(ctx context.Context, pathStr string) error {
 	_, err := c.client.EnsurePath(ctx, &llv1.EnsurePathRequest{Path: pathStr})
 	return err
+}
+
+func (c *GRPCClient) CheckPath(ctx context.Context, pathStr string) (*llv1.CheckPathResponse, error) {
+	return c.client.CheckPath(ctx, &llv1.CheckPathRequest{Path: pathStr})
 }
 
 func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error) {

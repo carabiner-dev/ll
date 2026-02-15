@@ -213,6 +213,25 @@ message EnsurePathResponse {
   ConsistencyToken written_at = 3;
 }
 
+// CheckPathRequest is the request for the CheckPath RPC.
+message CheckPathRequest {
+  // The hierarchical path in the format: type:id>type:id>type:id#relation
+  // Example: folder:root>folder:projects>file:readme.md#parent
+  string path = 1;
+}
+
+// CheckPathResponse is the response for the CheckPath RPC.
+message CheckPathResponse {
+  // Whether all tuples in the path exist.
+  bool complete = 1;
+
+  // The tuples that exist.
+  repeated RelationTuple found = 2;
+
+  // The tuples that are missing.
+  repeated RelationTuple missing = 3;
+}
+
 // GrantRoleRequest is the request for the GrantRole RPC.
 message GrantRoleRequest {
   // The name of the role to grant.

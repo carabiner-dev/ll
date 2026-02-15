@@ -60,6 +60,11 @@ service LamplightService {
   //   file:readme.md#parent@folder:projects
   rpc EnsurePath(EnsurePathRequest) returns (EnsurePathResponse);
 
+  // CheckPath checks if all tuples in a hierarchical path exist.
+  // It parses the path and checks each tuple without creating any.
+  // Returns which tuples exist and which are missing.
+  rpc CheckPath(CheckPathRequest) returns (CheckPathResponse);
+
   // GrantRole assigns a role to a subject on an object.
   // Roles are defined in the server configuration and expand to a set of tuples.
   // Role-granted tuples cannot be deleted individually; they are removed when
