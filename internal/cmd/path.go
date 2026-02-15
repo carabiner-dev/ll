@@ -10,14 +10,33 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// AddEnsurePath adds the ensure-path command to the parent command.
-func AddEnsurePath(parent *cobra.Command) {
+// AddPath adds the path command group to the parent command.
+func AddPath(parent *cobra.Command) {
+	pathCmd := &cobra.Command{
+		Use:   "path",
+		Short: "Manage hierarchical paths",
+		Long: `Manage hierarchical paths in the Lamplight permissions engine.
+
+Paths provide a convenient way to establish parent-child relationships
+between objects. Instead of manually creating individual relation tuples
+for each link in a hierarchy, you can specify the entire path and Lamplight
+will create the necessary tuples.
+
+Path format: type:id>type:id>type:id#relation`,
+	}
+
+	addPathWrite(pathCmd)
+
+	parent.AddCommand(pathCmd)
+}
+
+func addPathWrite(parent *cobra.Command) {
 	opts := defaultServerOptions
 
 	cmd := &cobra.Command{
-		Use:   "ensure-path <path>",
-		Short: "Ensure all parent tuples exist for a hierarchical path",
-		Long: `Ensure all parent tuples exist for a hierarchical path.
+		Use:   "write <path>",
+		Short: "Write a hierarchical path, creating all parent tuples",
+		Long: `Write a hierarchical path, ensuring all parent tuples exist.
 
 The path format is: type:id>type:id>type:id#relation
 
@@ -30,6 +49,8 @@ Creates these tuples:
   folder:projects#parent@folder:root
   file:readme.md#parent@folder:projects
 
+The operation is idempotent - existing tuples are not duplicated.
+
 Special characters in object IDs should be URL-encoded:
   > as %3E
   # as %23
@@ -37,8 +58,8 @@ Special characters in object IDs should be URL-encoded:
   @ as %40
 
 Examples:
-  llctl ensure-path "folder:root>folder:sub>file:doc.txt#parent"
-  llctl ensure-path "org:acme>team:backend>repo:api#owner"
+  llctl path write "folder:root>folder:sub>file:doc.txt#parent"
+  llctl path write "org:acme>team:backend>repo:api#owner"
 `,
 		Args: cobra.ExactArgs(1),
 		PreRunE: func(cmd *cobra.Command, args []string) error {

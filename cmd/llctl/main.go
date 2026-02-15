@@ -35,7 +35,7 @@ It provides commands for:
 	cmd.AddSchema(rootCmd)
 	cmd.AddLs(rootCmd)
 	cmd.AddIAM(rootCmd)
-	cmd.AddEnsurePath(rootCmd)
+	cmd.AddPath(rootCmd)
 	cmd.AddRole(rootCmd)
 	addVersion(rootCmd)
 
