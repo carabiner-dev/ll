@@ -75,7 +75,7 @@ Examples:
 				return fmt.Errorf("invalid path: %w", err)
 			}
 
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -131,7 +131,7 @@ Examples:
 				return fmt.Errorf("invalid path: %w", err)
 			}
 
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}

@@ -65,7 +65,7 @@ Examples:
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}

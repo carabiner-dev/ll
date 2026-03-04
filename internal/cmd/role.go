@@ -89,7 +89,7 @@ Examples:
 				return fmt.Errorf("invalid subject format %q, expected type:id", args[2])
 			}
 
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -147,7 +147,7 @@ Examples:
 				return fmt.Errorf("invalid subject format %q, expected type:id", args[2])
 			}
 
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -226,7 +226,7 @@ Examples:
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -278,7 +278,7 @@ This shows the names of all roles that have been configured on the server.`,
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}

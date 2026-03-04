@@ -69,7 +69,7 @@ func AddApply(parent *cobra.Command) {
 				return fmt.Errorf("reading file: %w", err)
 			}
 
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -106,7 +106,7 @@ func AddGet(parent *cobra.Command) {
 				return cmd.Help()
 			}
 
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -190,7 +190,7 @@ Examples:
 				return fmt.Errorf("reading file: %w", err)
 			}
 
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -236,7 +236,7 @@ Examples:
 				return cmd.Help()
 			}
 
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}
@@ -302,7 +302,7 @@ Examples:
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			c, err := opts.NewClient()
+			c, err := opts.NewClient(cmd.Context())
 			if err != nil {
 				return err
 			}

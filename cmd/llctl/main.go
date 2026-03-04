@@ -28,6 +28,7 @@ It provides commands for:
 	}
 
 	// Add commands
+	cmd.AddAuth(rootCmd)
 	cmd.AddCheck(rootCmd)
 	cmd.AddWrite(rootCmd)
 	cmd.AddRead(rootCmd)
