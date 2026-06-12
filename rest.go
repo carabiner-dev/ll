@@ -71,7 +71,7 @@ func NewREST(serverAddr string, opts ...RESTOption) (Client, error) {
 	return c, nil
 }
 
-func (c *RESTClient) doRequest(ctx context.Context, method, path string, reqBody, respBody proto.Message) error {
+func (c *RESTClient) doRequest(ctx context.Context, method, path string, reqBody, respBody proto.Message, opts ...CallOption) error {
 	var bodyReader io.Reader
 	if reqBody != nil {
 		data, err := c.marshaler.Marshal(reqBody)
@@ -86,16 +86,26 @@ func (c *RESTClient) doRequest(ctx context.Context, method, path string, reqBody
 		return fmt.Errorf("creating request: %w", err)
 	}
 
+	// Per-call token (WithCallToken) overrides the client-level token.
+	token := c.token
+	var o callOptions
+	for _, opt := range opts {
+		opt(&o)
+	}
+	if o.token != "" {
+		token = o.token
+	}
+
 	req.Header.Set("Content-Type", "application/json")
-	if c.token != "" {
-		req.Header.Set("Authorization", "Bearer "+c.token)
+	if token != "" {
+		req.Header.Set("Authorization", "Bearer "+token)
 	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("executing request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	respData, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -115,7 +125,7 @@ func (c *RESTClient) doRequest(ctx context.Context, method, path string, reqBody
 	return nil
 }
 
-func (c *RESTClient) Check(ctx context.Context, t *llv1.RelationTuple) (bool, error) {
+func (c *RESTClient) Check(ctx context.Context, t *llv1.RelationTuple, opts ...CallOption) (bool, error) {
 	if err := ValidateTuple(t); err != nil {
 		return false, fmt.Errorf("invalid tuple: %w", err)
 	}
@@ -123,14 +133,14 @@ func (c *RESTClient) Check(ctx context.Context, t *llv1.RelationTuple) (bool, er
 	req := &llv1.CheckRequest{Tuple: t}
 	resp := &llv1.CheckResponse{}
 
-	if err := c.doRequest(ctx, "POST", "/v1/check", req, resp); err != nil {
+	if err := c.doRequest(ctx, "POST", "/v1/check", req, resp, opts...); err != nil {
 		return false, err
 	}
 
 	return resp.Allowed, nil
 }
 
-func (c *RESTClient) Write(ctx context.Context, writes, deletes []*llv1.RelationTuple) error {
+func (c *RESTClient) Write(ctx context.Context, writes, deletes []*llv1.RelationTuple, opts ...CallOption) error {
 	for i, t := range writes {
 		if err := ValidateTuple(t); err != nil {
 			return fmt.Errorf("invalid write tuple[%d]: %w", i, err)
@@ -145,28 +155,28 @@ func (c *RESTClient) Write(ctx context.Context, writes, deletes []*llv1.Relation
 	req := &llv1.WriteRequest{Writes: writes, Deletes: deletes}
 	resp := &llv1.WriteResponse{}
 
-	return c.doRequest(ctx, "POST", "/v1/write", req, resp)
+	return c.doRequest(ctx, "POST", "/v1/write", req, resp, opts...)
 }
 
-func (c *RESTClient) Read(ctx context.Context, filter *llv1.RelationTupleFilter) ([]*llv1.RelationTuple, error) {
+func (c *RESTClient) Read(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) ([]*llv1.RelationTuple, error) {
 	req := &llv1.ReadRequest{Filter: filter}
 	resp := &llv1.ReadResponse{}
 
-	if err := c.doRequest(ctx, "POST", "/v1/read", req, resp); err != nil {
+	if err := c.doRequest(ctx, "POST", "/v1/read", req, resp, opts...); err != nil {
 		return nil, err
 	}
 
 	return resp.Tuples, nil
 }
 
-func (c *RESTClient) Delete(ctx context.Context, filter *llv1.RelationTupleFilter) error {
+func (c *RESTClient) Delete(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) error {
 	req := &llv1.DeleteRequest{Filter: filter}
 	resp := &llv1.DeleteResponse{}
 
-	return c.doRequest(ctx, "POST", "/v1/delete", req, resp)
+	return c.doRequest(ctx, "POST", "/v1/delete", req, resp, opts...)
 }
 
-func (c *RESTClient) ListObjects(ctx context.Context, subjectType, subjectID, permission, objectType string) ([]string, error) {
+func (c *RESTClient) ListObjects(ctx context.Context, subjectType, subjectID, permission, objectType string, opts ...CallOption) ([]string, error) {
 	req := &llv1.ListObjectsRequest{
 		SubjectType: subjectType,
 		SubjectId:   subjectID,
@@ -175,14 +185,14 @@ func (c *RESTClient) ListObjects(ctx context.Context, subjectType, subjectID, pe
 	}
 	resp := &llv1.ListObjectsResponse{}
 
-	if err := c.doRequest(ctx, "POST", "/v1/list-objects", req, resp); err != nil {
+	if err := c.doRequest(ctx, "POST", "/v1/list-objects", req, resp, opts...); err != nil {
 		return nil, err
 	}
 
 	return resp.ObjectIds, nil
 }
 
-func (c *RESTClient) Expand(ctx context.Context, objectType, objectID, permission string) (*llv1.ExpandTree, error) {
+func (c *RESTClient) Expand(ctx context.Context, objectType, objectID, permission string, opts ...CallOption) (*llv1.ExpandTree, error) {
 	req := &llv1.ExpandRequest{
 		ObjectType: objectType,
 		ObjectId:   objectID,
@@ -190,85 +200,85 @@ func (c *RESTClient) Expand(ctx context.Context, objectType, objectID, permissio
 	}
 	resp := &llv1.ExpandResponse{}
 
-	if err := c.doRequest(ctx, "POST", "/v1/expand", req, resp); err != nil {
+	if err := c.doRequest(ctx, "POST", "/v1/expand", req, resp, opts...); err != nil {
 		return nil, err
 	}
 
 	return resp.Tree, nil
 }
 
-func (c *RESTClient) WriteSchema(ctx context.Context, yamlData string) error {
+func (c *RESTClient) WriteSchema(ctx context.Context, yamlData string, opts ...CallOption) error {
 	req := &llv1.WriteSchemaRequest{SchemaYaml: yamlData}
 	resp := &llv1.WriteSchemaResponse{}
 
-	return c.doRequest(ctx, "POST", "/v1/schema", req, resp)
+	return c.doRequest(ctx, "POST", "/v1/schema", req, resp, opts...)
 }
 
-func (c *RESTClient) ReadSchema(ctx context.Context) (string, error) {
+func (c *RESTClient) ReadSchema(ctx context.Context, opts ...CallOption) (string, error) {
 	resp := &llv1.ReadSchemaResponse{}
 
-	if err := c.doRequest(ctx, "GET", "/v1/schema", nil, resp); err != nil {
+	if err := c.doRequest(ctx, "GET", "/v1/schema", nil, resp, opts...); err != nil {
 		return "", err
 	}
 
 	return resp.SchemaYaml, nil
 }
 
-func (c *RESTClient) ReadSchemaSet(ctx context.Context, name string) (string, error) {
+func (c *RESTClient) ReadSchemaSet(ctx context.Context, name string, opts ...CallOption) (string, error) {
 	resp := &llv1.ReadSchemaResponse{}
 
-	if err := c.doRequest(ctx, "GET", "/v1/schema/"+name, nil, resp); err != nil {
+	if err := c.doRequest(ctx, "GET", "/v1/schema/"+name, nil, resp, opts...); err != nil {
 		return "", err
 	}
 
 	return resp.SchemaYaml, nil
 }
 
-func (c *RESTClient) ListSchemaSets(ctx context.Context) ([]string, error) {
+func (c *RESTClient) ListSchemaSets(ctx context.Context, opts ...CallOption) ([]string, error) {
 	resp := &llv1.ListSchemaSetsResponse{}
 
-	if err := c.doRequest(ctx, "GET", "/v1/schema/sets", nil, resp); err != nil {
+	if err := c.doRequest(ctx, "GET", "/v1/schema/sets", nil, resp, opts...); err != nil {
 		return nil, err
 	}
 
 	return resp.Names, nil
 }
 
-func (c *RESTClient) DeleteSchemaSet(ctx context.Context, name string) error {
+func (c *RESTClient) DeleteSchemaSet(ctx context.Context, name string, opts ...CallOption) error {
 	resp := &llv1.DeleteSchemaSetResponse{}
 
-	return c.doRequest(ctx, "DELETE", "/v1/schema/"+name, nil, resp)
+	return c.doRequest(ctx, "DELETE", "/v1/schema/"+name, nil, resp, opts...)
 }
 
-func (c *RESTClient) WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error) {
+func (c *RESTClient) WhoAmI(ctx context.Context, opts ...CallOption) (*llv1.WhoAmIResponse, error) {
 	resp := &llv1.WhoAmIResponse{}
 
-	if err := c.doRequest(ctx, "GET", "/v1/whoami", nil, resp); err != nil {
+	if err := c.doRequest(ctx, "GET", "/v1/whoami", nil, resp, opts...); err != nil {
 		return nil, err
 	}
 
 	return resp, nil
 }
 
-func (c *RESTClient) EnsurePath(ctx context.Context, pathStr string) error {
+func (c *RESTClient) EnsurePath(ctx context.Context, pathStr string, opts ...CallOption) error {
 	req := &llv1.EnsurePathRequest{Path: pathStr}
 	resp := &llv1.EnsurePathResponse{}
 
-	return c.doRequest(ctx, "POST", "/v1/ensure-path", req, resp)
+	return c.doRequest(ctx, "POST", "/v1/ensure-path", req, resp, opts...)
 }
 
-func (c *RESTClient) CheckPath(ctx context.Context, pathStr string) (*llv1.CheckPathResponse, error) {
+func (c *RESTClient) CheckPath(ctx context.Context, pathStr string, opts ...CallOption) (*llv1.CheckPathResponse, error) {
 	req := &llv1.CheckPathRequest{Path: pathStr}
 	resp := &llv1.CheckPathResponse{}
 
-	if err := c.doRequest(ctx, "POST", "/v1/check-path", req, resp); err != nil {
+	if err := c.doRequest(ctx, "POST", "/v1/check-path", req, resp, opts...); err != nil {
 		return nil, err
 	}
 
 	return resp, nil
 }
 
-func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error) {
+func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) (*llv1.RoleAssignment, error) {
 	req := &llv1.GrantRoleRequest{
 		Role:        role,
 		ObjectType:  objectType,
@@ -278,14 +288,14 @@ func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, 
 	}
 	resp := &llv1.GrantRoleResponse{}
 
-	if err := c.doRequest(ctx, "POST", "/v1/role/grant", req, resp); err != nil {
+	if err := c.doRequest(ctx, "POST", "/v1/role/grant", req, resp, opts...); err != nil {
 		return nil, err
 	}
 
 	return resp.Assignment, nil
 }
 
-func (c *RESTClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) error {
+func (c *RESTClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) error {
 	req := &llv1.RevokeRoleRequest{
 		Role:        role,
 		ObjectType:  objectType,
@@ -295,10 +305,10 @@ func (c *RESTClient) RevokeRole(ctx context.Context, role, objectType, objectID,
 	}
 	resp := &llv1.RevokeRoleResponse{}
 
-	return c.doRequest(ctx, "POST", "/v1/role/revoke", req, resp)
+	return c.doRequest(ctx, "POST", "/v1/role/revoke", req, resp, opts...)
 }
 
-func (c *RESTClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string) ([]*llv1.RoleAssignment, error) {
+func (c *RESTClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error) {
 	req := &llv1.ListRoleAssignmentsRequest{
 		ObjectType:  objectType,
 		ObjectId:    objectID,
@@ -308,17 +318,17 @@ func (c *RESTClient) ListRoleAssignments(ctx context.Context, objectType, object
 	}
 	resp := &llv1.ListRoleAssignmentsResponse{}
 
-	if err := c.doRequest(ctx, "POST", "/v1/role/list", req, resp); err != nil {
+	if err := c.doRequest(ctx, "POST", "/v1/role/list", req, resp, opts...); err != nil {
 		return nil, err
 	}
 
 	return resp.Assignments, nil
 }
 
-func (c *RESTClient) ListRoles(ctx context.Context) ([]string, error) {
+func (c *RESTClient) ListRoles(ctx context.Context, opts ...CallOption) ([]string, error) {
 	resp := &llv1.ListRolesResponse{}
 
-	if err := c.doRequest(ctx, "GET", "/v1/roles", nil, resp); err != nil {
+	if err := c.doRequest(ctx, "GET", "/v1/roles", nil, resp, opts...); err != nil {
 		return nil, err
 	}
 

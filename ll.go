@@ -14,37 +14,67 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 )
+
+// CallOption configures a single RPC call.
+type CallOption func(*callOptions)
+
+type callOptions struct {
+	token string
+}
+
+// WithCallToken injects a bearer token for a single call, overriding the
+// client-level token (set via WithToken at construction). Use it to forward an
+// end user's identity per request, so the call is authorized as that user rather
+// than as the client's own service identity. Intended for clients created
+// without a baked-in token; pairing it with a client-level token would send two
+// Authorization headers.
+func WithCallToken(token string) CallOption {
+	return func(o *callOptions) { o.token = token }
+}
+
+// applyCall threads per-call options into the outgoing context.
+func applyCall(ctx context.Context, opts []CallOption) context.Context {
+	var o callOptions
+	for _, opt := range opts {
+		opt(&o)
+	}
+	if o.token != "" {
+		ctx = metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+o.token)
+	}
+	return ctx
+}
 
 // Client is the interface for interacting with a Lamplight server.
 type Client interface {
-	Check(ctx context.Context, tuple *llv1.RelationTuple) (bool, error)
-	Write(ctx context.Context, writes, deletes []*llv1.RelationTuple) error
-	Read(ctx context.Context, filter *llv1.RelationTupleFilter) ([]*llv1.RelationTuple, error)
-	Delete(ctx context.Context, filter *llv1.RelationTupleFilter) error
-	ListObjects(ctx context.Context, subjectType, subjectID, permission, objectType string) ([]string, error)
-	Expand(ctx context.Context, objectType, objectID, permission string) (*llv1.ExpandTree, error)
-	WriteSchema(ctx context.Context, yamlData string) error
-	ReadSchema(ctx context.Context) (string, error)
-	ReadSchemaSet(ctx context.Context, name string) (string, error)
-	ListSchemaSets(ctx context.Context) ([]string, error)
-	DeleteSchemaSet(ctx context.Context, name string) error
-	WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error)
+	Check(ctx context.Context, tuple *llv1.RelationTuple, opts ...CallOption) (bool, error)
+	Write(ctx context.Context, writes, deletes []*llv1.RelationTuple, opts ...CallOption) error
+	Read(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) ([]*llv1.RelationTuple, error)
+	Delete(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) error
+	ListObjects(ctx context.Context, subjectType, subjectID, permission, objectType string, opts ...CallOption) ([]string, error)
+	Expand(ctx context.Context, objectType, objectID, permission string, opts ...CallOption) (*llv1.ExpandTree, error)
+	WriteSchema(ctx context.Context, yamlData string, opts ...CallOption) error
+	ReadSchema(ctx context.Context, opts ...CallOption) (string, error)
+	ReadSchemaSet(ctx context.Context, name string, opts ...CallOption) (string, error)
+	ListSchemaSets(ctx context.Context, opts ...CallOption) ([]string, error)
+	DeleteSchemaSet(ctx context.Context, name string, opts ...CallOption) error
+	WhoAmI(ctx context.Context, opts ...CallOption) (*llv1.WhoAmIResponse, error)
 	// EnsurePath ensures all parent tuples exist for the given path.
 	// The path format is: type:id>type:id>type:id#relation
 	// This creates tuples connecting each child to its parent using the specified relation.
-	EnsurePath(ctx context.Context, path string) error
+	EnsurePath(ctx context.Context, path string, opts ...CallOption) error
 	// CheckPath checks if all tuples in the given path exist.
 	// Returns whether the path is complete and which tuples are found/missing.
-	CheckPath(ctx context.Context, path string) (*llv1.CheckPathResponse, error)
+	CheckPath(ctx context.Context, path string, opts ...CallOption) (*llv1.CheckPathResponse, error)
 	// GrantRole assigns a role to a subject on an object.
-	GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error)
+	GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) (*llv1.RoleAssignment, error)
 	// RevokeRole removes a role assignment from a subject on an object.
-	RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) error
+	RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) error
 	// ListRoleAssignments returns all role assignments matching the filter.
-	ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string) ([]*llv1.RoleAssignment, error)
+	ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error)
 	// ListRoles returns the names of all defined roles.
-	ListRoles(ctx context.Context) ([]string, error)
+	ListRoles(ctx context.Context, opts ...CallOption) ([]string, error)
 	Close() error
 }
 
@@ -154,7 +184,8 @@ func (t tokenAuth) RequireTransportSecurity() bool {
 	return t.requireTLS
 }
 
-func (c *GRPCClient) Check(ctx context.Context, t *llv1.RelationTuple) (bool, error) {
+func (c *GRPCClient) Check(ctx context.Context, t *llv1.RelationTuple, opts ...CallOption) (bool, error) {
+	ctx = applyCall(ctx, opts)
 	if err := ValidateTuple(t); err != nil {
 		return false, fmt.Errorf("invalid tuple: %w", err)
 	}
@@ -165,7 +196,8 @@ func (c *GRPCClient) Check(ctx context.Context, t *llv1.RelationTuple) (bool, er
 	return resp.Allowed, nil
 }
 
-func (c *GRPCClient) Write(ctx context.Context, writes, deletes []*llv1.RelationTuple) error {
+func (c *GRPCClient) Write(ctx context.Context, writes, deletes []*llv1.RelationTuple, opts ...CallOption) error {
+	ctx = applyCall(ctx, opts)
 	// Validate all tuples before sending
 	for i, t := range writes {
 		if err := ValidateTuple(t); err != nil {
@@ -181,7 +213,8 @@ func (c *GRPCClient) Write(ctx context.Context, writes, deletes []*llv1.Relation
 	return err
 }
 
-func (c *GRPCClient) Read(ctx context.Context, filter *llv1.RelationTupleFilter) ([]*llv1.RelationTuple, error) {
+func (c *GRPCClient) Read(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) ([]*llv1.RelationTuple, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.Read(ctx, &llv1.ReadRequest{Filter: filter})
 	if err != nil {
 		return nil, err
@@ -189,12 +222,14 @@ func (c *GRPCClient) Read(ctx context.Context, filter *llv1.RelationTupleFilter)
 	return resp.Tuples, nil
 }
 
-func (c *GRPCClient) Delete(ctx context.Context, filter *llv1.RelationTupleFilter) error {
+func (c *GRPCClient) Delete(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) error {
+	ctx = applyCall(ctx, opts)
 	_, err := c.client.Delete(ctx, &llv1.DeleteRequest{Filter: filter})
 	return err
 }
 
-func (c *GRPCClient) ListObjects(ctx context.Context, subjectType, subjectID, permission, objectType string) ([]string, error) {
+func (c *GRPCClient) ListObjects(ctx context.Context, subjectType, subjectID, permission, objectType string, opts ...CallOption) ([]string, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.ListObjects(ctx, &llv1.ListObjectsRequest{
 		SubjectType: subjectType,
 		SubjectId:   subjectID,
@@ -207,7 +242,8 @@ func (c *GRPCClient) ListObjects(ctx context.Context, subjectType, subjectID, pe
 	return resp.ObjectIds, nil
 }
 
-func (c *GRPCClient) Expand(ctx context.Context, objectType, objectID, permission string) (*llv1.ExpandTree, error) {
+func (c *GRPCClient) Expand(ctx context.Context, objectType, objectID, permission string, opts ...CallOption) (*llv1.ExpandTree, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.Expand(ctx, &llv1.ExpandRequest{
 		ObjectType: objectType,
 		ObjectId:   objectID,
@@ -219,12 +255,14 @@ func (c *GRPCClient) Expand(ctx context.Context, objectType, objectID, permissio
 	return resp.Tree, nil
 }
 
-func (c *GRPCClient) WriteSchema(ctx context.Context, yamlData string) error {
+func (c *GRPCClient) WriteSchema(ctx context.Context, yamlData string, opts ...CallOption) error {
+	ctx = applyCall(ctx, opts)
 	_, err := c.client.WriteSchema(ctx, &llv1.WriteSchemaRequest{SchemaYaml: yamlData})
 	return err
 }
 
-func (c *GRPCClient) ReadSchema(ctx context.Context) (string, error) {
+func (c *GRPCClient) ReadSchema(ctx context.Context, opts ...CallOption) (string, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.ReadSchema(ctx, &llv1.ReadSchemaRequest{})
 	if err != nil {
 		return "", err
@@ -232,7 +270,8 @@ func (c *GRPCClient) ReadSchema(ctx context.Context) (string, error) {
 	return resp.SchemaYaml, nil
 }
 
-func (c *GRPCClient) ReadSchemaSet(ctx context.Context, name string) (string, error) {
+func (c *GRPCClient) ReadSchemaSet(ctx context.Context, name string, opts ...CallOption) (string, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.ReadSchema(ctx, &llv1.ReadSchemaRequest{Name: name})
 	if err != nil {
 		return "", err
@@ -240,7 +279,8 @@ func (c *GRPCClient) ReadSchemaSet(ctx context.Context, name string) (string, er
 	return resp.SchemaYaml, nil
 }
 
-func (c *GRPCClient) ListSchemaSets(ctx context.Context) ([]string, error) {
+func (c *GRPCClient) ListSchemaSets(ctx context.Context, opts ...CallOption) ([]string, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.ListSchemaSets(ctx, &llv1.ListSchemaSetsRequest{})
 	if err != nil {
 		return nil, err
@@ -248,25 +288,30 @@ func (c *GRPCClient) ListSchemaSets(ctx context.Context) ([]string, error) {
 	return resp.Names, nil
 }
 
-func (c *GRPCClient) DeleteSchemaSet(ctx context.Context, name string) error {
+func (c *GRPCClient) DeleteSchemaSet(ctx context.Context, name string, opts ...CallOption) error {
+	ctx = applyCall(ctx, opts)
 	_, err := c.client.DeleteSchemaSet(ctx, &llv1.DeleteSchemaSetRequest{Name: name})
 	return err
 }
 
-func (c *GRPCClient) WhoAmI(ctx context.Context) (*llv1.WhoAmIResponse, error) {
+func (c *GRPCClient) WhoAmI(ctx context.Context, opts ...CallOption) (*llv1.WhoAmIResponse, error) {
+	ctx = applyCall(ctx, opts)
 	return c.client.WhoAmI(ctx, &llv1.WhoAmIRequest{})
 }
 
-func (c *GRPCClient) EnsurePath(ctx context.Context, pathStr string) error {
+func (c *GRPCClient) EnsurePath(ctx context.Context, pathStr string, opts ...CallOption) error {
+	ctx = applyCall(ctx, opts)
 	_, err := c.client.EnsurePath(ctx, &llv1.EnsurePathRequest{Path: pathStr})
 	return err
 }
 
-func (c *GRPCClient) CheckPath(ctx context.Context, pathStr string) (*llv1.CheckPathResponse, error) {
+func (c *GRPCClient) CheckPath(ctx context.Context, pathStr string, opts ...CallOption) (*llv1.CheckPathResponse, error) {
+	ctx = applyCall(ctx, opts)
 	return c.client.CheckPath(ctx, &llv1.CheckPathRequest{Path: pathStr})
 }
 
-func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) (*llv1.RoleAssignment, error) {
+func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) (*llv1.RoleAssignment, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.GrantRole(ctx, &llv1.GrantRoleRequest{
 		Role:        role,
 		ObjectType:  objectType,
@@ -280,7 +325,8 @@ func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, 
 	return resp.Assignment, nil
 }
 
-func (c *GRPCClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string) error {
+func (c *GRPCClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) error {
+	ctx = applyCall(ctx, opts)
 	_, err := c.client.RevokeRole(ctx, &llv1.RevokeRoleRequest{
 		Role:        role,
 		ObjectType:  objectType,
@@ -291,7 +337,8 @@ func (c *GRPCClient) RevokeRole(ctx context.Context, role, objectType, objectID,
 	return err
 }
 
-func (c *GRPCClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string) ([]*llv1.RoleAssignment, error) {
+func (c *GRPCClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.ListRoleAssignments(ctx, &llv1.ListRoleAssignmentsRequest{
 		ObjectType:  objectType,
 		ObjectId:    objectID,
@@ -305,7 +352,8 @@ func (c *GRPCClient) ListRoleAssignments(ctx context.Context, objectType, object
 	return resp.Assignments, nil
 }
 
-func (c *GRPCClient) ListRoles(ctx context.Context) ([]string, error) {
+func (c *GRPCClient) ListRoles(ctx context.Context, opts ...CallOption) ([]string, error) {
+	ctx = applyCall(ctx, opts)
 	resp, err := c.client.ListRoles(ctx, &llv1.ListRolesRequest{})
 	if err != nil {
 		return nil, err
