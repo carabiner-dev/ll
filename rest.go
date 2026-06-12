@@ -11,9 +11,10 @@ import (
 	"net/http"
 	"strings"
 
-	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
+
+	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 )
 
 // RESTClient implements Client using HTTP/REST.
@@ -137,7 +138,7 @@ func (c *RESTClient) Check(ctx context.Context, t *llv1.RelationTuple, opts ...C
 		return false, err
 	}
 
-	return resp.Allowed, nil
+	return resp.GetAllowed(), nil
 }
 
 func (c *RESTClient) Write(ctx context.Context, writes, deletes []*llv1.RelationTuple, opts ...CallOption) error {
@@ -166,7 +167,7 @@ func (c *RESTClient) Read(ctx context.Context, filter *llv1.RelationTupleFilter,
 		return nil, err
 	}
 
-	return resp.Tuples, nil
+	return resp.GetTuples(), nil
 }
 
 func (c *RESTClient) Delete(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) error {
@@ -189,7 +190,7 @@ func (c *RESTClient) ListObjects(ctx context.Context, subjectType, subjectID, pe
 		return nil, err
 	}
 
-	return resp.ObjectIds, nil
+	return resp.GetObjectIds(), nil
 }
 
 func (c *RESTClient) Expand(ctx context.Context, objectType, objectID, permission string, opts ...CallOption) (*llv1.ExpandTree, error) {
@@ -204,7 +205,7 @@ func (c *RESTClient) Expand(ctx context.Context, objectType, objectID, permissio
 		return nil, err
 	}
 
-	return resp.Tree, nil
+	return resp.GetTree(), nil
 }
 
 func (c *RESTClient) WriteSchema(ctx context.Context, yamlData string, opts ...CallOption) error {
@@ -221,7 +222,7 @@ func (c *RESTClient) ReadSchema(ctx context.Context, opts ...CallOption) (string
 		return "", err
 	}
 
-	return resp.SchemaYaml, nil
+	return resp.GetSchemaYaml(), nil
 }
 
 func (c *RESTClient) ReadSchemaSet(ctx context.Context, name string, opts ...CallOption) (string, error) {
@@ -231,7 +232,7 @@ func (c *RESTClient) ReadSchemaSet(ctx context.Context, name string, opts ...Cal
 		return "", err
 	}
 
-	return resp.SchemaYaml, nil
+	return resp.GetSchemaYaml(), nil
 }
 
 func (c *RESTClient) ListSchemaSets(ctx context.Context, opts ...CallOption) ([]string, error) {
@@ -241,7 +242,7 @@ func (c *RESTClient) ListSchemaSets(ctx context.Context, opts ...CallOption) ([]
 		return nil, err
 	}
 
-	return resp.Names, nil
+	return resp.GetNames(), nil
 }
 
 func (c *RESTClient) DeleteSchemaSet(ctx context.Context, name string, opts ...CallOption) error {
@@ -292,7 +293,7 @@ func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, 
 		return nil, err
 	}
 
-	return resp.Assignment, nil
+	return resp.GetAssignment(), nil
 }
 
 func (c *RESTClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) error {
@@ -322,7 +323,7 @@ func (c *RESTClient) ListRoleAssignments(ctx context.Context, objectType, object
 		return nil, err
 	}
 
-	return resp.Assignments, nil
+	return resp.GetAssignments(), nil
 }
 
 func (c *RESTClient) ListRoles(ctx context.Context, opts ...CallOption) ([]string, error) {
@@ -332,7 +333,7 @@ func (c *RESTClient) ListRoles(ctx context.Context, opts ...CallOption) ([]strin
 		return nil, err
 	}
 
-	return resp.Roles, nil
+	return resp.GetRoles(), nil
 }
 
 func (c *RESTClient) Close() error {

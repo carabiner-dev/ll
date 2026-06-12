@@ -71,26 +71,26 @@ Examples:
 
 			// Display identity
 			fmt.Println("Identity:")
-			if resp.Subject != "" {
-				fmt.Printf("  Subject: %s\n", resp.Subject)
+			if resp.GetSubject() != "" {
+				fmt.Printf("  Subject: %s\n", resp.GetSubject())
 			} else {
 				fmt.Println("  Subject: (not authenticated)")
 			}
-			fmt.Printf("  Authentication enabled: %v\n", resp.Authenticated)
+			fmt.Printf("  Authentication enabled: %v\n", resp.GetAuthenticated())
 
 			// Display grants
 			fmt.Println("\nIAM Grants:")
-			if len(resp.Grants) == 0 {
-				if resp.Subject == "" {
+			if len(resp.GetGrants()) == 0 {
+				if resp.GetSubject() == "" {
 					fmt.Println("  (not authenticated - no grants)")
 				} else {
 					fmt.Println("  (no grants found)")
 				}
 			} else {
-				for _, grant := range resp.Grants {
-					fmt.Printf("  - %s#%s\n", grant.Object, grant.Relation)
-					if grant.Description != "" {
-						fmt.Printf("    %s\n", grant.Description)
+				for _, grant := range resp.GetGrants() {
+					fmt.Printf("  - %s#%s\n", grant.GetObject(), grant.GetRelation())
+					if grant.GetDescription() != "" {
+						fmt.Printf("    %s\n", grant.GetDescription())
 					}
 				}
 			}

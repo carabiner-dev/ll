@@ -8,9 +8,10 @@ import (
 	"fmt"
 
 	"github.com/carabiner-dev/command"
+	"github.com/spf13/cobra"
+
 	"github.com/carabiner-dev/ll"
 	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
-	"github.com/spf13/cobra"
 )
 
 var _ command.OptionsSet = (*WriteOptions)(nil)

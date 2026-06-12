@@ -152,27 +152,27 @@ func ValidateTuple(t *llv1.RelationTuple) error {
 	if t == nil {
 		return fmt.Errorf("tuple is nil")
 	}
-	if t.ObjectType == "" {
+	if t.GetObjectType() == "" {
 		return fmt.Errorf("empty object type")
 	}
-	if t.ObjectId == "" {
+	if t.GetObjectId() == "" {
 		return fmt.Errorf("empty object id")
 	}
-	if t.Relation == "" {
+	if t.GetRelation() == "" {
 		return fmt.Errorf("empty relation")
 	}
-	if t.SubjectType == "" {
+	if t.GetSubjectType() == "" {
 		return fmt.Errorf("empty subject type")
 	}
-	if t.SubjectId == "" {
+	if t.GetSubjectId() == "" {
 		return fmt.Errorf("empty subject id")
 	}
 
 	// Validate ID encoding
-	if err := ValidateEncodedID(t.ObjectId); err != nil {
+	if err := ValidateEncodedID(t.GetObjectId()); err != nil {
 		return fmt.Errorf("invalid object id: %w", err)
 	}
-	if err := ValidateEncodedID(t.SubjectId); err != nil {
+	if err := ValidateEncodedID(t.GetSubjectId()); err != nil {
 		return fmt.Errorf("invalid subject id: %w", err)
 	}
 
@@ -187,7 +187,7 @@ func tokenize(s string) ([]string, error) {
 	var current strings.Builder
 	inQuote := false
 
-	for i := 0; i < len(s); i++ {
+	for i := range len(s) {
 		ch := s[i]
 
 		if ch == '"' {
@@ -334,9 +334,9 @@ func parseSubjectTokens(tokens []string, original string) (subjectType, subjectI
 // FormatTuple formats a RelationTuple as a string.
 // IDs are stored URL-encoded, so this returns the encoded form.
 func FormatTuple(t *llv1.RelationTuple) string {
-	s := fmt.Sprintf("%s:%s#%s@%s:%s", t.ObjectType, t.ObjectId, t.Relation, t.SubjectType, t.SubjectId)
-	if t.SubjectRelation != "" {
-		s += "#" + t.SubjectRelation
+	s := fmt.Sprintf("%s:%s#%s@%s:%s", t.GetObjectType(), t.GetObjectId(), t.GetRelation(), t.GetSubjectType(), t.GetSubjectId())
+	if t.GetSubjectRelation() != "" {
+		s += "#" + t.GetSubjectRelation()
 	}
 	return s
 }
@@ -345,8 +345,8 @@ func FormatTuple(t *llv1.RelationTuple) string {
 // This is useful for human-readable display. IDs containing special
 // characters are wrapped in quotes.
 func FormatTupleDecoded(t *llv1.RelationTuple) string {
-	objectID := DecodeID(t.ObjectId)
-	subjectID := DecodeID(t.SubjectId)
+	objectID := DecodeID(t.GetObjectId())
+	subjectID := DecodeID(t.GetSubjectId())
 
 	// If decoded IDs contain special characters, wrap in quotes
 	if needsQuoting(objectID) {
@@ -356,9 +356,9 @@ func FormatTupleDecoded(t *llv1.RelationTuple) string {
 		subjectID = fmt.Sprintf("%q", subjectID)
 	}
 
-	s := fmt.Sprintf("%s:%s#%s@%s:%s", t.ObjectType, objectID, t.Relation, t.SubjectType, subjectID)
-	if t.SubjectRelation != "" {
-		s += "#" + t.SubjectRelation
+	s := fmt.Sprintf("%s:%s#%s@%s:%s", t.GetObjectType(), objectID, t.GetRelation(), t.GetSubjectType(), subjectID)
+	if t.GetSubjectRelation() != "" {
+		s += "#" + t.GetSubjectRelation()
 	}
 	return s
 }

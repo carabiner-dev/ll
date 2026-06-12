@@ -9,8 +9,9 @@ import (
 	"os"
 
 	"github.com/carabiner-dev/command"
-	"github.com/carabiner-dev/ll"
 	"github.com/spf13/cobra"
+
+	"github.com/carabiner-dev/ll"
 )
 
 var _ command.OptionsSet = (*CheckOptions)(nil)

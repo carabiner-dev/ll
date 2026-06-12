@@ -107,9 +107,9 @@ Examples:
 
 			fmt.Printf("granted role %q to %s:%s on %s:%s (assignment: %s)\n",
 				roleName,
-				assignment.SubjectType, assignment.SubjectId,
-				assignment.ObjectType, assignment.ObjectId,
-				assignment.Id,
+				assignment.GetSubjectType(), assignment.GetSubjectId(),
+				assignment.GetObjectType(), assignment.GetObjectId(),
+				assignment.GetId(),
 			)
 			return nil
 		},
@@ -249,11 +249,11 @@ Examples:
 
 			for _, a := range assignments {
 				fmt.Printf("%s: %s on %s:%s -> %s:%s (created: %s)\n",
-					a.Role,
-					a.Id,
-					a.ObjectType, a.ObjectId,
-					a.SubjectType, a.SubjectId,
-					a.CreatedAt,
+					a.GetRole(),
+					a.GetId(),
+					a.GetObjectType(), a.GetObjectId(),
+					a.GetSubjectType(), a.GetSubjectId(),
+					a.GetCreatedAt(),
 				)
 			}
 			return nil

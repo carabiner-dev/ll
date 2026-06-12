@@ -11,8 +11,9 @@ import (
 
 	"github.com/carabiner-dev/command"
 	"github.com/carabiner-dev/deadrop/pkg/client/credentials"
-	"github.com/carabiner-dev/ll"
 	"github.com/spf13/cobra"
+
+	"github.com/carabiner-dev/ll"
 )
 
 var _ command.OptionsSet = (*ServerOptions)(nil)

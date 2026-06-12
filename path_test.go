@@ -111,33 +111,33 @@ func TestPathTuples(t *testing.T) {
 	}
 
 	// First tuple: folder:sub#parent@folder:root
-	if tuples[0].ObjectType != "folder" || tuples[0].ObjectId != "sub" {
-		t.Errorf("tuple[0] object = %s:%s, want folder:sub", tuples[0].ObjectType, tuples[0].ObjectId)
+	if tuples[0].GetObjectType() != "folder" || tuples[0].GetObjectId() != "sub" {
+		t.Errorf("tuple[0] object = %s:%s, want folder:sub", tuples[0].GetObjectType(), tuples[0].GetObjectId())
 	}
-	if tuples[0].Relation != "parent" {
-		t.Errorf("tuple[0] relation = %s, want parent", tuples[0].Relation)
+	if tuples[0].GetRelation() != "parent" {
+		t.Errorf("tuple[0] relation = %s, want parent", tuples[0].GetRelation())
 	}
-	if tuples[0].SubjectType != "folder" || tuples[0].SubjectId != "root" {
-		t.Errorf("tuple[0] subject = %s:%s, want folder:root", tuples[0].SubjectType, tuples[0].SubjectId)
+	if tuples[0].GetSubjectType() != "folder" || tuples[0].GetSubjectId() != "root" {
+		t.Errorf("tuple[0] subject = %s:%s, want folder:root", tuples[0].GetSubjectType(), tuples[0].GetSubjectId())
 	}
 
 	// Second tuple: file:doc.txt#parent@folder:sub
-	if tuples[1].ObjectType != "file" || tuples[1].ObjectId != "doc.txt" {
-		t.Errorf("tuple[1] object = %s:%s, want file:doc.txt", tuples[1].ObjectType, tuples[1].ObjectId)
+	if tuples[1].GetObjectType() != "file" || tuples[1].GetObjectId() != "doc.txt" {
+		t.Errorf("tuple[1] object = %s:%s, want file:doc.txt", tuples[1].GetObjectType(), tuples[1].GetObjectId())
 	}
-	if tuples[1].Relation != "parent" {
-		t.Errorf("tuple[1] relation = %s, want parent", tuples[1].Relation)
+	if tuples[1].GetRelation() != "parent" {
+		t.Errorf("tuple[1] relation = %s, want parent", tuples[1].GetRelation())
 	}
-	if tuples[1].SubjectType != "folder" || tuples[1].SubjectId != "sub" {
-		t.Errorf("tuple[1] subject = %s:%s, want folder:sub", tuples[1].SubjectType, tuples[1].SubjectId)
+	if tuples[1].GetSubjectType() != "folder" || tuples[1].GetSubjectId() != "sub" {
+		t.Errorf("tuple[1] subject = %s:%s, want folder:sub", tuples[1].GetSubjectType(), tuples[1].GetSubjectId())
 	}
 }
 
 func TestPathString(t *testing.T) {
 	tests := []struct {
-		name  string
-		path  *Path
-		want  string
+		name string
+		path *Path
+		want string
 	}{
 		{
 			name: "simple path",

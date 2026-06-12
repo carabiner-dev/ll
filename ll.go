@@ -10,11 +10,12 @@ import (
 	"fmt"
 	"strings"
 
-	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
+
+	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 )
 
 // CallOption configures a single RPC call.
@@ -193,7 +194,7 @@ func (c *GRPCClient) Check(ctx context.Context, t *llv1.RelationTuple, opts ...C
 	if err != nil {
 		return false, err
 	}
-	return resp.Allowed, nil
+	return resp.GetAllowed(), nil
 }
 
 func (c *GRPCClient) Write(ctx context.Context, writes, deletes []*llv1.RelationTuple, opts ...CallOption) error {
@@ -219,7 +220,7 @@ func (c *GRPCClient) Read(ctx context.Context, filter *llv1.RelationTupleFilter,
 	if err != nil {
 		return nil, err
 	}
-	return resp.Tuples, nil
+	return resp.GetTuples(), nil
 }
 
 func (c *GRPCClient) Delete(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) error {
@@ -239,7 +240,7 @@ func (c *GRPCClient) ListObjects(ctx context.Context, subjectType, subjectID, pe
 	if err != nil {
 		return nil, err
 	}
-	return resp.ObjectIds, nil
+	return resp.GetObjectIds(), nil
 }
 
 func (c *GRPCClient) Expand(ctx context.Context, objectType, objectID, permission string, opts ...CallOption) (*llv1.ExpandTree, error) {
@@ -252,7 +253,7 @@ func (c *GRPCClient) Expand(ctx context.Context, objectType, objectID, permissio
 	if err != nil {
 		return nil, err
 	}
-	return resp.Tree, nil
+	return resp.GetTree(), nil
 }
 
 func (c *GRPCClient) WriteSchema(ctx context.Context, yamlData string, opts ...CallOption) error {
@@ -267,7 +268,7 @@ func (c *GRPCClient) ReadSchema(ctx context.Context, opts ...CallOption) (string
 	if err != nil {
 		return "", err
 	}
-	return resp.SchemaYaml, nil
+	return resp.GetSchemaYaml(), nil
 }
 
 func (c *GRPCClient) ReadSchemaSet(ctx context.Context, name string, opts ...CallOption) (string, error) {
@@ -276,7 +277,7 @@ func (c *GRPCClient) ReadSchemaSet(ctx context.Context, name string, opts ...Cal
 	if err != nil {
 		return "", err
 	}
-	return resp.SchemaYaml, nil
+	return resp.GetSchemaYaml(), nil
 }
 
 func (c *GRPCClient) ListSchemaSets(ctx context.Context, opts ...CallOption) ([]string, error) {
@@ -285,7 +286,7 @@ func (c *GRPCClient) ListSchemaSets(ctx context.Context, opts ...CallOption) ([]
 	if err != nil {
 		return nil, err
 	}
-	return resp.Names, nil
+	return resp.GetNames(), nil
 }
 
 func (c *GRPCClient) DeleteSchemaSet(ctx context.Context, name string, opts ...CallOption) error {
@@ -322,7 +323,7 @@ func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, 
 	if err != nil {
 		return nil, err
 	}
-	return resp.Assignment, nil
+	return resp.GetAssignment(), nil
 }
 
 func (c *GRPCClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) error {
@@ -349,7 +350,7 @@ func (c *GRPCClient) ListRoleAssignments(ctx context.Context, objectType, object
 	if err != nil {
 		return nil, err
 	}
-	return resp.Assignments, nil
+	return resp.GetAssignments(), nil
 }
 
 func (c *GRPCClient) ListRoles(ctx context.Context, opts ...CallOption) ([]string, error) {
@@ -358,7 +359,7 @@ func (c *GRPCClient) ListRoles(ctx context.Context, opts ...CallOption) ([]strin
 	if err != nil {
 		return nil, err
 	}
-	return resp.Roles, nil
+	return resp.GetRoles(), nil
 }
 
 func (c *GRPCClient) Close() error {

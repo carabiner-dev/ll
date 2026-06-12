@@ -6,8 +6,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/carabiner-dev/ll"
 	"github.com/spf13/cobra"
+
+	"github.com/carabiner-dev/ll"
 )
 
 // AddPath adds the path command group to the parent command.
@@ -90,8 +91,8 @@ Examples:
 			fmt.Printf("Ensured %d parent tuple(s):\n", len(tuples))
 			for _, t := range tuples {
 				fmt.Printf("  %s:%s#%s@%s:%s\n",
-					t.ObjectType, t.ObjectId, t.Relation,
-					t.SubjectType, t.SubjectId)
+					t.GetObjectType(), t.GetObjectId(), t.GetRelation(),
+					t.GetSubjectType(), t.GetSubjectId())
 			}
 
 			return nil
@@ -142,27 +143,27 @@ Examples:
 				return err
 			}
 
-			if resp.Complete {
-				fmt.Printf("Path is complete (%d tuple(s) found)\n", len(resp.Found))
+			if resp.GetComplete() {
+				fmt.Printf("Path is complete (%d tuple(s) found)\n", len(resp.GetFound()))
 			} else {
 				fmt.Printf("Path is incomplete\n")
 			}
 
-			if len(resp.Found) > 0 {
+			if len(resp.GetFound()) > 0 {
 				fmt.Println("\nFound:")
-				for _, t := range resp.Found {
+				for _, t := range resp.GetFound() {
 					fmt.Printf("  %s:%s#%s@%s:%s\n",
-						t.ObjectType, t.ObjectId, t.Relation,
-						t.SubjectType, t.SubjectId)
+						t.GetObjectType(), t.GetObjectId(), t.GetRelation(),
+						t.GetSubjectType(), t.GetSubjectId())
 				}
 			}
 
-			if len(resp.Missing) > 0 {
+			if len(resp.GetMissing()) > 0 {
 				fmt.Println("\nMissing:")
-				for _, t := range resp.Missing {
+				for _, t := range resp.GetMissing() {
 					fmt.Printf("  %s:%s#%s@%s:%s\n",
-						t.ObjectType, t.ObjectId, t.Relation,
-						t.SubjectType, t.SubjectId)
+						t.GetObjectType(), t.GetObjectId(), t.GetRelation(),
+						t.GetSubjectType(), t.GetSubjectId())
 				}
 			}
 

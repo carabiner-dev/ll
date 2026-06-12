@@ -6,15 +6,16 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 	"text/tabwriter"
-	"os"
 
 	"github.com/carabiner-dev/command"
-	"github.com/carabiner-dev/ll"
-	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
+
+	"github.com/carabiner-dev/ll"
+	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 )
 
 var _ command.OptionsSet = (*LsOptions)(nil)
@@ -208,9 +209,9 @@ Examples:
 			seen := make(map[string]bool)
 			var objectIDs []string
 			for _, t := range tuples {
-				if !seen[t.ObjectId] {
-					seen[t.ObjectId] = true
-					objectIDs = append(objectIDs, t.ObjectId)
+				if !seen[t.GetObjectId()] {
+					seen[t.GetObjectId()] = true
+					objectIDs = append(objectIDs, t.GetObjectId())
 				}
 			}
 
@@ -324,14 +325,14 @@ Examples:
 				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 				fmt.Fprintln(w, "RELATION\tSUBJECT")
 				for _, t := range tuples {
-					subject := fmt.Sprintf("%s:%s", t.SubjectType, t.SubjectId)
+					subject := fmt.Sprintf("%s:%s", t.GetSubjectType(), t.GetSubjectId())
 					if opts.Decode {
-						subject = fmt.Sprintf("%s:%s", t.SubjectType, ll.DecodeID(t.SubjectId))
+						subject = fmt.Sprintf("%s:%s", t.GetSubjectType(), ll.DecodeID(t.GetSubjectId()))
 					}
-					if t.SubjectRelation != "" {
-						subject += "#" + t.SubjectRelation
+					if t.GetSubjectRelation() != "" {
+						subject += "#" + t.GetSubjectRelation()
 					}
-					fmt.Fprintf(w, "%s\t%s\n", t.Relation, subject)
+					fmt.Fprintf(w, "%s\t%s\n", t.GetRelation(), subject)
 				}
 				w.Flush()
 				return nil
