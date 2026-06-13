@@ -19,13 +19,13 @@ jobs:
       stable: ${{ steps.versions.outputs.GO_MINOR_VERSION_STABLE }}
       previous: ${{ steps.versions.outputs.GO_MINOR_VERSION_PREVIOUS }}
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+    - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       with:
         persist-credentials: false
 
     - name: Determine Go versions
       id: versions
-      uses: carabiner-dev/actions/go/versions@486750c75e9c3900944193c0c2d7956a840acf2a # main
+      uses: carabiner-dev/actions/go/versions@94f29392187fe5082d1195a7d4cae3a7ddf09d9c # main
 
   test:
     needs: go-versions
@@ -40,12 +40,12 @@ jobs:
           - ${{ needs.go-versions.outputs.stable }}
 
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+    - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       with:
         persist-credentials: false
 
     - name: Set up Go
-      uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
+      uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
       with:
         go-version: ${{ matrix.go-version }}
         check-latest: true
