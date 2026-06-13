@@ -93,7 +93,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			assignment, err := c.GrantRole(
 				cmd.Context(),
@@ -151,7 +151,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			err = c.RevokeRole(
 				cmd.Context(),
@@ -230,7 +230,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			assignments, err := c.ListRoleAssignments(
 				cmd.Context(),
@@ -282,7 +282,7 @@ This shows the names of all roles that have been configured on the server.`,
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			roles, err := c.ListRoles(cmd.Context())
 			if err != nil {

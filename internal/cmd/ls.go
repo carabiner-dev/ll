@@ -18,6 +18,8 @@ import (
 	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 )
 
+const eofErrString = "EOF"
+
 var _ command.OptionsSet = (*LsOptions)(nil)
 
 // LsOptions contains the options for the ls command.
@@ -106,7 +108,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			objects, err := c.ListObjects(cmd.Context(), subjectType, subjectID, permission, objectType)
 			if err != nil {
@@ -158,7 +160,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			// No args: list object types from schema
 			if len(args) == 0 {
@@ -186,11 +188,11 @@ Examples:
 				}
 
 				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-				fmt.Fprintln(w, "TYPE\tDESCRIPTION")
+				fmt.Fprintln(w, "TYPE\tDESCRIPTION") //nolint:errcheck
 				for _, t := range filtered {
-					fmt.Fprintf(w, "%s\t%s\n", t.Name, t.Description)
+					fmt.Fprintf(w, "%s\t%s\n", t.Name, t.Description) //nolint:errcheck
 				}
-				w.Flush()
+				w.Flush() //nolint:errcheck,gosec
 				return nil
 			}
 
@@ -262,7 +264,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			// No args: list all permissions by type
 			if len(args) == 0 {
@@ -290,11 +292,11 @@ Examples:
 				}
 
 				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-				fmt.Fprintln(w, "TYPE\tPERMISSION")
+				fmt.Fprintln(w, "TYPE\tPERMISSION") //nolint:errcheck
 				for _, p := range filtered {
-					fmt.Fprintf(w, "%s\t%s\n", p.ObjectType, p.Permission)
+					fmt.Fprintf(w, "%s\t%s\n", p.ObjectType, p.Permission) //nolint:errcheck
 				}
-				w.Flush()
+				w.Flush() //nolint:errcheck,gosec
 				return nil
 			}
 
@@ -323,7 +325,7 @@ Examples:
 				}
 
 				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-				fmt.Fprintln(w, "RELATION\tSUBJECT")
+				fmt.Fprintln(w, "RELATION\tSUBJECT") //nolint:errcheck
 				for _, t := range tuples {
 					subject := fmt.Sprintf("%s:%s", t.GetSubjectType(), t.GetSubjectId())
 					if opts.Decode {
@@ -332,9 +334,9 @@ Examples:
 					if t.GetSubjectRelation() != "" {
 						subject += "#" + t.GetSubjectRelation()
 					}
-					fmt.Fprintf(w, "%s\t%s\n", t.GetRelation(), subject)
+					fmt.Fprintf(w, "%s\t%s\n", t.GetRelation(), subject) //nolint:errcheck
 				}
-				w.Flush()
+				w.Flush() //nolint:errcheck,gosec
 				return nil
 			}
 
@@ -403,7 +405,7 @@ func parseObjectTypes(schemaYAML string) ([]typeInfo, error) {
 	for {
 		var doc schemaDoc
 		if err := decoder.Decode(&doc); err != nil {
-			if err.Error() == "EOF" {
+			if err.Error() == eofErrString {
 				break
 			}
 			return nil, err
@@ -430,7 +432,7 @@ func parseAllPermissions(schemaYAML string) ([]typePermission, error) {
 	for {
 		var doc schemaDoc
 		if err := decoder.Decode(&doc); err != nil {
-			if err.Error() == "EOF" {
+			if err.Error() == eofErrString {
 				break
 			}
 			return nil, err
@@ -452,14 +454,14 @@ func parseAllPermissions(schemaYAML string) ([]typePermission, error) {
 }
 
 // parseTypePermissions extracts permissions for a specific type from the schema.
-func parseTypePermissions(schemaYAML string, objectType string) ([]string, error) {
+func parseTypePermissions(schemaYAML, objectType string) ([]string, error) {
 	var perms []string
 
 	decoder := yaml.NewDecoder(strings.NewReader(schemaYAML))
 	for {
 		var doc schemaDoc
 		if err := decoder.Decode(&doc); err != nil {
-			if err.Error() == "EOF" {
+			if err.Error() == eofErrString {
 				break
 			}
 			return nil, err

@@ -73,7 +73,7 @@ func AddApply(parent *cobra.Command) {
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			if err := c.WriteSchema(cmd.Context(), string(data)); err != nil {
 				return err
@@ -101,58 +101,65 @@ func AddGet(parent *cobra.Command) {
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// No args and no --all flag: show help
-			if len(args) == 0 && !all {
-				return cmd.Help()
-			}
-
-			c, err := opts.NewClient(cmd.Context())
-			if err != nil {
-				return err
-			}
-			defer c.Close()
-
-			// --all flag: get all schemas concatenated
-			if all {
-				yamlStr, err := c.ReadSchema(cmd.Context())
-				if err != nil {
-					return err
-				}
-				fmt.Print(yamlStr)
-				return nil
-			}
-
-			// "sets" lists all schema set names
-			if len(args) > 0 && args[0] == "sets" {
-				names, err := c.ListSchemaSets(cmd.Context())
-				if err != nil {
-					return err
-				}
-				for _, name := range names {
-					fmt.Println(name)
-				}
-				if len(names) == 0 {
-					fmt.Println("no schema sets found")
-				}
-				return nil
-			}
-
-			// "set <name>" gets a specific schema set
-			if len(args) >= 2 && args[0] == "set" {
-				yamlStr, err := c.ReadSchemaSet(cmd.Context(), args[1])
-				if err != nil {
-					return err
-				}
-				fmt.Print(yamlStr)
-				return nil
-			}
-
-			return fmt.Errorf("invalid arguments: use 'get --all', 'get sets', or 'get set <name>'")
+			return runSchemaGet(cmd, args, &opts, all)
 		},
 	}
 	cmd.Flags().BoolVarP(&all, "all", "a", false, "Get all schema sets concatenated")
 	opts.AddFlags(cmd)
 	parent.AddCommand(cmd)
+}
+
+// runSchemaGet implements the shared logic for the "get" and "schema get"
+// commands: reading the full schema, listing schema set names, or fetching a
+// specific schema set.
+func runSchemaGet(cmd *cobra.Command, args []string, opts *SchemaOptions, all bool) error {
+	// No args and no --all flag: show help
+	if len(args) == 0 && !all {
+		return cmd.Help()
+	}
+
+	c, err := opts.NewClient(cmd.Context())
+	if err != nil {
+		return err
+	}
+	defer c.Close() //nolint:errcheck
+
+	// --all flag: get all schemas concatenated
+	if all {
+		yamlStr, err := c.ReadSchema(cmd.Context())
+		if err != nil {
+			return err
+		}
+		fmt.Print(yamlStr)
+		return nil
+	}
+
+	// "sets" lists all schema set names
+	if len(args) > 0 && args[0] == "sets" {
+		names, err := c.ListSchemaSets(cmd.Context())
+		if err != nil {
+			return err
+		}
+		for _, name := range names {
+			fmt.Println(name)
+		}
+		if len(names) == 0 {
+			fmt.Println("no schema sets found")
+		}
+		return nil
+	}
+
+	// "set <name>" gets a specific schema set
+	if len(args) >= 2 && args[0] == "set" {
+		yamlStr, err := c.ReadSchemaSet(cmd.Context(), args[1])
+		if err != nil {
+			return err
+		}
+		fmt.Print(yamlStr)
+		return nil
+	}
+
+	return fmt.Errorf("invalid arguments: use 'get --all', 'get sets', or 'get set <name>'")
 }
 
 func addSchemaApply(parent *cobra.Command) {
@@ -194,7 +201,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			if err := c.WriteSchema(cmd.Context(), string(data)); err != nil {
 				return err
@@ -231,53 +238,7 @@ Examples:
 			return opts.Validate()
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// No args and no --all flag: show help
-			if len(args) == 0 && !all {
-				return cmd.Help()
-			}
-
-			c, err := opts.NewClient(cmd.Context())
-			if err != nil {
-				return err
-			}
-			defer c.Close()
-
-			// --all flag: get all schemas concatenated
-			if all {
-				yamlStr, err := c.ReadSchema(cmd.Context())
-				if err != nil {
-					return err
-				}
-				fmt.Print(yamlStr)
-				return nil
-			}
-
-			// "sets" lists all schema set names
-			if len(args) > 0 && args[0] == "sets" {
-				names, err := c.ListSchemaSets(cmd.Context())
-				if err != nil {
-					return err
-				}
-				for _, name := range names {
-					fmt.Println(name)
-				}
-				if len(names) == 0 {
-					fmt.Println("no schema sets found")
-				}
-				return nil
-			}
-
-			// "set <name>" gets a specific schema set
-			if len(args) >= 2 && args[0] == "set" {
-				yamlStr, err := c.ReadSchemaSet(cmd.Context(), args[1])
-				if err != nil {
-					return err
-				}
-				fmt.Print(yamlStr)
-				return nil
-			}
-
-			return fmt.Errorf("invalid arguments: use 'get --all', 'get sets', or 'get set <name>'")
+			return runSchemaGet(cmd, args, &opts, all)
 		},
 	}
 	cmd.Flags().BoolVarP(&all, "all", "a", false, "Get all schema sets concatenated")
@@ -306,7 +267,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			if err := c.DeleteSchemaSet(cmd.Context(), args[0]); err != nil {
 				return err

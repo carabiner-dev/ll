@@ -187,7 +187,6 @@ func NewPath(relation string, components ...PathComponent) *Path {
 // PathBuilder provides a fluent API for building paths.
 type PathBuilder struct {
 	components []PathComponent
-	relation   string
 }
 
 // BuildPath starts building a new path with the root object.

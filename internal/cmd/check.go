@@ -67,7 +67,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			allowed, err := c.Check(cmd.Context(), t)
 			if err != nil {

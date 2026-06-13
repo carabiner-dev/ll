@@ -72,7 +72,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			if err := c.Write(cmd.Context(), tuples, nil); err != nil {
 				return err

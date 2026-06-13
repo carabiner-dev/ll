@@ -106,7 +106,7 @@ func (c *RESTClient) doRequest(ctx context.Context, method, path string, reqBody
 	if err != nil {
 		return fmt.Errorf("executing request: %w", err)
 	}
-	defer func() { _ = resp.Body.Close() }()
+	defer resp.Body.Close() //nolint:errcheck
 
 	respData, err := io.ReadAll(resp.Body)
 	if err != nil {

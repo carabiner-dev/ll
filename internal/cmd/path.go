@@ -80,7 +80,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			if err := c.EnsurePath(cmd.Context(), pathStr); err != nil {
 				return err
@@ -136,7 +136,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			resp, err := c.CheckPath(cmd.Context(), pathStr)
 			if err != nil {

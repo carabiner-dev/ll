@@ -70,7 +70,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			filter := &llv1.RelationTupleFilter{
 				ObjectType: opts.ObjectType,

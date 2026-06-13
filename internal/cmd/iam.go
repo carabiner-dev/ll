@@ -15,6 +15,12 @@ import (
 	llv1 "github.com/carabiner-dev/ll/api/carabiner/ll/v1"
 )
 
+const (
+	permissionTupleRead  = "tuple.read"
+	permissionTupleWrite = "tuple.write"
+	iamObjectRefGlobal   = "global"
+)
+
 var _ command.OptionsSet = (*IAMOptions)(nil)
 
 // IAMOptions contains the options for IAM commands.
@@ -74,15 +80,6 @@ func parseObjectRef(ref string) (objectType, objectID string, err error) {
 	return ref[:idx], ref[idx+1:], nil
 }
 
-// parseSubjectRef parses a subject reference like "user:alice" into type and ID.
-func parseSubjectRef(ref string) (subjectType, subjectID string, err error) {
-	idx := strings.Index(ref, ":")
-	if idx < 0 {
-		return "", "", fmt.Errorf("invalid subject reference %q: expected type:id format", ref)
-	}
-	return ref[:idx], ref[idx+1:], nil
-}
-
 func addIAMGrant(parent *cobra.Command) {
 	opts := defaultIAMOptions
 
@@ -115,7 +112,7 @@ Examples:
 			objectRef := args[1]
 
 			// Validate permission
-			if permission != "tuple.read" && permission != "tuple.write" {
+			if permission != permissionTupleRead && permission != permissionTupleWrite {
 				return fmt.Errorf("invalid permission %q: must be tuple.read or tuple.write", permission)
 			}
 
@@ -128,16 +125,16 @@ Examples:
 			// Determine the relation based on permission
 			var relation string
 			switch permission {
-			case "tuple.read":
+			case permissionTupleRead:
 				relation = "reader"
-			case "tuple.write":
+			case permissionTupleWrite:
 				relation = "writer"
 			}
 
 			// Determine the IAM object ID
 			var iamObjectID string
-			if objectRef == "global" {
-				iamObjectID = "global"
+			if objectRef == iamObjectRefGlobal {
+				iamObjectID = iamObjectRefGlobal
 			} else {
 				objectType, objectID, err := parseObjectRef(objectRef)
 				if err != nil {
@@ -153,7 +150,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			// Create the IAM tuple
 			tuple, err := ll.ParseTuple(fmt.Sprintf("_lamplight.tuple:%s#%s@_lamplight.user:%s",
@@ -166,7 +163,7 @@ Examples:
 				return fmt.Errorf("granting permission: %w", err)
 			}
 
-			if objectRef == "global" {
+			if objectRef == iamObjectRefGlobal {
 				fmt.Printf("Granted %s on all objects to %s\n", permission, subjectFlag)
 			} else {
 				fmt.Printf("Granted %s on %s to %s\n", permission, objectRef, subjectFlag)
@@ -176,7 +173,7 @@ Examples:
 	}
 
 	cmd.Flags().String("to", "", "Subject to grant permission to (required)")
-	cmd.MarkFlagRequired("to") //nolint:errcheck
+	cmd.MarkFlagRequired("to") //nolint:errcheck,gosec
 	opts.AddFlags(cmd)
 	parent.AddCommand(cmd)
 }
@@ -204,7 +201,7 @@ Examples:
 			objectRef := args[1]
 
 			// Validate permission
-			if permission != "tuple.read" && permission != "tuple.write" {
+			if permission != permissionTupleRead && permission != permissionTupleWrite {
 				return fmt.Errorf("invalid permission %q: must be tuple.read or tuple.write", permission)
 			}
 
@@ -217,16 +214,16 @@ Examples:
 			// Determine the relation based on permission
 			var relation string
 			switch permission {
-			case "tuple.read":
+			case permissionTupleRead:
 				relation = "reader"
-			case "tuple.write":
+			case permissionTupleWrite:
 				relation = "writer"
 			}
 
 			// Determine the IAM object ID
 			var iamObjectID string
-			if objectRef == "global" {
-				iamObjectID = "global"
+			if objectRef == iamObjectRefGlobal {
+				iamObjectID = iamObjectRefGlobal
 			} else {
 				objectType, objectID, err := parseObjectRef(objectRef)
 				if err != nil {
@@ -242,7 +239,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			// Create the IAM tuple to delete
 			tuple, err := ll.ParseTuple(fmt.Sprintf("_lamplight.tuple:%s#%s@_lamplight.user:%s",
@@ -255,7 +252,7 @@ Examples:
 				return fmt.Errorf("revoking permission: %w", err)
 			}
 
-			if objectRef == "global" {
+			if objectRef == iamObjectRefGlobal {
 				fmt.Printf("Revoked %s on all objects from %s\n", permission, subjectFlag)
 			} else {
 				fmt.Printf("Revoked %s on %s from %s\n", permission, objectRef, subjectFlag)
@@ -265,7 +262,7 @@ Examples:
 	}
 
 	cmd.Flags().String("from", "", "Subject to revoke permission from (required)")
-	cmd.MarkFlagRequired("from") //nolint:errcheck
+	cmd.MarkFlagRequired("from") //nolint:errcheck,gosec
 	opts.AddFlags(cmd)
 	parent.AddCommand(cmd)
 }
@@ -293,7 +290,7 @@ Examples:
 			objectRef := args[1]
 
 			// Validate permission
-			if permission != "tuple.read" && permission != "tuple.write" {
+			if permission != permissionTupleRead && permission != permissionTupleWrite {
 				return fmt.Errorf("invalid permission %q: must be tuple.read or tuple.write", permission)
 			}
 
@@ -305,8 +302,8 @@ Examples:
 
 			// Determine the IAM object ID
 			var iamObjectID string
-			if objectRef == "global" {
-				iamObjectID = "global"
+			if objectRef == iamObjectRefGlobal {
+				iamObjectID = iamObjectRefGlobal
 			} else {
 				objectType, objectID, err := parseObjectRef(objectRef)
 				if err != nil {
@@ -322,7 +319,7 @@ Examples:
 			if err != nil {
 				return err
 			}
-			defer c.Close()
+			defer c.Close() //nolint:errcheck
 
 			// Create the check tuple
 			tuple, err := ll.ParseTuple(fmt.Sprintf("_lamplight.tuple:%s#%s@_lamplight.user:%s",
@@ -346,7 +343,7 @@ Examples:
 	}
 
 	cmd.Flags().String("subject", "", "Subject to check (required)")
-	cmd.MarkFlagRequired("subject") //nolint:errcheck
+	cmd.MarkFlagRequired("subject") //nolint:errcheck,gosec
 	opts.AddFlags(cmd)
 	parent.AddCommand(cmd)
 }

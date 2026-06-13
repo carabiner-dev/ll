@@ -7,6 +7,14 @@ import (
 	"testing"
 )
 
+const (
+	relParent  = "parent"
+	typeFolder = "folder"
+	typeFile   = "file"
+	idRoot     = "root"
+	idDocTxt   = "doc.txt"
+)
+
 func TestParsePath(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -19,13 +27,13 @@ func TestParsePath(t *testing.T) {
 			name:      "simple two-level path",
 			input:     "folder:root>file:doc.txt#parent",
 			wantComps: 2,
-			wantRel:   "parent",
+			wantRel:   relParent,
 		},
 		{
 			name:      "three-level path",
 			input:     "folder:root>folder:sub>file:doc.txt#parent",
 			wantComps: 3,
-			wantRel:   "parent",
+			wantRel:   relParent,
 		},
 		{
 			name:      "org and repo",
@@ -37,7 +45,7 @@ func TestParsePath(t *testing.T) {
 			name:      "with encoded characters",
 			input:     "folder:my%3Efolder>file:doc%23test.txt#parent",
 			wantComps: 2,
-			wantRel:   "parent",
+			wantRel:   relParent,
 		},
 		{
 			name:    "empty string",
@@ -111,24 +119,24 @@ func TestPathTuples(t *testing.T) {
 	}
 
 	// First tuple: folder:sub#parent@folder:root
-	if tuples[0].GetObjectType() != "folder" || tuples[0].GetObjectId() != "sub" {
+	if tuples[0].GetObjectType() != typeFolder || tuples[0].GetObjectId() != "sub" {
 		t.Errorf("tuple[0] object = %s:%s, want folder:sub", tuples[0].GetObjectType(), tuples[0].GetObjectId())
 	}
-	if tuples[0].GetRelation() != "parent" {
+	if tuples[0].GetRelation() != relParent {
 		t.Errorf("tuple[0] relation = %s, want parent", tuples[0].GetRelation())
 	}
-	if tuples[0].GetSubjectType() != "folder" || tuples[0].GetSubjectId() != "root" {
+	if tuples[0].GetSubjectType() != typeFolder || tuples[0].GetSubjectId() != idRoot {
 		t.Errorf("tuple[0] subject = %s:%s, want folder:root", tuples[0].GetSubjectType(), tuples[0].GetSubjectId())
 	}
 
 	// Second tuple: file:doc.txt#parent@folder:sub
-	if tuples[1].GetObjectType() != "file" || tuples[1].GetObjectId() != "doc.txt" {
+	if tuples[1].GetObjectType() != typeFile || tuples[1].GetObjectId() != idDocTxt {
 		t.Errorf("tuple[1] object = %s:%s, want file:doc.txt", tuples[1].GetObjectType(), tuples[1].GetObjectId())
 	}
-	if tuples[1].GetRelation() != "parent" {
+	if tuples[1].GetRelation() != relParent {
 		t.Errorf("tuple[1] relation = %s, want parent", tuples[1].GetRelation())
 	}
-	if tuples[1].GetSubjectType() != "folder" || tuples[1].GetSubjectId() != "sub" {
+	if tuples[1].GetSubjectType() != typeFolder || tuples[1].GetSubjectId() != "sub" {
 		t.Errorf("tuple[1] subject = %s:%s, want folder:sub", tuples[1].GetSubjectType(), tuples[1].GetSubjectId())
 	}
 }
@@ -143,10 +151,10 @@ func TestPathString(t *testing.T) {
 			name: "simple path",
 			path: &Path{
 				Components: []PathComponent{
-					{Type: "folder", ID: "root"},
-					{Type: "file", ID: "doc.txt"},
+					{Type: typeFolder, ID: idRoot},
+					{Type: "file", ID: idDocTxt},
 				},
-				Relation: "parent",
+				Relation: relParent,
 			},
 			want: "folder:root>file:doc.txt#parent",
 		},
@@ -157,7 +165,7 @@ func TestPathString(t *testing.T) {
 					{Type: "folder", ID: "my>folder"},
 					{Type: "file", ID: "doc#test.txt"},
 				},
-				Relation: "parent",
+				Relation: relParent,
 			},
 			want: "folder:my%3Efolder>file:doc%23test.txt#parent",
 		},
@@ -207,15 +215,18 @@ func TestBuildPath(t *testing.T) {
 }
 
 func TestPathLeafAndRoot(t *testing.T) {
-	path, _ := ParsePath("folder:root>folder:sub>file:doc.txt#parent")
+	path, err := ParsePath("folder:root>folder:sub>file:doc.txt#parent")
+	if err != nil {
+		t.Fatalf("ParsePath failed: %v", err)
+	}
 
 	root := path.Root()
-	if root.Type != "folder" || root.ID != "root" {
+	if root.Type != typeFolder || root.ID != idRoot {
 		t.Errorf("Root() = %s:%s, want folder:root", root.Type, root.ID)
 	}
 
 	leaf := path.Leaf()
-	if leaf.Type != "file" || leaf.ID != "doc.txt" {
+	if leaf.Type != typeFile || leaf.ID != idDocTxt {
 		t.Errorf("Leaf() = %s:%s, want file:doc.txt", leaf.Type, leaf.ID)
 	}
 }
