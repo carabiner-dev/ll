@@ -6,6 +6,8 @@ package cmd
 import (
 	"context"
 	"errors"
+	"fmt"
+	"net/url"
 	"os"
 	"strings"
 
@@ -19,12 +21,9 @@ import (
 
 var _ command.OptionsSet = (*ServerOptions)(nil)
 
-// LamplightAudience is the audience claim for Lamplight service tokens.
-const LamplightAudience = "lamplight"
-
 var defaultServerOptions = ServerOptions{
 	Server:      "localhost:8080",
-	AuthOptions: *credentials.NewServerOptions(credentials.WithPrefix("auth"), credentials.WithAudience(LamplightAudience)),
+	AuthOptions: *credentials.NewServerOptions(credentials.WithPrefix("auth")),
 }
 
 // ServerOptions contains the common server connection options.
@@ -114,6 +113,56 @@ func (r *renewingIdentitySource) Token(ctx context.Context) (string, error) {
 	return token, nil
 }
 
+// audience derives the token audience from the Lamplight server address: the
+// scheme://host origin the token will be presented to, e.g.
+// "https://lamplight.dev.carabiner.dev". The platform's exchangers match a
+// service's audience against its full URL, so the audience must name exactly
+// the server this client targets, and it follows --server across environments
+// instead of being pinned to one of them.
+//
+// --server doubles as a gRPC dial target, so it may be a bare host[:port] as
+// well as a URL. A missing scheme is filled in the way both clients choose one:
+// http for localhost or --insecure, https otherwise.
+func (so *ServerOptions) audience() (string, error) {
+	addr := strings.TrimSpace(so.Server)
+	if addr == "" {
+		return "", errors.New("server address not set")
+	}
+
+	if !strings.Contains(addr, "://") {
+		scheme := "https"
+		if so.Insecure || isLocalhostAddr(addr) {
+			scheme = "http"
+		}
+		addr = scheme + "://" + addr
+	}
+
+	u, err := url.Parse(addr)
+	if err != nil {
+		return "", fmt.Errorf("parsing server address %q: %w", so.Server, err)
+	}
+	if u.Scheme == "" || u.Host == "" {
+		return "", fmt.Errorf("server address %q must be a host[:port] or a scheme://host URL", so.Server)
+	}
+	return u.Scheme + "://" + u.Host, nil
+}
+
+// isLocalhostAddr mirrors the ll package's unexported localhost check, which
+// decides whether its clients dial in the clear.
+func isLocalhostAddr(addr string) bool {
+	host := addr
+	if idx := strings.LastIndex(addr, ":"); idx != -1 {
+		if strings.HasPrefix(addr, "[") {
+			if bracketIdx := strings.Index(addr, "]"); bracketIdx != -1 {
+				host = addr[1:bracketIdx]
+			}
+		} else {
+			host = addr[:idx]
+		}
+	}
+	return host == "localhost" || host == "127.0.0.1" || host == "::1" || host == "[::1]"
+}
+
 // tokenSource builds the service token source for --auth-server, exchanging the
 // identity cached for that same server.
 //
@@ -127,8 +176,10 @@ func (so *ServerOptions) tokenSource() (credentials.TokenSource, error) {
 	if so.AuthOptions.Server == "" {
 		return nil, errors.New("auth server not set")
 	}
-	if len(so.AuthOptions.Audience) == 0 {
-		return nil, errors.New("at least one audience is required")
+
+	audience, err := so.audience()
+	if err != nil {
+		return nil, err
 	}
 
 	// The env var keeps taking precedence, as with deadrop's default source.
@@ -145,7 +196,7 @@ func (so *ServerOptions) tokenSource() (credentials.TokenSource, error) {
 	}
 
 	return credentials.NewServiceTokenSource(
-		&exchange.ExchangeRequest{Audience: so.AuthOptions.Audience},
+		&exchange.ExchangeRequest{Audience: []string{audience}},
 		so.AuthOptions.Server,
 		opts...,
 	)
