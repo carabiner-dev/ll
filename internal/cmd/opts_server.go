@@ -11,6 +11,7 @@ import (
 
 	"github.com/carabiner-dev/command"
 	"github.com/carabiner-dev/deadrop/pkg/client/credentials"
+	"github.com/carabiner-dev/deadrop/pkg/client/exchange"
 	"github.com/spf13/cobra"
 
 	"github.com/carabiner-dev/ll"
@@ -86,7 +87,7 @@ func (so *ServerOptions) GetToken(ctx context.Context) (string, error) {
 	}
 
 	// No explicit token - use credentials manager via deadrop options
-	source, err := so.AuthOptions.TokenSource(ctx)
+	source, err := so.tokenSource()
 	if err != nil {
 		return "", err
 	}
@@ -97,6 +98,57 @@ func (so *ServerOptions) GetToken(ctx context.Context) (string, error) {
 	}
 
 	return token, nil
+}
+
+// renewingIdentitySource loads the identity token cached for one specific auth
+// server, renewing it when it has expired.
+type renewingIdentitySource struct {
+	serverURL string
+}
+
+func (r *renewingIdentitySource) Token(ctx context.Context) (string, error) {
+	token, _, _, err := credentials.LoadIdentityWithRenewal(ctx, r.serverURL)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+
+// tokenSource builds the service token source for --auth-server, exchanging the
+// identity cached for that same server.
+//
+// This is deliberately not credentials.ServerOptions.TokenSource: that leaves
+// the identity to deadrop's DefaultTokenSource, which reads whichever session
+// is marked default rather than the one for --auth-server. Pointing
+// --auth-server at a non-default environment would then present the default
+// environment's identity to it, and the exchange fails with "no validator found
+// for issuer". Sessions are already stored per server, so bind to that one.
+func (so *ServerOptions) tokenSource() (credentials.TokenSource, error) {
+	if so.AuthOptions.Server == "" {
+		return nil, errors.New("auth server not set")
+	}
+	if len(so.AuthOptions.Audience) == 0 {
+		return nil, errors.New("at least one audience is required")
+	}
+
+	// The env var keeps taking precedence, as with deadrop's default source.
+	identity := credentials.NewChainedTokenSource(
+		credentials.DefaultEnvTokenSource(),
+		&renewingIdentitySource{serverURL: so.AuthOptions.Server},
+	)
+
+	opts := []credentials.ServiceTokenSourceOption{
+		credentials.WithServiceIdentitySource(identity),
+	}
+	if !so.AuthOptions.DisablePersistence {
+		opts = append(opts, credentials.WithServicePersistence())
+	}
+
+	return credentials.NewServiceTokenSource(
+		&exchange.ExchangeRequest{Audience: so.AuthOptions.Audience},
+		so.AuthOptions.Server,
+		opts...,
+	)
 }
 
 // NewClient creates a new Lamplight client based on the configured options.
