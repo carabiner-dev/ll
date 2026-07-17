@@ -5,6 +5,11 @@ package cmd
 
 import "testing"
 
+const (
+	devURL  = "https://lamplight.dev.carabiner.dev"
+	prodURL = "https://lamplight.carabiner.dev"
+)
+
 // TestAudienceFromServer pins the audience the exchange requests: the full
 // service URL of --server, matching what the platform's exchangers allowlist
 // (e.g. "https://lamplight.dev.carabiner.dev"). Regression guard for the bare
@@ -17,11 +22,11 @@ func TestAudienceFromServer(t *testing.T) {
 		want     string
 		mustErr  bool
 	}{
-		{name: "dev url", server: "https://lamplight.dev.carabiner.dev", want: "https://lamplight.dev.carabiner.dev"},
-		{name: "prod url", server: "https://lamplight.carabiner.dev", want: "https://lamplight.carabiner.dev"},
-		{name: "path and query are dropped", server: "https://lamplight.carabiner.dev/v1/x?a=b", want: "https://lamplight.carabiner.dev"},
-		{name: "trailing slash", server: "https://lamplight.carabiner.dev/", want: "https://lamplight.carabiner.dev"},
-		{name: "surrounding space", server: "  https://lamplight.carabiner.dev  ", want: "https://lamplight.carabiner.dev"},
+		{name: "dev url", server: devURL, want: devURL},
+		{name: "prod url", server: prodURL, want: prodURL},
+		{name: "path and query are dropped", server: prodURL + "/v1/x?a=b", want: prodURL},
+		{name: "trailing slash", server: prodURL + "/", want: prodURL},
+		{name: "surrounding space", server: "  " + prodURL + "  ", want: prodURL},
 		{name: "port is kept", server: "https://lamplight.carabiner.dev:8443", want: "https://lamplight.carabiner.dev:8443"},
 
 		// --server doubles as a gRPC dial target, so bare host:port is valid.
