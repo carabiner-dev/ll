@@ -141,6 +141,28 @@ func (c *RESTClient) Check(ctx context.Context, t *llv1.RelationTuple, opts ...C
 	return resp.GetAllowed(), nil
 }
 
+func (c *RESTClient) BatchCheck(ctx context.Context, tuples []*llv1.RelationTuple, opts ...CallOption) ([]bool, error) {
+	for i, t := range tuples {
+		if err := ValidateTuple(t); err != nil {
+			return nil, fmt.Errorf("invalid tuple %d: %w", i, err)
+		}
+	}
+	req := &llv1.BatchCheckRequest{Tuples: tuples}
+	resp := &llv1.BatchCheckResponse{}
+	if err := c.doRequest(ctx, "POST", "/v1/batch-check", req, resp, opts...); err != nil {
+		return nil, err
+	}
+	results := resp.GetResults()
+	if len(results) != len(tuples) {
+		return nil, fmt.Errorf("batch check returned %d results for %d tuples", len(results), len(tuples))
+	}
+	out := make([]bool, len(results))
+	for i, r := range results {
+		out[i] = r.GetAllowed()
+	}
+	return out, nil
+}
+
 func (c *RESTClient) Write(ctx context.Context, writes, deletes []*llv1.RelationTuple, opts ...CallOption) error {
 	for i, t := range writes {
 		if err := ValidateTuple(t); err != nil {

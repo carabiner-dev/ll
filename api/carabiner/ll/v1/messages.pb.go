@@ -70,7 +70,7 @@ func (x HealthCheckResponse_ServingStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use HealthCheckResponse_ServingStatus.Descriptor instead.
 func (HealthCheckResponse_ServingStatus) EnumDescriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{26, 0}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{28, 0}
 }
 
 // CheckRequest is the request for the Check RPC.
@@ -179,6 +179,106 @@ func (x *CheckResponse) GetCheckedAt() *ConsistencyToken {
 	return nil
 }
 
+// BatchCheckRequest is the request for the BatchCheck RPC.
+type BatchCheckRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The checks to evaluate, each a (object, relation, subject) tuple.
+	Tuples        []*RelationTuple `protobuf:"bytes,1,rep,name=tuples,proto3" json:"tuples,omitempty"`
+	Consistency   *Consistency     `protobuf:"bytes,2,opt,name=consistency,proto3" json:"consistency,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchCheckRequest) Reset() {
+	*x = BatchCheckRequest{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchCheckRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchCheckRequest) ProtoMessage() {}
+
+func (x *BatchCheckRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchCheckRequest.ProtoReflect.Descriptor instead.
+func (*BatchCheckRequest) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *BatchCheckRequest) GetTuples() []*RelationTuple {
+	if x != nil {
+		return x.Tuples
+	}
+	return nil
+}
+
+func (x *BatchCheckRequest) GetConsistency() *Consistency {
+	if x != nil {
+		return x.Consistency
+	}
+	return nil
+}
+
+// BatchCheckResponse is the response for the BatchCheck RPC.
+type BatchCheckResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// One result per request tuple, in request order.
+	Results       []*CheckResponse `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BatchCheckResponse) Reset() {
+	*x = BatchCheckResponse{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BatchCheckResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BatchCheckResponse) ProtoMessage() {}
+
+func (x *BatchCheckResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BatchCheckResponse.ProtoReflect.Descriptor instead.
+func (*BatchCheckResponse) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *BatchCheckResponse) GetResults() []*CheckResponse {
+	if x != nil {
+		return x.Results
+	}
+	return nil
+}
+
 // WriteRequest is the request for the Write RPC.
 type WriteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -190,7 +290,7 @@ type WriteRequest struct {
 
 func (x *WriteRequest) Reset() {
 	*x = WriteRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[2]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -202,7 +302,7 @@ func (x *WriteRequest) String() string {
 func (*WriteRequest) ProtoMessage() {}
 
 func (x *WriteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[2]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -215,7 +315,7 @@ func (x *WriteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteRequest.ProtoReflect.Descriptor instead.
 func (*WriteRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{2}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *WriteRequest) GetWrites() []*RelationTuple {
@@ -242,7 +342,7 @@ type WriteResponse struct {
 
 func (x *WriteResponse) Reset() {
 	*x = WriteResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[3]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -254,7 +354,7 @@ func (x *WriteResponse) String() string {
 func (*WriteResponse) ProtoMessage() {}
 
 func (x *WriteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[3]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -267,7 +367,7 @@ func (x *WriteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteResponse.ProtoReflect.Descriptor instead.
 func (*WriteResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{3}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *WriteResponse) GetWrittenAt() *ConsistencyToken {
@@ -290,7 +390,7 @@ type ReadRequest struct {
 
 func (x *ReadRequest) Reset() {
 	*x = ReadRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[4]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -302,7 +402,7 @@ func (x *ReadRequest) String() string {
 func (*ReadRequest) ProtoMessage() {}
 
 func (x *ReadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[4]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -315,7 +415,7 @@ func (x *ReadRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadRequest.ProtoReflect.Descriptor instead.
 func (*ReadRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{4}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ReadRequest) GetFilter() *RelationTupleFilter {
@@ -357,7 +457,7 @@ type ReadResponse struct {
 
 func (x *ReadResponse) Reset() {
 	*x = ReadResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[5]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -369,7 +469,7 @@ func (x *ReadResponse) String() string {
 func (*ReadResponse) ProtoMessage() {}
 
 func (x *ReadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[5]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -382,7 +482,7 @@ func (x *ReadResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadResponse.ProtoReflect.Descriptor instead.
 func (*ReadResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{5}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ReadResponse) GetTuples() []*RelationTuple {
@@ -409,7 +509,7 @@ type DeleteRequest struct {
 
 func (x *DeleteRequest) Reset() {
 	*x = DeleteRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[6]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -421,7 +521,7 @@ func (x *DeleteRequest) String() string {
 func (*DeleteRequest) ProtoMessage() {}
 
 func (x *DeleteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[6]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -434,7 +534,7 @@ func (x *DeleteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteRequest.ProtoReflect.Descriptor instead.
 func (*DeleteRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{6}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteRequest) GetFilter() *RelationTupleFilter {
@@ -454,7 +554,7 @@ type DeleteResponse struct {
 
 func (x *DeleteResponse) Reset() {
 	*x = DeleteResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[7]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -466,7 +566,7 @@ func (x *DeleteResponse) String() string {
 func (*DeleteResponse) ProtoMessage() {}
 
 func (x *DeleteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[7]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -479,7 +579,7 @@ func (x *DeleteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteResponse.ProtoReflect.Descriptor instead.
 func (*DeleteResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{7}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteResponse) GetDeletedAt() *ConsistencyToken {
@@ -503,7 +603,7 @@ type ListObjectsRequest struct {
 
 func (x *ListObjectsRequest) Reset() {
 	*x = ListObjectsRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[8]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -515,7 +615,7 @@ func (x *ListObjectsRequest) String() string {
 func (*ListObjectsRequest) ProtoMessage() {}
 
 func (x *ListObjectsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[8]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -528,7 +628,7 @@ func (x *ListObjectsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListObjectsRequest.ProtoReflect.Descriptor instead.
 func (*ListObjectsRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{8}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListObjectsRequest) GetSubjectType() string {
@@ -576,7 +676,7 @@ type ListObjectsResponse struct {
 
 func (x *ListObjectsResponse) Reset() {
 	*x = ListObjectsResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[9]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -588,7 +688,7 @@ func (x *ListObjectsResponse) String() string {
 func (*ListObjectsResponse) ProtoMessage() {}
 
 func (x *ListObjectsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[9]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -601,7 +701,7 @@ func (x *ListObjectsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListObjectsResponse.ProtoReflect.Descriptor instead.
 func (*ListObjectsResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{9}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListObjectsResponse) GetObjectIds() []string {
@@ -624,7 +724,7 @@ type ExpandRequest struct {
 
 func (x *ExpandRequest) Reset() {
 	*x = ExpandRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[10]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -636,7 +736,7 @@ func (x *ExpandRequest) String() string {
 func (*ExpandRequest) ProtoMessage() {}
 
 func (x *ExpandRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[10]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -649,7 +749,7 @@ func (x *ExpandRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExpandRequest.ProtoReflect.Descriptor instead.
 func (*ExpandRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{10}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ExpandRequest) GetObjectType() string {
@@ -690,7 +790,7 @@ type ExpandResponse struct {
 
 func (x *ExpandResponse) Reset() {
 	*x = ExpandResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[11]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -702,7 +802,7 @@ func (x *ExpandResponse) String() string {
 func (*ExpandResponse) ProtoMessage() {}
 
 func (x *ExpandResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[11]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -715,7 +815,7 @@ func (x *ExpandResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExpandResponse.ProtoReflect.Descriptor instead.
 func (*ExpandResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{11}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ExpandResponse) GetTree() *ExpandTree {
@@ -743,7 +843,7 @@ type ExpandTree struct {
 
 func (x *ExpandTree) Reset() {
 	*x = ExpandTree{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[12]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -755,7 +855,7 @@ func (x *ExpandTree) String() string {
 func (*ExpandTree) ProtoMessage() {}
 
 func (x *ExpandTree) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[12]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -768,7 +868,7 @@ func (x *ExpandTree) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExpandTree.ProtoReflect.Descriptor instead.
 func (*ExpandTree) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{12}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ExpandTree) GetExpanded() string {
@@ -859,7 +959,7 @@ type ExpandLeaf struct {
 
 func (x *ExpandLeaf) Reset() {
 	*x = ExpandLeaf{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[13]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -871,7 +971,7 @@ func (x *ExpandLeaf) String() string {
 func (*ExpandLeaf) ProtoMessage() {}
 
 func (x *ExpandLeaf) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[13]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -884,7 +984,7 @@ func (x *ExpandLeaf) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExpandLeaf.ProtoReflect.Descriptor instead.
 func (*ExpandLeaf) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{13}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ExpandLeaf) GetSubjects() []*RelationTuple {
@@ -904,7 +1004,7 @@ type ExpandUnion struct {
 
 func (x *ExpandUnion) Reset() {
 	*x = ExpandUnion{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[14]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -916,7 +1016,7 @@ func (x *ExpandUnion) String() string {
 func (*ExpandUnion) ProtoMessage() {}
 
 func (x *ExpandUnion) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[14]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -929,7 +1029,7 @@ func (x *ExpandUnion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExpandUnion.ProtoReflect.Descriptor instead.
 func (*ExpandUnion) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{14}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ExpandUnion) GetChildren() []*ExpandTree {
@@ -949,7 +1049,7 @@ type ExpandIntersection struct {
 
 func (x *ExpandIntersection) Reset() {
 	*x = ExpandIntersection{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[15]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -961,7 +1061,7 @@ func (x *ExpandIntersection) String() string {
 func (*ExpandIntersection) ProtoMessage() {}
 
 func (x *ExpandIntersection) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[15]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -974,7 +1074,7 @@ func (x *ExpandIntersection) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExpandIntersection.ProtoReflect.Descriptor instead.
 func (*ExpandIntersection) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{15}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ExpandIntersection) GetChildren() []*ExpandTree {
@@ -995,7 +1095,7 @@ type ExpandExclusion struct {
 
 func (x *ExpandExclusion) Reset() {
 	*x = ExpandExclusion{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[16]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1007,7 +1107,7 @@ func (x *ExpandExclusion) String() string {
 func (*ExpandExclusion) ProtoMessage() {}
 
 func (x *ExpandExclusion) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[16]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1020,7 +1120,7 @@ func (x *ExpandExclusion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExpandExclusion.ProtoReflect.Descriptor instead.
 func (*ExpandExclusion) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{16}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ExpandExclusion) GetBase() *ExpandTree {
@@ -1047,7 +1147,7 @@ type WriteSchemaRequest struct {
 
 func (x *WriteSchemaRequest) Reset() {
 	*x = WriteSchemaRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[17]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1059,7 +1159,7 @@ func (x *WriteSchemaRequest) String() string {
 func (*WriteSchemaRequest) ProtoMessage() {}
 
 func (x *WriteSchemaRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[17]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1072,7 +1172,7 @@ func (x *WriteSchemaRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteSchemaRequest.ProtoReflect.Descriptor instead.
 func (*WriteSchemaRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{17}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *WriteSchemaRequest) GetSchemaYaml() string {
@@ -1091,7 +1191,7 @@ type WriteSchemaResponse struct {
 
 func (x *WriteSchemaResponse) Reset() {
 	*x = WriteSchemaResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[18]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1103,7 +1203,7 @@ func (x *WriteSchemaResponse) String() string {
 func (*WriteSchemaResponse) ProtoMessage() {}
 
 func (x *WriteSchemaResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[18]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1116,7 +1216,7 @@ func (x *WriteSchemaResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WriteSchemaResponse.ProtoReflect.Descriptor instead.
 func (*WriteSchemaResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{18}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{20}
 }
 
 // ReadSchemaRequest is the request for the ReadSchema RPC.
@@ -1131,7 +1231,7 @@ type ReadSchemaRequest struct {
 
 func (x *ReadSchemaRequest) Reset() {
 	*x = ReadSchemaRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[19]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1143,7 +1243,7 @@ func (x *ReadSchemaRequest) String() string {
 func (*ReadSchemaRequest) ProtoMessage() {}
 
 func (x *ReadSchemaRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[19]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1156,7 +1256,7 @@ func (x *ReadSchemaRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadSchemaRequest.ProtoReflect.Descriptor instead.
 func (*ReadSchemaRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{19}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ReadSchemaRequest) GetName() string {
@@ -1176,7 +1276,7 @@ type ReadSchemaResponse struct {
 
 func (x *ReadSchemaResponse) Reset() {
 	*x = ReadSchemaResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[20]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1188,7 +1288,7 @@ func (x *ReadSchemaResponse) String() string {
 func (*ReadSchemaResponse) ProtoMessage() {}
 
 func (x *ReadSchemaResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[20]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1201,7 +1301,7 @@ func (x *ReadSchemaResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadSchemaResponse.ProtoReflect.Descriptor instead.
 func (*ReadSchemaResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{20}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ReadSchemaResponse) GetSchemaYaml() string {
@@ -1220,7 +1320,7 @@ type ListSchemaSetsRequest struct {
 
 func (x *ListSchemaSetsRequest) Reset() {
 	*x = ListSchemaSetsRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[21]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1232,7 +1332,7 @@ func (x *ListSchemaSetsRequest) String() string {
 func (*ListSchemaSetsRequest) ProtoMessage() {}
 
 func (x *ListSchemaSetsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[21]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1245,7 +1345,7 @@ func (x *ListSchemaSetsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSchemaSetsRequest.ProtoReflect.Descriptor instead.
 func (*ListSchemaSetsRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{21}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{23}
 }
 
 // ListSchemaSetsResponse is the response for the ListSchemaSets RPC.
@@ -1258,7 +1358,7 @@ type ListSchemaSetsResponse struct {
 
 func (x *ListSchemaSetsResponse) Reset() {
 	*x = ListSchemaSetsResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[22]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1270,7 +1370,7 @@ func (x *ListSchemaSetsResponse) String() string {
 func (*ListSchemaSetsResponse) ProtoMessage() {}
 
 func (x *ListSchemaSetsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[22]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1283,7 +1383,7 @@ func (x *ListSchemaSetsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSchemaSetsResponse.ProtoReflect.Descriptor instead.
 func (*ListSchemaSetsResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{22}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ListSchemaSetsResponse) GetNames() []string {
@@ -1303,7 +1403,7 @@ type DeleteSchemaSetRequest struct {
 
 func (x *DeleteSchemaSetRequest) Reset() {
 	*x = DeleteSchemaSetRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[23]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1315,7 +1415,7 @@ func (x *DeleteSchemaSetRequest) String() string {
 func (*DeleteSchemaSetRequest) ProtoMessage() {}
 
 func (x *DeleteSchemaSetRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[23]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1328,7 +1428,7 @@ func (x *DeleteSchemaSetRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSchemaSetRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSchemaSetRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{23}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *DeleteSchemaSetRequest) GetName() string {
@@ -1347,7 +1447,7 @@ type DeleteSchemaSetResponse struct {
 
 func (x *DeleteSchemaSetResponse) Reset() {
 	*x = DeleteSchemaSetResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[24]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1359,7 +1459,7 @@ func (x *DeleteSchemaSetResponse) String() string {
 func (*DeleteSchemaSetResponse) ProtoMessage() {}
 
 func (x *DeleteSchemaSetResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[24]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1372,7 +1472,7 @@ func (x *DeleteSchemaSetResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSchemaSetResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSchemaSetResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{24}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{26}
 }
 
 // HealthCheckRequest is the request for the HealthCheck RPC.
@@ -1384,7 +1484,7 @@ type HealthCheckRequest struct {
 
 func (x *HealthCheckRequest) Reset() {
 	*x = HealthCheckRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[25]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1396,7 +1496,7 @@ func (x *HealthCheckRequest) String() string {
 func (*HealthCheckRequest) ProtoMessage() {}
 
 func (x *HealthCheckRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[25]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1409,7 +1509,7 @@ func (x *HealthCheckRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthCheckRequest.ProtoReflect.Descriptor instead.
 func (*HealthCheckRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{25}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{27}
 }
 
 // HealthCheckResponse is the response for the HealthCheck RPC.
@@ -1422,7 +1522,7 @@ type HealthCheckResponse struct {
 
 func (x *HealthCheckResponse) Reset() {
 	*x = HealthCheckResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[26]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1434,7 +1534,7 @@ func (x *HealthCheckResponse) String() string {
 func (*HealthCheckResponse) ProtoMessage() {}
 
 func (x *HealthCheckResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[26]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1447,7 +1547,7 @@ func (x *HealthCheckResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthCheckResponse.ProtoReflect.Descriptor instead.
 func (*HealthCheckResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{26}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *HealthCheckResponse) GetStatus() HealthCheckResponse_ServingStatus {
@@ -1466,7 +1566,7 @@ type WhoAmIRequest struct {
 
 func (x *WhoAmIRequest) Reset() {
 	*x = WhoAmIRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[27]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1478,7 +1578,7 @@ func (x *WhoAmIRequest) String() string {
 func (*WhoAmIRequest) ProtoMessage() {}
 
 func (x *WhoAmIRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[27]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1491,7 +1591,7 @@ func (x *WhoAmIRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WhoAmIRequest.ProtoReflect.Descriptor instead.
 func (*WhoAmIRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{27}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{29}
 }
 
 // WhoAmIResponse is the response for the WhoAmI RPC.
@@ -1510,7 +1610,7 @@ type WhoAmIResponse struct {
 
 func (x *WhoAmIResponse) Reset() {
 	*x = WhoAmIResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[28]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1522,7 +1622,7 @@ func (x *WhoAmIResponse) String() string {
 func (*WhoAmIResponse) ProtoMessage() {}
 
 func (x *WhoAmIResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[28]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1535,7 +1635,7 @@ func (x *WhoAmIResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WhoAmIResponse.ProtoReflect.Descriptor instead.
 func (*WhoAmIResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{28}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *WhoAmIResponse) GetSubject() string {
@@ -1574,7 +1674,7 @@ type IAMGrant struct {
 
 func (x *IAMGrant) Reset() {
 	*x = IAMGrant{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[29]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1586,7 +1686,7 @@ func (x *IAMGrant) String() string {
 func (*IAMGrant) ProtoMessage() {}
 
 func (x *IAMGrant) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[29]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1599,7 +1699,7 @@ func (x *IAMGrant) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IAMGrant.ProtoReflect.Descriptor instead.
 func (*IAMGrant) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{29}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *IAMGrant) GetObject() string {
@@ -1635,7 +1735,7 @@ type EnsurePathRequest struct {
 
 func (x *EnsurePathRequest) Reset() {
 	*x = EnsurePathRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[30]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1647,7 +1747,7 @@ func (x *EnsurePathRequest) String() string {
 func (*EnsurePathRequest) ProtoMessage() {}
 
 func (x *EnsurePathRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[30]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1660,7 +1760,7 @@ func (x *EnsurePathRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnsurePathRequest.ProtoReflect.Descriptor instead.
 func (*EnsurePathRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{30}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *EnsurePathRequest) GetPath() string {
@@ -1685,7 +1785,7 @@ type EnsurePathResponse struct {
 
 func (x *EnsurePathResponse) Reset() {
 	*x = EnsurePathResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[31]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1697,7 +1797,7 @@ func (x *EnsurePathResponse) String() string {
 func (*EnsurePathResponse) ProtoMessage() {}
 
 func (x *EnsurePathResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[31]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1710,7 +1810,7 @@ func (x *EnsurePathResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnsurePathResponse.ProtoReflect.Descriptor instead.
 func (*EnsurePathResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{31}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *EnsurePathResponse) GetCreated() []*RelationTuple {
@@ -1746,7 +1846,7 @@ type CheckPathRequest struct {
 
 func (x *CheckPathRequest) Reset() {
 	*x = CheckPathRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[32]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1758,7 +1858,7 @@ func (x *CheckPathRequest) String() string {
 func (*CheckPathRequest) ProtoMessage() {}
 
 func (x *CheckPathRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[32]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1771,7 +1871,7 @@ func (x *CheckPathRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckPathRequest.ProtoReflect.Descriptor instead.
 func (*CheckPathRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{32}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CheckPathRequest) GetPath() string {
@@ -1796,7 +1896,7 @@ type CheckPathResponse struct {
 
 func (x *CheckPathResponse) Reset() {
 	*x = CheckPathResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[33]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1808,7 +1908,7 @@ func (x *CheckPathResponse) String() string {
 func (*CheckPathResponse) ProtoMessage() {}
 
 func (x *CheckPathResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[33]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1821,7 +1921,7 @@ func (x *CheckPathResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckPathResponse.ProtoReflect.Descriptor instead.
 func (*CheckPathResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{33}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CheckPathResponse) GetComplete() bool {
@@ -1862,7 +1962,7 @@ type GrantRoleRequest struct {
 
 func (x *GrantRoleRequest) Reset() {
 	*x = GrantRoleRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[34]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1874,7 +1974,7 @@ func (x *GrantRoleRequest) String() string {
 func (*GrantRoleRequest) ProtoMessage() {}
 
 func (x *GrantRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[34]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1887,7 +1987,7 @@ func (x *GrantRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantRoleRequest.ProtoReflect.Descriptor instead.
 func (*GrantRoleRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{34}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *GrantRoleRequest) GetRole() string {
@@ -1938,7 +2038,7 @@ type GrantRoleResponse struct {
 
 func (x *GrantRoleResponse) Reset() {
 	*x = GrantRoleResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[35]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1950,7 +2050,7 @@ func (x *GrantRoleResponse) String() string {
 func (*GrantRoleResponse) ProtoMessage() {}
 
 func (x *GrantRoleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[35]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1963,7 +2063,7 @@ func (x *GrantRoleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantRoleResponse.ProtoReflect.Descriptor instead.
 func (*GrantRoleResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{35}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *GrantRoleResponse) GetAssignment() *RoleAssignment {
@@ -1997,7 +2097,7 @@ type RevokeRoleRequest struct {
 
 func (x *RevokeRoleRequest) Reset() {
 	*x = RevokeRoleRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[36]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2009,7 +2109,7 @@ func (x *RevokeRoleRequest) String() string {
 func (*RevokeRoleRequest) ProtoMessage() {}
 
 func (x *RevokeRoleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[36]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2022,7 +2122,7 @@ func (x *RevokeRoleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeRoleRequest.ProtoReflect.Descriptor instead.
 func (*RevokeRoleRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{36}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *RevokeRoleRequest) GetRole() string {
@@ -2069,7 +2169,7 @@ type RevokeRoleResponse struct {
 
 func (x *RevokeRoleResponse) Reset() {
 	*x = RevokeRoleResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[37]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2081,7 +2181,7 @@ func (x *RevokeRoleResponse) String() string {
 func (*RevokeRoleResponse) ProtoMessage() {}
 
 func (x *RevokeRoleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[37]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2094,7 +2194,7 @@ func (x *RevokeRoleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeRoleResponse.ProtoReflect.Descriptor instead.
 func (*RevokeRoleResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{37}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{39}
 }
 
 // ListRoleAssignmentsRequest is the request for the ListRoleAssignments RPC.
@@ -2112,7 +2212,7 @@ type ListRoleAssignmentsRequest struct {
 
 func (x *ListRoleAssignmentsRequest) Reset() {
 	*x = ListRoleAssignmentsRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[38]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2124,7 +2224,7 @@ func (x *ListRoleAssignmentsRequest) String() string {
 func (*ListRoleAssignmentsRequest) ProtoMessage() {}
 
 func (x *ListRoleAssignmentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[38]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2137,7 +2237,7 @@ func (x *ListRoleAssignmentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoleAssignmentsRequest.ProtoReflect.Descriptor instead.
 func (*ListRoleAssignmentsRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{38}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *ListRoleAssignmentsRequest) GetObjectType() string {
@@ -2185,7 +2285,7 @@ type ListRoleAssignmentsResponse struct {
 
 func (x *ListRoleAssignmentsResponse) Reset() {
 	*x = ListRoleAssignmentsResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[39]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2197,7 +2297,7 @@ func (x *ListRoleAssignmentsResponse) String() string {
 func (*ListRoleAssignmentsResponse) ProtoMessage() {}
 
 func (x *ListRoleAssignmentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[39]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2210,7 +2310,7 @@ func (x *ListRoleAssignmentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRoleAssignmentsResponse.ProtoReflect.Descriptor instead.
 func (*ListRoleAssignmentsResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{39}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *ListRoleAssignmentsResponse) GetAssignments() []*RoleAssignment {
@@ -2229,7 +2329,7 @@ type ListRolesRequest struct {
 
 func (x *ListRolesRequest) Reset() {
 	*x = ListRolesRequest{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[40]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2241,7 +2341,7 @@ func (x *ListRolesRequest) String() string {
 func (*ListRolesRequest) ProtoMessage() {}
 
 func (x *ListRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[40]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2254,7 +2354,7 @@ func (x *ListRolesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRolesRequest.ProtoReflect.Descriptor instead.
 func (*ListRolesRequest) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{40}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{42}
 }
 
 // ListRolesResponse is the response for the ListRoles RPC.
@@ -2268,7 +2368,7 @@ type ListRolesResponse struct {
 
 func (x *ListRolesResponse) Reset() {
 	*x = ListRolesResponse{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[41]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2280,7 +2380,7 @@ func (x *ListRolesResponse) String() string {
 func (*ListRolesResponse) ProtoMessage() {}
 
 func (x *ListRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[41]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2293,7 +2393,7 @@ func (x *ListRolesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRolesResponse.ProtoReflect.Descriptor instead.
 func (*ListRolesResponse) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{41}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *ListRolesResponse) GetRoles() []string {
@@ -2324,7 +2424,7 @@ type RoleAssignment struct {
 
 func (x *RoleAssignment) Reset() {
 	*x = RoleAssignment{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[42]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2336,7 +2436,7 @@ func (x *RoleAssignment) String() string {
 func (*RoleAssignment) ProtoMessage() {}
 
 func (x *RoleAssignment) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[42]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2349,7 +2449,7 @@ func (x *RoleAssignment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAssignment.ProtoReflect.Descriptor instead.
 func (*RoleAssignment) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{42}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *RoleAssignment) GetId() string {
@@ -2412,7 +2512,12 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\rCheckResponse\x12\x18\n" +
 	"\aallowed\x18\x01 \x01(\bR\aallowed\x12@\n" +
 	"\n" +
-	"checked_at\x18\x02 \x01(\v2!.carabiner.ll.v1.ConsistencyTokenR\tcheckedAt\"\x80\x01\n" +
+	"checked_at\x18\x02 \x01(\v2!.carabiner.ll.v1.ConsistencyTokenR\tcheckedAt\"\x8b\x01\n" +
+	"\x11BatchCheckRequest\x126\n" +
+	"\x06tuples\x18\x01 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\x06tuples\x12>\n" +
+	"\vconsistency\x18\x02 \x01(\v2\x1c.carabiner.ll.v1.ConsistencyR\vconsistency\"N\n" +
+	"\x12BatchCheckResponse\x128\n" +
+	"\aresults\x18\x01 \x03(\v2\x1e.carabiner.ll.v1.CheckResponseR\aresults\"\x80\x01\n" +
 	"\fWriteRequest\x126\n" +
 	"\x06writes\x18\x01 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\x06writes\x128\n" +
 	"\adeletes\x18\x02 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\adeletes\"Q\n" +
@@ -2578,96 +2683,101 @@ func file_carabiner_ll_v1_messages_proto_rawDescGZIP() []byte {
 }
 
 var file_carabiner_ll_v1_messages_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_carabiner_ll_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 43)
+var file_carabiner_ll_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
 var file_carabiner_ll_v1_messages_proto_goTypes = []any{
 	(HealthCheckResponse_ServingStatus)(0), // 0: carabiner.ll.v1.HealthCheckResponse.ServingStatus
 	(*CheckRequest)(nil),                   // 1: carabiner.ll.v1.CheckRequest
 	(*CheckResponse)(nil),                  // 2: carabiner.ll.v1.CheckResponse
-	(*WriteRequest)(nil),                   // 3: carabiner.ll.v1.WriteRequest
-	(*WriteResponse)(nil),                  // 4: carabiner.ll.v1.WriteResponse
-	(*ReadRequest)(nil),                    // 5: carabiner.ll.v1.ReadRequest
-	(*ReadResponse)(nil),                   // 6: carabiner.ll.v1.ReadResponse
-	(*DeleteRequest)(nil),                  // 7: carabiner.ll.v1.DeleteRequest
-	(*DeleteResponse)(nil),                 // 8: carabiner.ll.v1.DeleteResponse
-	(*ListObjectsRequest)(nil),             // 9: carabiner.ll.v1.ListObjectsRequest
-	(*ListObjectsResponse)(nil),            // 10: carabiner.ll.v1.ListObjectsResponse
-	(*ExpandRequest)(nil),                  // 11: carabiner.ll.v1.ExpandRequest
-	(*ExpandResponse)(nil),                 // 12: carabiner.ll.v1.ExpandResponse
-	(*ExpandTree)(nil),                     // 13: carabiner.ll.v1.ExpandTree
-	(*ExpandLeaf)(nil),                     // 14: carabiner.ll.v1.ExpandLeaf
-	(*ExpandUnion)(nil),                    // 15: carabiner.ll.v1.ExpandUnion
-	(*ExpandIntersection)(nil),             // 16: carabiner.ll.v1.ExpandIntersection
-	(*ExpandExclusion)(nil),                // 17: carabiner.ll.v1.ExpandExclusion
-	(*WriteSchemaRequest)(nil),             // 18: carabiner.ll.v1.WriteSchemaRequest
-	(*WriteSchemaResponse)(nil),            // 19: carabiner.ll.v1.WriteSchemaResponse
-	(*ReadSchemaRequest)(nil),              // 20: carabiner.ll.v1.ReadSchemaRequest
-	(*ReadSchemaResponse)(nil),             // 21: carabiner.ll.v1.ReadSchemaResponse
-	(*ListSchemaSetsRequest)(nil),          // 22: carabiner.ll.v1.ListSchemaSetsRequest
-	(*ListSchemaSetsResponse)(nil),         // 23: carabiner.ll.v1.ListSchemaSetsResponse
-	(*DeleteSchemaSetRequest)(nil),         // 24: carabiner.ll.v1.DeleteSchemaSetRequest
-	(*DeleteSchemaSetResponse)(nil),        // 25: carabiner.ll.v1.DeleteSchemaSetResponse
-	(*HealthCheckRequest)(nil),             // 26: carabiner.ll.v1.HealthCheckRequest
-	(*HealthCheckResponse)(nil),            // 27: carabiner.ll.v1.HealthCheckResponse
-	(*WhoAmIRequest)(nil),                  // 28: carabiner.ll.v1.WhoAmIRequest
-	(*WhoAmIResponse)(nil),                 // 29: carabiner.ll.v1.WhoAmIResponse
-	(*IAMGrant)(nil),                       // 30: carabiner.ll.v1.IAMGrant
-	(*EnsurePathRequest)(nil),              // 31: carabiner.ll.v1.EnsurePathRequest
-	(*EnsurePathResponse)(nil),             // 32: carabiner.ll.v1.EnsurePathResponse
-	(*CheckPathRequest)(nil),               // 33: carabiner.ll.v1.CheckPathRequest
-	(*CheckPathResponse)(nil),              // 34: carabiner.ll.v1.CheckPathResponse
-	(*GrantRoleRequest)(nil),               // 35: carabiner.ll.v1.GrantRoleRequest
-	(*GrantRoleResponse)(nil),              // 36: carabiner.ll.v1.GrantRoleResponse
-	(*RevokeRoleRequest)(nil),              // 37: carabiner.ll.v1.RevokeRoleRequest
-	(*RevokeRoleResponse)(nil),             // 38: carabiner.ll.v1.RevokeRoleResponse
-	(*ListRoleAssignmentsRequest)(nil),     // 39: carabiner.ll.v1.ListRoleAssignmentsRequest
-	(*ListRoleAssignmentsResponse)(nil),    // 40: carabiner.ll.v1.ListRoleAssignmentsResponse
-	(*ListRolesRequest)(nil),               // 41: carabiner.ll.v1.ListRolesRequest
-	(*ListRolesResponse)(nil),              // 42: carabiner.ll.v1.ListRolesResponse
-	(*RoleAssignment)(nil),                 // 43: carabiner.ll.v1.RoleAssignment
-	(*RelationTuple)(nil),                  // 44: carabiner.ll.v1.RelationTuple
-	(*Consistency)(nil),                    // 45: carabiner.ll.v1.Consistency
-	(*ConsistencyToken)(nil),               // 46: carabiner.ll.v1.ConsistencyToken
-	(*RelationTupleFilter)(nil),            // 47: carabiner.ll.v1.RelationTupleFilter
+	(*BatchCheckRequest)(nil),              // 3: carabiner.ll.v1.BatchCheckRequest
+	(*BatchCheckResponse)(nil),             // 4: carabiner.ll.v1.BatchCheckResponse
+	(*WriteRequest)(nil),                   // 5: carabiner.ll.v1.WriteRequest
+	(*WriteResponse)(nil),                  // 6: carabiner.ll.v1.WriteResponse
+	(*ReadRequest)(nil),                    // 7: carabiner.ll.v1.ReadRequest
+	(*ReadResponse)(nil),                   // 8: carabiner.ll.v1.ReadResponse
+	(*DeleteRequest)(nil),                  // 9: carabiner.ll.v1.DeleteRequest
+	(*DeleteResponse)(nil),                 // 10: carabiner.ll.v1.DeleteResponse
+	(*ListObjectsRequest)(nil),             // 11: carabiner.ll.v1.ListObjectsRequest
+	(*ListObjectsResponse)(nil),            // 12: carabiner.ll.v1.ListObjectsResponse
+	(*ExpandRequest)(nil),                  // 13: carabiner.ll.v1.ExpandRequest
+	(*ExpandResponse)(nil),                 // 14: carabiner.ll.v1.ExpandResponse
+	(*ExpandTree)(nil),                     // 15: carabiner.ll.v1.ExpandTree
+	(*ExpandLeaf)(nil),                     // 16: carabiner.ll.v1.ExpandLeaf
+	(*ExpandUnion)(nil),                    // 17: carabiner.ll.v1.ExpandUnion
+	(*ExpandIntersection)(nil),             // 18: carabiner.ll.v1.ExpandIntersection
+	(*ExpandExclusion)(nil),                // 19: carabiner.ll.v1.ExpandExclusion
+	(*WriteSchemaRequest)(nil),             // 20: carabiner.ll.v1.WriteSchemaRequest
+	(*WriteSchemaResponse)(nil),            // 21: carabiner.ll.v1.WriteSchemaResponse
+	(*ReadSchemaRequest)(nil),              // 22: carabiner.ll.v1.ReadSchemaRequest
+	(*ReadSchemaResponse)(nil),             // 23: carabiner.ll.v1.ReadSchemaResponse
+	(*ListSchemaSetsRequest)(nil),          // 24: carabiner.ll.v1.ListSchemaSetsRequest
+	(*ListSchemaSetsResponse)(nil),         // 25: carabiner.ll.v1.ListSchemaSetsResponse
+	(*DeleteSchemaSetRequest)(nil),         // 26: carabiner.ll.v1.DeleteSchemaSetRequest
+	(*DeleteSchemaSetResponse)(nil),        // 27: carabiner.ll.v1.DeleteSchemaSetResponse
+	(*HealthCheckRequest)(nil),             // 28: carabiner.ll.v1.HealthCheckRequest
+	(*HealthCheckResponse)(nil),            // 29: carabiner.ll.v1.HealthCheckResponse
+	(*WhoAmIRequest)(nil),                  // 30: carabiner.ll.v1.WhoAmIRequest
+	(*WhoAmIResponse)(nil),                 // 31: carabiner.ll.v1.WhoAmIResponse
+	(*IAMGrant)(nil),                       // 32: carabiner.ll.v1.IAMGrant
+	(*EnsurePathRequest)(nil),              // 33: carabiner.ll.v1.EnsurePathRequest
+	(*EnsurePathResponse)(nil),             // 34: carabiner.ll.v1.EnsurePathResponse
+	(*CheckPathRequest)(nil),               // 35: carabiner.ll.v1.CheckPathRequest
+	(*CheckPathResponse)(nil),              // 36: carabiner.ll.v1.CheckPathResponse
+	(*GrantRoleRequest)(nil),               // 37: carabiner.ll.v1.GrantRoleRequest
+	(*GrantRoleResponse)(nil),              // 38: carabiner.ll.v1.GrantRoleResponse
+	(*RevokeRoleRequest)(nil),              // 39: carabiner.ll.v1.RevokeRoleRequest
+	(*RevokeRoleResponse)(nil),             // 40: carabiner.ll.v1.RevokeRoleResponse
+	(*ListRoleAssignmentsRequest)(nil),     // 41: carabiner.ll.v1.ListRoleAssignmentsRequest
+	(*ListRoleAssignmentsResponse)(nil),    // 42: carabiner.ll.v1.ListRoleAssignmentsResponse
+	(*ListRolesRequest)(nil),               // 43: carabiner.ll.v1.ListRolesRequest
+	(*ListRolesResponse)(nil),              // 44: carabiner.ll.v1.ListRolesResponse
+	(*RoleAssignment)(nil),                 // 45: carabiner.ll.v1.RoleAssignment
+	(*RelationTuple)(nil),                  // 46: carabiner.ll.v1.RelationTuple
+	(*Consistency)(nil),                    // 47: carabiner.ll.v1.Consistency
+	(*ConsistencyToken)(nil),               // 48: carabiner.ll.v1.ConsistencyToken
+	(*RelationTupleFilter)(nil),            // 49: carabiner.ll.v1.RelationTupleFilter
 }
 var file_carabiner_ll_v1_messages_proto_depIdxs = []int32{
-	44, // 0: carabiner.ll.v1.CheckRequest.tuple:type_name -> carabiner.ll.v1.RelationTuple
-	45, // 1: carabiner.ll.v1.CheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	46, // 2: carabiner.ll.v1.CheckResponse.checked_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	44, // 3: carabiner.ll.v1.WriteRequest.writes:type_name -> carabiner.ll.v1.RelationTuple
-	44, // 4: carabiner.ll.v1.WriteRequest.deletes:type_name -> carabiner.ll.v1.RelationTuple
-	46, // 5: carabiner.ll.v1.WriteResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	47, // 6: carabiner.ll.v1.ReadRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
-	45, // 7: carabiner.ll.v1.ReadRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	44, // 8: carabiner.ll.v1.ReadResponse.tuples:type_name -> carabiner.ll.v1.RelationTuple
-	47, // 9: carabiner.ll.v1.DeleteRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
-	46, // 10: carabiner.ll.v1.DeleteResponse.deleted_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	45, // 11: carabiner.ll.v1.ListObjectsRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	45, // 12: carabiner.ll.v1.ExpandRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	13, // 13: carabiner.ll.v1.ExpandResponse.tree:type_name -> carabiner.ll.v1.ExpandTree
-	14, // 14: carabiner.ll.v1.ExpandTree.leaf:type_name -> carabiner.ll.v1.ExpandLeaf
-	15, // 15: carabiner.ll.v1.ExpandTree.union:type_name -> carabiner.ll.v1.ExpandUnion
-	16, // 16: carabiner.ll.v1.ExpandTree.intersection:type_name -> carabiner.ll.v1.ExpandIntersection
-	17, // 17: carabiner.ll.v1.ExpandTree.exclusion:type_name -> carabiner.ll.v1.ExpandExclusion
-	44, // 18: carabiner.ll.v1.ExpandLeaf.subjects:type_name -> carabiner.ll.v1.RelationTuple
-	13, // 19: carabiner.ll.v1.ExpandUnion.children:type_name -> carabiner.ll.v1.ExpandTree
-	13, // 20: carabiner.ll.v1.ExpandIntersection.children:type_name -> carabiner.ll.v1.ExpandTree
-	13, // 21: carabiner.ll.v1.ExpandExclusion.base:type_name -> carabiner.ll.v1.ExpandTree
-	13, // 22: carabiner.ll.v1.ExpandExclusion.subtract:type_name -> carabiner.ll.v1.ExpandTree
-	0,  // 23: carabiner.ll.v1.HealthCheckResponse.status:type_name -> carabiner.ll.v1.HealthCheckResponse.ServingStatus
-	30, // 24: carabiner.ll.v1.WhoAmIResponse.grants:type_name -> carabiner.ll.v1.IAMGrant
-	44, // 25: carabiner.ll.v1.EnsurePathResponse.created:type_name -> carabiner.ll.v1.RelationTuple
-	44, // 26: carabiner.ll.v1.EnsurePathResponse.existed:type_name -> carabiner.ll.v1.RelationTuple
-	46, // 27: carabiner.ll.v1.EnsurePathResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	44, // 28: carabiner.ll.v1.CheckPathResponse.found:type_name -> carabiner.ll.v1.RelationTuple
-	44, // 29: carabiner.ll.v1.CheckPathResponse.missing:type_name -> carabiner.ll.v1.RelationTuple
-	43, // 30: carabiner.ll.v1.GrantRoleResponse.assignment:type_name -> carabiner.ll.v1.RoleAssignment
-	44, // 31: carabiner.ll.v1.GrantRoleResponse.created_tuples:type_name -> carabiner.ll.v1.RelationTuple
-	43, // 32: carabiner.ll.v1.ListRoleAssignmentsResponse.assignments:type_name -> carabiner.ll.v1.RoleAssignment
-	33, // [33:33] is the sub-list for method output_type
-	33, // [33:33] is the sub-list for method input_type
-	33, // [33:33] is the sub-list for extension type_name
-	33, // [33:33] is the sub-list for extension extendee
-	0,  // [0:33] is the sub-list for field type_name
+	46, // 0: carabiner.ll.v1.CheckRequest.tuple:type_name -> carabiner.ll.v1.RelationTuple
+	47, // 1: carabiner.ll.v1.CheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	48, // 2: carabiner.ll.v1.CheckResponse.checked_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	46, // 3: carabiner.ll.v1.BatchCheckRequest.tuples:type_name -> carabiner.ll.v1.RelationTuple
+	47, // 4: carabiner.ll.v1.BatchCheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	2,  // 5: carabiner.ll.v1.BatchCheckResponse.results:type_name -> carabiner.ll.v1.CheckResponse
+	46, // 6: carabiner.ll.v1.WriteRequest.writes:type_name -> carabiner.ll.v1.RelationTuple
+	46, // 7: carabiner.ll.v1.WriteRequest.deletes:type_name -> carabiner.ll.v1.RelationTuple
+	48, // 8: carabiner.ll.v1.WriteResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	49, // 9: carabiner.ll.v1.ReadRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
+	47, // 10: carabiner.ll.v1.ReadRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	46, // 11: carabiner.ll.v1.ReadResponse.tuples:type_name -> carabiner.ll.v1.RelationTuple
+	49, // 12: carabiner.ll.v1.DeleteRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
+	48, // 13: carabiner.ll.v1.DeleteResponse.deleted_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	47, // 14: carabiner.ll.v1.ListObjectsRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	47, // 15: carabiner.ll.v1.ExpandRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	15, // 16: carabiner.ll.v1.ExpandResponse.tree:type_name -> carabiner.ll.v1.ExpandTree
+	16, // 17: carabiner.ll.v1.ExpandTree.leaf:type_name -> carabiner.ll.v1.ExpandLeaf
+	17, // 18: carabiner.ll.v1.ExpandTree.union:type_name -> carabiner.ll.v1.ExpandUnion
+	18, // 19: carabiner.ll.v1.ExpandTree.intersection:type_name -> carabiner.ll.v1.ExpandIntersection
+	19, // 20: carabiner.ll.v1.ExpandTree.exclusion:type_name -> carabiner.ll.v1.ExpandExclusion
+	46, // 21: carabiner.ll.v1.ExpandLeaf.subjects:type_name -> carabiner.ll.v1.RelationTuple
+	15, // 22: carabiner.ll.v1.ExpandUnion.children:type_name -> carabiner.ll.v1.ExpandTree
+	15, // 23: carabiner.ll.v1.ExpandIntersection.children:type_name -> carabiner.ll.v1.ExpandTree
+	15, // 24: carabiner.ll.v1.ExpandExclusion.base:type_name -> carabiner.ll.v1.ExpandTree
+	15, // 25: carabiner.ll.v1.ExpandExclusion.subtract:type_name -> carabiner.ll.v1.ExpandTree
+	0,  // 26: carabiner.ll.v1.HealthCheckResponse.status:type_name -> carabiner.ll.v1.HealthCheckResponse.ServingStatus
+	32, // 27: carabiner.ll.v1.WhoAmIResponse.grants:type_name -> carabiner.ll.v1.IAMGrant
+	46, // 28: carabiner.ll.v1.EnsurePathResponse.created:type_name -> carabiner.ll.v1.RelationTuple
+	46, // 29: carabiner.ll.v1.EnsurePathResponse.existed:type_name -> carabiner.ll.v1.RelationTuple
+	48, // 30: carabiner.ll.v1.EnsurePathResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	46, // 31: carabiner.ll.v1.CheckPathResponse.found:type_name -> carabiner.ll.v1.RelationTuple
+	46, // 32: carabiner.ll.v1.CheckPathResponse.missing:type_name -> carabiner.ll.v1.RelationTuple
+	45, // 33: carabiner.ll.v1.GrantRoleResponse.assignment:type_name -> carabiner.ll.v1.RoleAssignment
+	46, // 34: carabiner.ll.v1.GrantRoleResponse.created_tuples:type_name -> carabiner.ll.v1.RelationTuple
+	45, // 35: carabiner.ll.v1.ListRoleAssignmentsResponse.assignments:type_name -> carabiner.ll.v1.RoleAssignment
+	36, // [36:36] is the sub-list for method output_type
+	36, // [36:36] is the sub-list for method input_type
+	36, // [36:36] is the sub-list for extension type_name
+	36, // [36:36] is the sub-list for extension extendee
+	0,  // [0:36] is the sub-list for field type_name
 }
 
 func init() { file_carabiner_ll_v1_messages_proto_init() }
@@ -2676,7 +2786,7 @@ func file_carabiner_ll_v1_messages_proto_init() {
 		return
 	}
 	file_carabiner_ll_v1_types_proto_init()
-	file_carabiner_ll_v1_messages_proto_msgTypes[12].OneofWrappers = []any{
+	file_carabiner_ll_v1_messages_proto_msgTypes[14].OneofWrappers = []any{
 		(*ExpandTree_Leaf)(nil),
 		(*ExpandTree_Union)(nil),
 		(*ExpandTree_Intersection)(nil),
@@ -2688,7 +2798,7 @@ func file_carabiner_ll_v1_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_carabiner_ll_v1_messages_proto_rawDesc), len(file_carabiner_ll_v1_messages_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   43,
+			NumMessages:   45,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

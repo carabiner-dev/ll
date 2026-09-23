@@ -21,6 +21,19 @@ message CheckResponse {
   ConsistencyToken checked_at = 2;
 }
 
+// BatchCheckRequest is the request for the BatchCheck RPC.
+message BatchCheckRequest {
+  // The checks to evaluate, each a (object, relation, subject) tuple.
+  repeated RelationTuple tuples = 1;
+  Consistency consistency = 2;
+}
+
+// BatchCheckResponse is the response for the BatchCheck RPC.
+message BatchCheckResponse {
+  // One result per request tuple, in request order.
+  repeated CheckResponse results = 1;
+}
+
 // WriteRequest is the request for the Write RPC.
 message WriteRequest {
   repeated RelationTuple writes = 1;
