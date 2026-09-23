@@ -50,6 +50,10 @@ func applyCall(ctx context.Context, opts []CallOption) context.Context {
 // Client is the interface for interacting with a Lamplight server.
 type Client interface {
 	Check(ctx context.Context, tuple *llv1.RelationTuple, opts ...CallOption) (bool, error)
+	// BatchCheck evaluates several checks in one call and returns one result
+	// per tuple, in order. An older server without the RPC answers
+	// codes.Unimplemented; callers that must run against it fall back to Check.
+	BatchCheck(ctx context.Context, tuples []*llv1.RelationTuple, opts ...CallOption) ([]bool, error)
 	Write(ctx context.Context, writes, deletes []*llv1.RelationTuple, opts ...CallOption) error
 	Read(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) ([]*llv1.RelationTuple, error)
 	Delete(ctx context.Context, filter *llv1.RelationTupleFilter, opts ...CallOption) error
@@ -195,6 +199,28 @@ func (c *GRPCClient) Check(ctx context.Context, t *llv1.RelationTuple, opts ...C
 		return false, err
 	}
 	return resp.GetAllowed(), nil
+}
+
+func (c *GRPCClient) BatchCheck(ctx context.Context, tuples []*llv1.RelationTuple, opts ...CallOption) ([]bool, error) {
+	ctx = applyCall(ctx, opts)
+	for i, t := range tuples {
+		if err := ValidateTuple(t); err != nil {
+			return nil, fmt.Errorf("invalid tuple %d: %w", i, err)
+		}
+	}
+	resp, err := c.client.BatchCheck(ctx, &llv1.BatchCheckRequest{Tuples: tuples})
+	if err != nil {
+		return nil, err
+	}
+	results := resp.GetResults()
+	if len(results) != len(tuples) {
+		return nil, fmt.Errorf("batch check returned %d results for %d tuples", len(results), len(tuples))
+	}
+	out := make([]bool, len(results))
+	for i, r := range results {
+		out[i] = r.GetAllowed()
+	}
+	return out, nil
 }
 
 func (c *GRPCClient) Write(ctx context.Context, writes, deletes []*llv1.RelationTuple, opts ...CallOption) error {

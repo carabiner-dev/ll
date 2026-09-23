@@ -14,6 +14,13 @@ service LamplightService {
   // Check determines whether a subject has a permission on an object.
   rpc Check(CheckRequest) returns (CheckResponse);
 
+  // BatchCheck evaluates several checks in one call. The results are in the
+  // order of the request's tuples. All the checks are evaluated under one
+  // request scope, so tuple reads are shared between them; callers deciding
+  // several permissions at once (a login granting scopes, say) pay one round
+  // trip instead of one per check.
+  rpc BatchCheck(BatchCheckRequest) returns (BatchCheckResponse);
+
   // Write creates or touches relation tuples.
   rpc Write(WriteRequest) returns (WriteResponse);
 
