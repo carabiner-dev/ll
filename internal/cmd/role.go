@@ -307,6 +307,11 @@ grant names another object as a template.`,
 				} else {
 					fmt.Printf("  - %s\n", r.GetName())
 				}
+				if len(r.GetAppliesTo()) > 0 {
+					fmt.Printf("      on %s\n", strings.Join(r.GetAppliesTo(), ", "))
+				} else {
+					fmt.Println("      on any type that defines its relations")
+				}
 				for _, g := range r.GetGrants() {
 					if g.GetObject() != "" {
 						fmt.Printf("      %s on %s\n", g.GetRelation(), g.GetObject())

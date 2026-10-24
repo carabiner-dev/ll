@@ -2432,10 +2432,16 @@ func (x *ListRolesResponse) GetRoles() []*RoleDefinition {
 // RoleDefinition is a role as the server defines it: a named set of grants
 // made together when the role is granted on an object to a subject.
 type RoleDefinition struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Grants        []*RoleGrant           `protobuf:"bytes,3,rep,name=grants,proto3" json:"grants,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Grants      []*RoleGrant           `protobuf:"bytes,3,rep,name=grants,proto3" json:"grants,omitempty"`
+	// The object types the role may be granted on, exactly as listed: a
+	// grant on any other type is refused. Empty, the role may be granted on
+	// any type whose schema admits every relation it grants. Access still
+	// reaches down from the object through the schema's inheritance, so a
+	// role on a project covers its folders without being grantable on them.
+	AppliesTo     []string `protobuf:"bytes,4,rep,name=applies_to,json=appliesTo,proto3" json:"applies_to,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2487,6 +2493,13 @@ func (x *RoleDefinition) GetDescription() string {
 func (x *RoleDefinition) GetGrants() []*RoleGrant {
 	if x != nil {
 		return x.Grants
+	}
+	return nil
+}
+
+func (x *RoleDefinition) GetAppliesTo() []string {
+	if x != nil {
+		return x.AppliesTo
 	}
 	return nil
 }
@@ -2814,11 +2827,13 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\vassignments\x18\x01 \x03(\v2\x1f.carabiner.ll.v1.RoleAssignmentR\vassignments\"\x12\n" +
 	"\x10ListRolesRequest\"P\n" +
 	"\x11ListRolesResponse\x125\n" +
-	"\x05roles\x18\x02 \x03(\v2\x1f.carabiner.ll.v1.RoleDefinitionR\x05rolesJ\x04\b\x01\x10\x02\"z\n" +
+	"\x05roles\x18\x02 \x03(\v2\x1f.carabiner.ll.v1.RoleDefinitionR\x05rolesJ\x04\b\x01\x10\x02\"\x99\x01\n" +
 	"\x0eRoleDefinition\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x122\n" +
-	"\x06grants\x18\x03 \x03(\v2\x1a.carabiner.ll.v1.RoleGrantR\x06grants\"?\n" +
+	"\x06grants\x18\x03 \x03(\v2\x1a.carabiner.ll.v1.RoleGrantR\x06grants\x12\x1d\n" +
+	"\n" +
+	"applies_to\x18\x04 \x03(\tR\tappliesTo\"?\n" +
 	"\tRoleGrant\x12\x1a\n" +
 	"\brelation\x18\x01 \x01(\tR\brelation\x12\x16\n" +
 	"\x06object\x18\x02 \x01(\tR\x06object\"\xfe\x01\n" +

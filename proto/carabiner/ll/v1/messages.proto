@@ -322,6 +322,12 @@ message RoleDefinition {
   string name = 1;
   string description = 2;
   repeated RoleGrant grants = 3;
+  // The object types the role may be granted on, exactly as listed: a
+  // grant on any other type is refused. Empty, the role may be granted on
+  // any type whose schema admits every relation it grants. Access still
+  // reaches down from the object through the schema's inheritance, so a
+  // role on a project covers its folders without being grantable on them.
+  repeated string applies_to = 4;
 }
 
 // RoleGrant is one tuple a role creates.
