@@ -64,16 +64,18 @@ func addRoleGrant(parent *cobra.Command) {
 	opts := defaultRoleOptions
 
 	cmd := &cobra.Command{
-		Use:   "grant <role> <object_type:object_id> <subject_type:subject_id>",
+		Use:   "grant <role> <object_type:object_id> <subject_type:subject_id[#relation]>",
 		Short: "Grant a role to a subject on an object",
 		Long: `Grant a role to a subject on an object.
 
 This assigns the named role to the subject on the specified object,
-creating all the relation tuples defined by the role.
+creating all the relation tuples defined by the role. A subject set (the
+members of a group) is written with its relation: group:eng#member.
 
 Examples:
   llctl role grant admin folder:my-folder user:alice
-  llctl role grant viewer document:doc1 user:bob`,
+  llctl role grant viewer document:doc1 user:bob
+  llctl role grant viewer document:doc1 group:eng#member`,
 		Args: cobra.ExactArgs(3),
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return opts.Validate()
@@ -84,9 +86,9 @@ Examples:
 			if len(objectParts) != 2 {
 				return fmt.Errorf("invalid object format %q, expected type:id", args[1])
 			}
-			subjectParts := strings.SplitN(args[2], ":", 2)
-			if len(subjectParts) != 2 {
-				return fmt.Errorf("invalid subject format %q, expected type:id", args[2])
+			subjectType, subjectID, subjectRelation, err := parseSubject(args[2])
+			if err != nil {
+				return err
 			}
 
 			c, err := opts.NewClient(cmd.Context())
@@ -99,15 +101,15 @@ Examples:
 				cmd.Context(),
 				roleName,
 				objectParts[0], objectParts[1],
-				subjectParts[0], subjectParts[1],
+				subjectType, subjectID, subjectRelation,
 			)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("granted role %q to %s:%s on %s:%s (assignment: %s)\n",
+			fmt.Printf("granted role %q to %s on %s:%s (assignment: %s)\n",
 				roleName,
-				assignment.GetSubjectType(), assignment.GetSubjectId(),
+				subjectString(assignment.GetSubjectType(), assignment.GetSubjectId(), assignment.GetSubjectRelation()),
 				assignment.GetObjectType(), assignment.GetObjectId(),
 				assignment.GetId(),
 			)
@@ -122,7 +124,7 @@ func addRoleRevoke(parent *cobra.Command) {
 	opts := defaultRoleOptions
 
 	cmd := &cobra.Command{
-		Use:   "revoke <role> <object_type:object_id> <subject_type:subject_id>",
+		Use:   "revoke <role> <object_type:object_id> <subject_type:subject_id[#relation]>",
 		Short: "Revoke a role from a subject on an object",
 		Long: `Revoke a role from a subject on an object.
 
@@ -142,9 +144,9 @@ Examples:
 			if len(objectParts) != 2 {
 				return fmt.Errorf("invalid object format %q, expected type:id", args[1])
 			}
-			subjectParts := strings.SplitN(args[2], ":", 2)
-			if len(subjectParts) != 2 {
-				return fmt.Errorf("invalid subject format %q, expected type:id", args[2])
+			subjectType, subjectID, subjectRelation, err := parseSubject(args[2])
+			if err != nil {
+				return err
 			}
 
 			c, err := opts.NewClient(cmd.Context())
@@ -157,15 +159,15 @@ Examples:
 				cmd.Context(),
 				roleName,
 				objectParts[0], objectParts[1],
-				subjectParts[0], subjectParts[1],
+				subjectType, subjectID, subjectRelation,
 			)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("revoked role %q from %s:%s on %s:%s\n",
+			fmt.Printf("revoked role %q from %s on %s:%s\n",
 				roleName,
-				subjectParts[0], subjectParts[1],
+				subjectString(subjectType, subjectID, subjectRelation),
 				objectParts[0], objectParts[1],
 			)
 			return nil
@@ -178,11 +180,12 @@ Examples:
 // RoleListOptions contains options for the role list command.
 type RoleListOptions struct {
 	ServerOptions
-	ObjectType  string
-	ObjectID    string
-	SubjectType string
-	SubjectID   string
-	Role        string
+	ObjectType      string
+	ObjectID        string
+	SubjectType     string
+	SubjectID       string
+	SubjectRelation string
+	Role            string
 }
 
 var defaultRoleListOptions = RoleListOptions{
@@ -201,6 +204,7 @@ func (o *RoleListOptions) AddFlags(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&o.ObjectID, "object-id", "", "Filter by object ID")
 	cmd.Flags().StringVar(&o.SubjectType, "subject-type", "", "Filter by subject type")
 	cmd.Flags().StringVar(&o.SubjectID, "subject-id", "", "Filter by subject ID")
+	cmd.Flags().StringVar(&o.SubjectRelation, "subject-relation", "", "Filter by subject relation (a subject set's)")
 	cmd.Flags().StringVar(&o.Role, "role", "", "Filter by role name")
 }
 
@@ -235,7 +239,7 @@ Examples:
 			assignments, err := c.ListRoleAssignments(
 				cmd.Context(),
 				opts.ObjectType, opts.ObjectID,
-				opts.SubjectType, opts.SubjectID,
+				opts.SubjectType, opts.SubjectID, opts.SubjectRelation,
 				opts.Role,
 			)
 			if err != nil {
@@ -248,11 +252,11 @@ Examples:
 			}
 
 			for _, a := range assignments {
-				fmt.Printf("%s: %s on %s:%s -> %s:%s (created: %s)\n",
+				fmt.Printf("%s: %s on %s:%s -> %s (created: %s)\n",
 					a.GetRole(),
 					a.GetId(),
 					a.GetObjectType(), a.GetObjectId(),
-					a.GetSubjectType(), a.GetSubjectId(),
+					subjectString(a.GetSubjectType(), a.GetSubjectId(), a.GetSubjectRelation()),
 					a.GetCreatedAt(),
 				)
 			}
@@ -272,7 +276,9 @@ func addRoleListDefinitions(parent *cobra.Command) {
 		Short:   "List available role definitions",
 		Long: `List all role definitions available on the server.
 
-This shows the names of all roles that have been configured on the server.`,
+This shows every role configured on the server with the grants it makes:
+the relation each creates, on the object the role is granted on unless the
+grant names another object as a template.`,
 		Args: cobra.NoArgs,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return opts.Validate()
@@ -296,11 +302,44 @@ This shows the names of all roles that have been configured on the server.`,
 
 			fmt.Println("Available roles:")
 			for _, r := range roles {
-				fmt.Printf("  - %s\n", r)
+				if r.GetDescription() != "" {
+					fmt.Printf("  - %s: %s\n", r.GetName(), r.GetDescription())
+				} else {
+					fmt.Printf("  - %s\n", r.GetName())
+				}
+				for _, g := range r.GetGrants() {
+					if g.GetObject() != "" {
+						fmt.Printf("      %s on %s\n", g.GetRelation(), g.GetObject())
+					} else {
+						fmt.Printf("      %s\n", g.GetRelation())
+					}
+				}
 			}
 			return nil
 		},
 	}
 	opts.AddFlags(cmd)
 	parent.AddCommand(cmd)
+}
+
+// parseSubject reads a subject as type:id, with #relation for a subject
+// set (group:eng#member).
+func parseSubject(arg string) (subjectType, subjectID, subjectRelation string, err error) {
+	parts := strings.SplitN(arg, ":", 2)
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		return "", "", "", fmt.Errorf("invalid subject format %q, expected type:id[#relation]", arg)
+	}
+	subjectID, subjectRelation, _ = strings.Cut(parts[1], "#")
+	if subjectID == "" {
+		return "", "", "", fmt.Errorf("invalid subject format %q, expected type:id[#relation]", arg)
+	}
+	return parts[0], subjectID, subjectRelation, nil
+}
+
+// subjectString writes a subject back as type:id[#relation].
+func subjectString(subjectType, subjectID, subjectRelation string) string {
+	if subjectRelation != "" {
+		return subjectType + ":" + subjectID + "#" + subjectRelation
+	}
+	return subjectType + ":" + subjectID
 }

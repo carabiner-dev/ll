@@ -1953,11 +1953,14 @@ type GrantRoleRequest struct {
 	// The object to grant the role on.
 	ObjectType string `protobuf:"bytes,2,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
 	ObjectId   string `protobuf:"bytes,3,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
-	// The subject receiving the role.
-	SubjectType   string `protobuf:"bytes,4,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
-	SubjectId     string `protobuf:"bytes,5,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// The subject receiving the role: a subject, or a subject set when
+	// subject_relation is given (the members of group:eng are
+	// group:eng#member). Every tuple the role creates names this subject.
+	SubjectType     string `protobuf:"bytes,4,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
+	SubjectId       string `protobuf:"bytes,5,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	SubjectRelation string `protobuf:"bytes,6,opt,name=subject_relation,json=subjectRelation,proto3" json:"subject_relation,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GrantRoleRequest) Reset() {
@@ -2025,6 +2028,13 @@ func (x *GrantRoleRequest) GetSubjectId() string {
 	return ""
 }
 
+func (x *GrantRoleRequest) GetSubjectRelation() string {
+	if x != nil {
+		return x.SubjectRelation
+	}
+	return ""
+}
+
 // GrantRoleResponse is the response for the GrantRole RPC.
 type GrantRoleResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -2088,11 +2098,12 @@ type RevokeRoleRequest struct {
 	// The object to revoke the role from.
 	ObjectType string `protobuf:"bytes,2,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
 	ObjectId   string `protobuf:"bytes,3,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
-	// The subject losing the role.
-	SubjectType   string `protobuf:"bytes,4,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
-	SubjectId     string `protobuf:"bytes,5,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// The subject losing the role, as it was granted.
+	SubjectType     string `protobuf:"bytes,4,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
+	SubjectId       string `protobuf:"bytes,5,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	SubjectRelation string `protobuf:"bytes,6,opt,name=subject_relation,json=subjectRelation,proto3" json:"subject_relation,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *RevokeRoleRequest) Reset() {
@@ -2160,6 +2171,13 @@ func (x *RevokeRoleRequest) GetSubjectId() string {
 	return ""
 }
 
+func (x *RevokeRoleRequest) GetSubjectRelation() string {
+	if x != nil {
+		return x.SubjectRelation
+	}
+	return ""
+}
+
 // RevokeRoleResponse is the response for the RevokeRole RPC.
 type RevokeRoleResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -2201,13 +2219,14 @@ func (*RevokeRoleResponse) Descriptor() ([]byte, []int) {
 type ListRoleAssignmentsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Optional filters. Empty values are ignored.
-	ObjectType    string `protobuf:"bytes,1,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
-	ObjectId      string `protobuf:"bytes,2,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
-	SubjectType   string `protobuf:"bytes,3,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
-	SubjectId     string `protobuf:"bytes,4,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
-	Role          string `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	ObjectType      string `protobuf:"bytes,1,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
+	ObjectId        string `protobuf:"bytes,2,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
+	SubjectType     string `protobuf:"bytes,3,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
+	SubjectId       string `protobuf:"bytes,4,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	Role            string `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
+	SubjectRelation string `protobuf:"bytes,6,opt,name=subject_relation,json=subjectRelation,proto3" json:"subject_relation,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListRoleAssignmentsRequest) Reset() {
@@ -2271,6 +2290,13 @@ func (x *ListRoleAssignmentsRequest) GetSubjectId() string {
 func (x *ListRoleAssignmentsRequest) GetRole() string {
 	if x != nil {
 		return x.Role
+	}
+	return ""
+}
+
+func (x *ListRoleAssignmentsRequest) GetSubjectRelation() string {
+	if x != nil {
+		return x.SubjectRelation
 	}
 	return ""
 }
@@ -2360,8 +2386,8 @@ func (*ListRolesRequest) Descriptor() ([]byte, []int) {
 // ListRolesResponse is the response for the ListRoles RPC.
 type ListRolesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The names of all defined roles.
-	Roles         []string `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
+	// Every role defined on the server, with what granting it creates.
+	Roles         []*RoleDefinition `protobuf:"bytes,2,rep,name=roles,proto3" json:"roles,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2396,11 +2422,130 @@ func (*ListRolesResponse) Descriptor() ([]byte, []int) {
 	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *ListRolesResponse) GetRoles() []string {
+func (x *ListRolesResponse) GetRoles() []*RoleDefinition {
 	if x != nil {
 		return x.Roles
 	}
 	return nil
+}
+
+// RoleDefinition is a role as the server defines it: a named set of grants
+// made together when the role is granted on an object to a subject.
+type RoleDefinition struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Grants        []*RoleGrant           `protobuf:"bytes,3,rep,name=grants,proto3" json:"grants,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RoleDefinition) Reset() {
+	*x = RoleDefinition{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RoleDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RoleDefinition) ProtoMessage() {}
+
+func (x *RoleDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RoleDefinition.ProtoReflect.Descriptor instead.
+func (*RoleDefinition) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *RoleDefinition) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *RoleDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *RoleDefinition) GetGrants() []*RoleGrant {
+	if x != nil {
+		return x.Grants
+	}
+	return nil
+}
+
+// RoleGrant is one tuple a role creates.
+type RoleGrant struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The relation granted.
+	Relation string `protobuf:"bytes,1,opt,name=relation,proto3" json:"relation,omitempty"`
+	// The object the relation is granted on, as a template over
+	// {object_type}, {object_id}, {subject_type} and {subject_id}; empty for
+	// the object the role is granted on.
+	Object        string `protobuf:"bytes,2,opt,name=object,proto3" json:"object,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RoleGrant) Reset() {
+	*x = RoleGrant{}
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RoleGrant) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RoleGrant) ProtoMessage() {}
+
+func (x *RoleGrant) ProtoReflect() protoreflect.Message {
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RoleGrant.ProtoReflect.Descriptor instead.
+func (*RoleGrant) Descriptor() ([]byte, []int) {
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *RoleGrant) GetRelation() string {
+	if x != nil {
+		return x.Relation
+	}
+	return ""
+}
+
+func (x *RoleGrant) GetObject() string {
+	if x != nil {
+		return x.Object
+	}
+	return ""
 }
 
 // RoleAssignment represents a role granted to a subject on an object.
@@ -2417,14 +2562,16 @@ type RoleAssignment struct {
 	SubjectType string `protobuf:"bytes,5,opt,name=subject_type,json=subjectType,proto3" json:"subject_type,omitempty"`
 	SubjectId   string `protobuf:"bytes,6,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
 	// When the role was assigned (RFC 3339 format).
-	CreatedAt     string `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	CreatedAt string `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// The subject's relation, for a role granted to a subject set.
+	SubjectRelation string `protobuf:"bytes,8,opt,name=subject_relation,json=subjectRelation,proto3" json:"subject_relation,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *RoleAssignment) Reset() {
 	*x = RoleAssignment{}
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[44]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2436,7 +2583,7 @@ func (x *RoleAssignment) String() string {
 func (*RoleAssignment) ProtoMessage() {}
 
 func (x *RoleAssignment) ProtoReflect() protoreflect.Message {
-	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[44]
+	mi := &file_carabiner_ll_v1_messages_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2449,7 +2596,7 @@ func (x *RoleAssignment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RoleAssignment.ProtoReflect.Descriptor instead.
 func (*RoleAssignment) Descriptor() ([]byte, []int) {
-	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{44}
+	return file_carabiner_ll_v1_messages_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *RoleAssignment) GetId() string {
@@ -2497,6 +2644,13 @@ func (x *RoleAssignment) GetSubjectId() string {
 func (x *RoleAssignment) GetCreatedAt() string {
 	if x != nil {
 		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *RoleAssignment) GetSubjectRelation() string {
+	if x != nil {
+		return x.SubjectRelation
 	}
 	return ""
 }
@@ -2622,7 +2776,7 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\x11CheckPathResponse\x12\x1a\n" +
 	"\bcomplete\x18\x01 \x01(\bR\bcomplete\x124\n" +
 	"\x05found\x18\x02 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\x05found\x128\n" +
-	"\amissing\x18\x03 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\amissing\"\xa6\x01\n" +
+	"\amissing\x18\x03 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\amissing\"\xd1\x01\n" +
 	"\x10GrantRoleRequest\x12\x12\n" +
 	"\x04role\x18\x01 \x01(\tR\x04role\x12\x1f\n" +
 	"\vobject_type\x18\x02 \x01(\tR\n" +
@@ -2630,12 +2784,13 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\tobject_id\x18\x03 \x01(\tR\bobjectId\x12!\n" +
 	"\fsubject_type\x18\x04 \x01(\tR\vsubjectType\x12\x1d\n" +
 	"\n" +
-	"subject_id\x18\x05 \x01(\tR\tsubjectId\"\x9b\x01\n" +
+	"subject_id\x18\x05 \x01(\tR\tsubjectId\x12)\n" +
+	"\x10subject_relation\x18\x06 \x01(\tR\x0fsubjectRelation\"\x9b\x01\n" +
 	"\x11GrantRoleResponse\x12?\n" +
 	"\n" +
 	"assignment\x18\x01 \x01(\v2\x1f.carabiner.ll.v1.RoleAssignmentR\n" +
 	"assignment\x12E\n" +
-	"\x0ecreated_tuples\x18\x02 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\rcreatedTuples\"\xa7\x01\n" +
+	"\x0ecreated_tuples\x18\x02 \x03(\v2\x1e.carabiner.ll.v1.RelationTupleR\rcreatedTuples\"\xd2\x01\n" +
 	"\x11RevokeRoleRequest\x12\x12\n" +
 	"\x04role\x18\x01 \x01(\tR\x04role\x12\x1f\n" +
 	"\vobject_type\x18\x02 \x01(\tR\n" +
@@ -2643,8 +2798,9 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\tobject_id\x18\x03 \x01(\tR\bobjectId\x12!\n" +
 	"\fsubject_type\x18\x04 \x01(\tR\vsubjectType\x12\x1d\n" +
 	"\n" +
-	"subject_id\x18\x05 \x01(\tR\tsubjectId\"\x14\n" +
-	"\x12RevokeRoleResponse\"\xb0\x01\n" +
+	"subject_id\x18\x05 \x01(\tR\tsubjectId\x12)\n" +
+	"\x10subject_relation\x18\x06 \x01(\tR\x0fsubjectRelation\"\x14\n" +
+	"\x12RevokeRoleResponse\"\xdb\x01\n" +
 	"\x1aListRoleAssignmentsRequest\x12\x1f\n" +
 	"\vobject_type\x18\x01 \x01(\tR\n" +
 	"objectType\x12\x1b\n" +
@@ -2652,12 +2808,20 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\fsubject_type\x18\x03 \x01(\tR\vsubjectType\x12\x1d\n" +
 	"\n" +
 	"subject_id\x18\x04 \x01(\tR\tsubjectId\x12\x12\n" +
-	"\x04role\x18\x05 \x01(\tR\x04role\"`\n" +
+	"\x04role\x18\x05 \x01(\tR\x04role\x12)\n" +
+	"\x10subject_relation\x18\x06 \x01(\tR\x0fsubjectRelation\"`\n" +
 	"\x1bListRoleAssignmentsResponse\x12A\n" +
 	"\vassignments\x18\x01 \x03(\v2\x1f.carabiner.ll.v1.RoleAssignmentR\vassignments\"\x12\n" +
-	"\x10ListRolesRequest\")\n" +
-	"\x11ListRolesResponse\x12\x14\n" +
-	"\x05roles\x18\x01 \x03(\tR\x05roles\"\xd3\x01\n" +
+	"\x10ListRolesRequest\"P\n" +
+	"\x11ListRolesResponse\x125\n" +
+	"\x05roles\x18\x02 \x03(\v2\x1f.carabiner.ll.v1.RoleDefinitionR\x05rolesJ\x04\b\x01\x10\x02\"z\n" +
+	"\x0eRoleDefinition\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\x122\n" +
+	"\x06grants\x18\x03 \x03(\v2\x1a.carabiner.ll.v1.RoleGrantR\x06grants\"?\n" +
+	"\tRoleGrant\x12\x1a\n" +
+	"\brelation\x18\x01 \x01(\tR\brelation\x12\x16\n" +
+	"\x06object\x18\x02 \x01(\tR\x06object\"\xfe\x01\n" +
 	"\x0eRoleAssignment\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\x12\x1f\n" +
@@ -2668,7 +2832,8 @@ const file_carabiner_ll_v1_messages_proto_rawDesc = "" +
 	"\n" +
 	"subject_id\x18\x06 \x01(\tR\tsubjectId\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\a \x01(\tR\tcreatedAtB6Z4github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1b\x06proto3"
+	"created_at\x18\a \x01(\tR\tcreatedAt\x12)\n" +
+	"\x10subject_relation\x18\b \x01(\tR\x0fsubjectRelationB6Z4github.com/carabiner-dev/ll/api/carabiner/ll/v1;llv1b\x06proto3"
 
 var (
 	file_carabiner_ll_v1_messages_proto_rawDescOnce sync.Once
@@ -2683,7 +2848,7 @@ func file_carabiner_ll_v1_messages_proto_rawDescGZIP() []byte {
 }
 
 var file_carabiner_ll_v1_messages_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_carabiner_ll_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
+var file_carabiner_ll_v1_messages_proto_msgTypes = make([]protoimpl.MessageInfo, 47)
 var file_carabiner_ll_v1_messages_proto_goTypes = []any{
 	(HealthCheckResponse_ServingStatus)(0), // 0: carabiner.ll.v1.HealthCheckResponse.ServingStatus
 	(*CheckRequest)(nil),                   // 1: carabiner.ll.v1.CheckRequest
@@ -2730,54 +2895,58 @@ var file_carabiner_ll_v1_messages_proto_goTypes = []any{
 	(*ListRoleAssignmentsResponse)(nil),    // 42: carabiner.ll.v1.ListRoleAssignmentsResponse
 	(*ListRolesRequest)(nil),               // 43: carabiner.ll.v1.ListRolesRequest
 	(*ListRolesResponse)(nil),              // 44: carabiner.ll.v1.ListRolesResponse
-	(*RoleAssignment)(nil),                 // 45: carabiner.ll.v1.RoleAssignment
-	(*RelationTuple)(nil),                  // 46: carabiner.ll.v1.RelationTuple
-	(*Consistency)(nil),                    // 47: carabiner.ll.v1.Consistency
-	(*ConsistencyToken)(nil),               // 48: carabiner.ll.v1.ConsistencyToken
-	(*RelationTupleFilter)(nil),            // 49: carabiner.ll.v1.RelationTupleFilter
+	(*RoleDefinition)(nil),                 // 45: carabiner.ll.v1.RoleDefinition
+	(*RoleGrant)(nil),                      // 46: carabiner.ll.v1.RoleGrant
+	(*RoleAssignment)(nil),                 // 47: carabiner.ll.v1.RoleAssignment
+	(*RelationTuple)(nil),                  // 48: carabiner.ll.v1.RelationTuple
+	(*Consistency)(nil),                    // 49: carabiner.ll.v1.Consistency
+	(*ConsistencyToken)(nil),               // 50: carabiner.ll.v1.ConsistencyToken
+	(*RelationTupleFilter)(nil),            // 51: carabiner.ll.v1.RelationTupleFilter
 }
 var file_carabiner_ll_v1_messages_proto_depIdxs = []int32{
-	46, // 0: carabiner.ll.v1.CheckRequest.tuple:type_name -> carabiner.ll.v1.RelationTuple
-	47, // 1: carabiner.ll.v1.CheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	48, // 2: carabiner.ll.v1.CheckResponse.checked_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	46, // 3: carabiner.ll.v1.BatchCheckRequest.tuples:type_name -> carabiner.ll.v1.RelationTuple
-	47, // 4: carabiner.ll.v1.BatchCheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	48, // 0: carabiner.ll.v1.CheckRequest.tuple:type_name -> carabiner.ll.v1.RelationTuple
+	49, // 1: carabiner.ll.v1.CheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	50, // 2: carabiner.ll.v1.CheckResponse.checked_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	48, // 3: carabiner.ll.v1.BatchCheckRequest.tuples:type_name -> carabiner.ll.v1.RelationTuple
+	49, // 4: carabiner.ll.v1.BatchCheckRequest.consistency:type_name -> carabiner.ll.v1.Consistency
 	2,  // 5: carabiner.ll.v1.BatchCheckResponse.results:type_name -> carabiner.ll.v1.CheckResponse
-	46, // 6: carabiner.ll.v1.WriteRequest.writes:type_name -> carabiner.ll.v1.RelationTuple
-	46, // 7: carabiner.ll.v1.WriteRequest.deletes:type_name -> carabiner.ll.v1.RelationTuple
-	48, // 8: carabiner.ll.v1.WriteResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	49, // 9: carabiner.ll.v1.ReadRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
-	47, // 10: carabiner.ll.v1.ReadRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	46, // 11: carabiner.ll.v1.ReadResponse.tuples:type_name -> carabiner.ll.v1.RelationTuple
-	49, // 12: carabiner.ll.v1.DeleteRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
-	48, // 13: carabiner.ll.v1.DeleteResponse.deleted_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	47, // 14: carabiner.ll.v1.ListObjectsRequest.consistency:type_name -> carabiner.ll.v1.Consistency
-	47, // 15: carabiner.ll.v1.ExpandRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	48, // 6: carabiner.ll.v1.WriteRequest.writes:type_name -> carabiner.ll.v1.RelationTuple
+	48, // 7: carabiner.ll.v1.WriteRequest.deletes:type_name -> carabiner.ll.v1.RelationTuple
+	50, // 8: carabiner.ll.v1.WriteResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	51, // 9: carabiner.ll.v1.ReadRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
+	49, // 10: carabiner.ll.v1.ReadRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	48, // 11: carabiner.ll.v1.ReadResponse.tuples:type_name -> carabiner.ll.v1.RelationTuple
+	51, // 12: carabiner.ll.v1.DeleteRequest.filter:type_name -> carabiner.ll.v1.RelationTupleFilter
+	50, // 13: carabiner.ll.v1.DeleteResponse.deleted_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	49, // 14: carabiner.ll.v1.ListObjectsRequest.consistency:type_name -> carabiner.ll.v1.Consistency
+	49, // 15: carabiner.ll.v1.ExpandRequest.consistency:type_name -> carabiner.ll.v1.Consistency
 	15, // 16: carabiner.ll.v1.ExpandResponse.tree:type_name -> carabiner.ll.v1.ExpandTree
 	16, // 17: carabiner.ll.v1.ExpandTree.leaf:type_name -> carabiner.ll.v1.ExpandLeaf
 	17, // 18: carabiner.ll.v1.ExpandTree.union:type_name -> carabiner.ll.v1.ExpandUnion
 	18, // 19: carabiner.ll.v1.ExpandTree.intersection:type_name -> carabiner.ll.v1.ExpandIntersection
 	19, // 20: carabiner.ll.v1.ExpandTree.exclusion:type_name -> carabiner.ll.v1.ExpandExclusion
-	46, // 21: carabiner.ll.v1.ExpandLeaf.subjects:type_name -> carabiner.ll.v1.RelationTuple
+	48, // 21: carabiner.ll.v1.ExpandLeaf.subjects:type_name -> carabiner.ll.v1.RelationTuple
 	15, // 22: carabiner.ll.v1.ExpandUnion.children:type_name -> carabiner.ll.v1.ExpandTree
 	15, // 23: carabiner.ll.v1.ExpandIntersection.children:type_name -> carabiner.ll.v1.ExpandTree
 	15, // 24: carabiner.ll.v1.ExpandExclusion.base:type_name -> carabiner.ll.v1.ExpandTree
 	15, // 25: carabiner.ll.v1.ExpandExclusion.subtract:type_name -> carabiner.ll.v1.ExpandTree
 	0,  // 26: carabiner.ll.v1.HealthCheckResponse.status:type_name -> carabiner.ll.v1.HealthCheckResponse.ServingStatus
 	32, // 27: carabiner.ll.v1.WhoAmIResponse.grants:type_name -> carabiner.ll.v1.IAMGrant
-	46, // 28: carabiner.ll.v1.EnsurePathResponse.created:type_name -> carabiner.ll.v1.RelationTuple
-	46, // 29: carabiner.ll.v1.EnsurePathResponse.existed:type_name -> carabiner.ll.v1.RelationTuple
-	48, // 30: carabiner.ll.v1.EnsurePathResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
-	46, // 31: carabiner.ll.v1.CheckPathResponse.found:type_name -> carabiner.ll.v1.RelationTuple
-	46, // 32: carabiner.ll.v1.CheckPathResponse.missing:type_name -> carabiner.ll.v1.RelationTuple
-	45, // 33: carabiner.ll.v1.GrantRoleResponse.assignment:type_name -> carabiner.ll.v1.RoleAssignment
-	46, // 34: carabiner.ll.v1.GrantRoleResponse.created_tuples:type_name -> carabiner.ll.v1.RelationTuple
-	45, // 35: carabiner.ll.v1.ListRoleAssignmentsResponse.assignments:type_name -> carabiner.ll.v1.RoleAssignment
-	36, // [36:36] is the sub-list for method output_type
-	36, // [36:36] is the sub-list for method input_type
-	36, // [36:36] is the sub-list for extension type_name
-	36, // [36:36] is the sub-list for extension extendee
-	0,  // [0:36] is the sub-list for field type_name
+	48, // 28: carabiner.ll.v1.EnsurePathResponse.created:type_name -> carabiner.ll.v1.RelationTuple
+	48, // 29: carabiner.ll.v1.EnsurePathResponse.existed:type_name -> carabiner.ll.v1.RelationTuple
+	50, // 30: carabiner.ll.v1.EnsurePathResponse.written_at:type_name -> carabiner.ll.v1.ConsistencyToken
+	48, // 31: carabiner.ll.v1.CheckPathResponse.found:type_name -> carabiner.ll.v1.RelationTuple
+	48, // 32: carabiner.ll.v1.CheckPathResponse.missing:type_name -> carabiner.ll.v1.RelationTuple
+	47, // 33: carabiner.ll.v1.GrantRoleResponse.assignment:type_name -> carabiner.ll.v1.RoleAssignment
+	48, // 34: carabiner.ll.v1.GrantRoleResponse.created_tuples:type_name -> carabiner.ll.v1.RelationTuple
+	47, // 35: carabiner.ll.v1.ListRoleAssignmentsResponse.assignments:type_name -> carabiner.ll.v1.RoleAssignment
+	45, // 36: carabiner.ll.v1.ListRolesResponse.roles:type_name -> carabiner.ll.v1.RoleDefinition
+	46, // 37: carabiner.ll.v1.RoleDefinition.grants:type_name -> carabiner.ll.v1.RoleGrant
+	38, // [38:38] is the sub-list for method output_type
+	38, // [38:38] is the sub-list for method input_type
+	38, // [38:38] is the sub-list for extension type_name
+	38, // [38:38] is the sub-list for extension extendee
+	0,  // [0:38] is the sub-list for field type_name
 }
 
 func init() { file_carabiner_ll_v1_messages_proto_init() }
@@ -2798,7 +2967,7 @@ func file_carabiner_ll_v1_messages_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_carabiner_ll_v1_messages_proto_rawDesc), len(file_carabiner_ll_v1_messages_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   45,
+			NumMessages:   47,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

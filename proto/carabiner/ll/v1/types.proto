@@ -19,6 +19,11 @@ message RelationTuple {
   string subject_id = 5;
   // Optional: for subject sets (e.g., group:eng#member)
   string subject_relation = 6;
+  // The role whose assignment created the tuple, empty for a tuple written
+  // on its own. Set by the server on reads; ignored on writes, since role
+  // tuples are only ever created by GrantRole. A role tuple cannot be
+  // deleted on its own: revoking the role removes it.
+  string role = 7;
 }
 
 // ConsistencyToken is an opaque token representing a point-in-time snapshot.

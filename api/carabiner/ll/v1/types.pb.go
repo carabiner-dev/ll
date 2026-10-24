@@ -37,8 +37,13 @@ type RelationTuple struct {
 	SubjectId   string                 `protobuf:"bytes,5,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
 	// Optional: for subject sets (e.g., group:eng#member)
 	SubjectRelation string `protobuf:"bytes,6,opt,name=subject_relation,json=subjectRelation,proto3" json:"subject_relation,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// The role whose assignment created the tuple, empty for a tuple written
+	// on its own. Set by the server on reads; ignored on writes, since role
+	// tuples are only ever created by GrantRole. A role tuple cannot be
+	// deleted on its own: revoking the role removes it.
+	Role          string `protobuf:"bytes,7,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RelationTuple) Reset() {
@@ -109,6 +114,13 @@ func (x *RelationTuple) GetSubjectId() string {
 func (x *RelationTuple) GetSubjectRelation() string {
 	if x != nil {
 		return x.SubjectRelation
+	}
+	return ""
+}
+
+func (x *RelationTuple) GetRole() string {
+	if x != nil {
+		return x.Role
 	}
 	return ""
 }
@@ -394,7 +406,7 @@ var File_carabiner_ll_v1_types_proto protoreflect.FileDescriptor
 
 const file_carabiner_ll_v1_types_proto_rawDesc = "" +
 	"\n" +
-	"\x1bcarabiner/ll/v1/types.proto\x12\x0fcarabiner.ll.v1\"\xd6\x01\n" +
+	"\x1bcarabiner/ll/v1/types.proto\x12\x0fcarabiner.ll.v1\"\xea\x01\n" +
 	"\rRelationTuple\x12\x1f\n" +
 	"\vobject_type\x18\x01 \x01(\tR\n" +
 	"objectType\x12\x1b\n" +
@@ -403,7 +415,8 @@ const file_carabiner_ll_v1_types_proto_rawDesc = "" +
 	"\fsubject_type\x18\x04 \x01(\tR\vsubjectType\x12\x1d\n" +
 	"\n" +
 	"subject_id\x18\x05 \x01(\tR\tsubjectId\x12)\n" +
-	"\x10subject_relation\x18\x06 \x01(\tR\x0fsubjectRelation\"(\n" +
+	"\x10subject_relation\x18\x06 \x01(\tR\x0fsubjectRelation\x12\x12\n" +
+	"\x04role\x18\a \x01(\tR\x04role\"(\n" +
 	"\x10ConsistencyToken\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\fR\x05token\"\xc6\x01\n" +
 	"\vConsistency\x12+\n" +

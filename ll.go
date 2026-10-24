@@ -73,13 +73,13 @@ type Client interface {
 	// Returns whether the path is complete and which tuples are found/missing.
 	CheckPath(ctx context.Context, path string, opts ...CallOption) (*llv1.CheckPathResponse, error)
 	// GrantRole assigns a role to a subject on an object.
-	GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) (*llv1.RoleAssignment, error)
+	GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID, subjectRelation string, opts ...CallOption) (*llv1.RoleAssignment, error)
 	// RevokeRole removes a role assignment from a subject on an object.
-	RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) error
+	RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID, subjectRelation string, opts ...CallOption) error
 	// ListRoleAssignments returns all role assignments matching the filter.
-	ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error)
+	ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, subjectRelation, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error)
 	// ListRoles returns the names of all defined roles.
-	ListRoles(ctx context.Context, opts ...CallOption) ([]string, error)
+	ListRoles(ctx context.Context, opts ...CallOption) ([]*llv1.RoleDefinition, error)
 	Close() error
 }
 
@@ -337,14 +337,15 @@ func (c *GRPCClient) CheckPath(ctx context.Context, pathStr string, opts ...Call
 	return c.client.CheckPath(ctx, &llv1.CheckPathRequest{Path: pathStr})
 }
 
-func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) (*llv1.RoleAssignment, error) {
+func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID, subjectRelation string, opts ...CallOption) (*llv1.RoleAssignment, error) {
 	ctx = applyCall(ctx, opts)
 	resp, err := c.client.GrantRole(ctx, &llv1.GrantRoleRequest{
-		Role:        role,
-		ObjectType:  objectType,
-		ObjectId:    objectID,
-		SubjectType: subjectType,
-		SubjectId:   subjectID,
+		Role:            role,
+		ObjectType:      objectType,
+		ObjectId:        objectID,
+		SubjectType:     subjectType,
+		SubjectId:       subjectID,
+		SubjectRelation: subjectRelation,
 	})
 	if err != nil {
 		return nil, err
@@ -352,26 +353,28 @@ func (c *GRPCClient) GrantRole(ctx context.Context, role, objectType, objectID, 
 	return resp.GetAssignment(), nil
 }
 
-func (c *GRPCClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) error {
+func (c *GRPCClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID, subjectRelation string, opts ...CallOption) error {
 	ctx = applyCall(ctx, opts)
 	_, err := c.client.RevokeRole(ctx, &llv1.RevokeRoleRequest{
-		Role:        role,
-		ObjectType:  objectType,
-		ObjectId:    objectID,
-		SubjectType: subjectType,
-		SubjectId:   subjectID,
+		Role:            role,
+		ObjectType:      objectType,
+		ObjectId:        objectID,
+		SubjectType:     subjectType,
+		SubjectId:       subjectID,
+		SubjectRelation: subjectRelation,
 	})
 	return err
 }
 
-func (c *GRPCClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error) {
+func (c *GRPCClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, subjectRelation, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error) {
 	ctx = applyCall(ctx, opts)
 	resp, err := c.client.ListRoleAssignments(ctx, &llv1.ListRoleAssignmentsRequest{
-		ObjectType:  objectType,
-		ObjectId:    objectID,
-		SubjectType: subjectType,
-		SubjectId:   subjectID,
-		Role:        role,
+		ObjectType:      objectType,
+		ObjectId:        objectID,
+		SubjectType:     subjectType,
+		SubjectId:       subjectID,
+		SubjectRelation: subjectRelation,
+		Role:            role,
 	})
 	if err != nil {
 		return nil, err
@@ -379,7 +382,7 @@ func (c *GRPCClient) ListRoleAssignments(ctx context.Context, objectType, object
 	return resp.GetAssignments(), nil
 }
 
-func (c *GRPCClient) ListRoles(ctx context.Context, opts ...CallOption) ([]string, error) {
+func (c *GRPCClient) ListRoles(ctx context.Context, opts ...CallOption) ([]*llv1.RoleDefinition, error) {
 	ctx = applyCall(ctx, opts)
 	resp, err := c.client.ListRoles(ctx, &llv1.ListRolesRequest{})
 	if err != nil {

@@ -254,9 +254,12 @@ message GrantRoleRequest {
   string object_type = 2;
   string object_id = 3;
 
-  // The subject receiving the role.
+  // The subject receiving the role: a subject, or a subject set when
+  // subject_relation is given (the members of group:eng are
+  // group:eng#member). Every tuple the role creates names this subject.
   string subject_type = 4;
   string subject_id = 5;
+  string subject_relation = 6;
 }
 
 // GrantRoleResponse is the response for the GrantRole RPC.
@@ -277,9 +280,10 @@ message RevokeRoleRequest {
   string object_type = 2;
   string object_id = 3;
 
-  // The subject losing the role.
+  // The subject losing the role, as it was granted.
   string subject_type = 4;
   string subject_id = 5;
+  string subject_relation = 6;
 }
 
 // RevokeRoleResponse is the response for the RevokeRole RPC.
@@ -293,6 +297,7 @@ message ListRoleAssignmentsRequest {
   string subject_type = 3;
   string subject_id = 4;
   string role = 5;
+  string subject_relation = 6;
 }
 
 // ListRoleAssignmentsResponse is the response for the ListRoleAssignments RPC.
@@ -305,8 +310,28 @@ message ListRolesRequest {}
 
 // ListRolesResponse is the response for the ListRoles RPC.
 message ListRolesResponse {
-  // The names of all defined roles.
-  repeated string roles = 1;
+  // Field 1 carried the role names alone.
+  reserved 1;
+  // Every role defined on the server, with what granting it creates.
+  repeated RoleDefinition roles = 2;
+}
+
+// RoleDefinition is a role as the server defines it: a named set of grants
+// made together when the role is granted on an object to a subject.
+message RoleDefinition {
+  string name = 1;
+  string description = 2;
+  repeated RoleGrant grants = 3;
+}
+
+// RoleGrant is one tuple a role creates.
+message RoleGrant {
+  // The relation granted.
+  string relation = 1;
+  // The object the relation is granted on, as a template over
+  // {object_type}, {object_id}, {subject_type} and {subject_id}; empty for
+  // the object the role is granted on.
+  string object = 2;
 }
 
 // RoleAssignment represents a role granted to a subject on an object.
@@ -327,4 +352,7 @@ message RoleAssignment {
 
   // When the role was assigned (RFC 3339 format).
   string created_at = 7;
+
+  // The subject's relation, for a role granted to a subject set.
+  string subject_relation = 8;
 }

@@ -301,13 +301,14 @@ func (c *RESTClient) CheckPath(ctx context.Context, pathStr string, opts ...Call
 	return resp, nil
 }
 
-func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) (*llv1.RoleAssignment, error) {
+func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID, subjectRelation string, opts ...CallOption) (*llv1.RoleAssignment, error) {
 	req := &llv1.GrantRoleRequest{
-		Role:        role,
-		ObjectType:  objectType,
-		ObjectId:    objectID,
-		SubjectType: subjectType,
-		SubjectId:   subjectID,
+		Role:            role,
+		ObjectType:      objectType,
+		ObjectId:        objectID,
+		SubjectType:     subjectType,
+		SubjectId:       subjectID,
+		SubjectRelation: subjectRelation,
 	}
 	resp := &llv1.GrantRoleResponse{}
 
@@ -318,26 +319,28 @@ func (c *RESTClient) GrantRole(ctx context.Context, role, objectType, objectID, 
 	return resp.GetAssignment(), nil
 }
 
-func (c *RESTClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID string, opts ...CallOption) error {
+func (c *RESTClient) RevokeRole(ctx context.Context, role, objectType, objectID, subjectType, subjectID, subjectRelation string, opts ...CallOption) error {
 	req := &llv1.RevokeRoleRequest{
-		Role:        role,
-		ObjectType:  objectType,
-		ObjectId:    objectID,
-		SubjectType: subjectType,
-		SubjectId:   subjectID,
+		Role:            role,
+		ObjectType:      objectType,
+		ObjectId:        objectID,
+		SubjectType:     subjectType,
+		SubjectId:       subjectID,
+		SubjectRelation: subjectRelation,
 	}
 	resp := &llv1.RevokeRoleResponse{}
 
 	return c.doRequest(ctx, "POST", "/v1/role/revoke", req, resp, opts...)
 }
 
-func (c *RESTClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error) {
+func (c *RESTClient) ListRoleAssignments(ctx context.Context, objectType, objectID, subjectType, subjectID, subjectRelation, role string, opts ...CallOption) ([]*llv1.RoleAssignment, error) {
 	req := &llv1.ListRoleAssignmentsRequest{
-		ObjectType:  objectType,
-		ObjectId:    objectID,
-		SubjectType: subjectType,
-		SubjectId:   subjectID,
-		Role:        role,
+		ObjectType:      objectType,
+		ObjectId:        objectID,
+		SubjectType:     subjectType,
+		SubjectId:       subjectID,
+		SubjectRelation: subjectRelation,
+		Role:            role,
 	}
 	resp := &llv1.ListRoleAssignmentsResponse{}
 
@@ -348,7 +351,7 @@ func (c *RESTClient) ListRoleAssignments(ctx context.Context, objectType, object
 	return resp.GetAssignments(), nil
 }
 
-func (c *RESTClient) ListRoles(ctx context.Context, opts ...CallOption) ([]string, error) {
+func (c *RESTClient) ListRoles(ctx context.Context, opts ...CallOption) ([]*llv1.RoleDefinition, error) {
 	resp := &llv1.ListRolesResponse{}
 
 	if err := c.doRequest(ctx, "GET", "/v1/roles", nil, resp, opts...); err != nil {
